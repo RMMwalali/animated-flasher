@@ -2,7 +2,7 @@ import type { CollectionAfterChangeHook, CollectionBeforeChangeHook } from 'payl
 import { stageLabel } from '@/lib/crm/stages'
 import { notifyAgentOfLead } from '@/lib/crm/notify'
 
-const idOf = (v: unknown) => (v && typeof v === 'object' ? (v as { id: number | string }).id : (v as number | string | undefined))
+const idOf = (v: unknown) => (v && typeof v === 'object' ? (v as { id: number }).id : (v as number | undefined))
 
 const before: CollectionBeforeChangeHook = ({ data, originalDoc, operation }) => {
   if (operation === 'create' || data.status !== originalDoc?.status) data.statusChangedAt = new Date().toISOString()
