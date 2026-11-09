@@ -25,7 +25,7 @@ export async function syncBookingPayments(req: PayloadRequest, payment: any, pre
       collection: 'activities', req, overrideAccess: true,
       data: { type: 'payment', summary: `Payment received: ${formatMoney(payment.amount, payment.currency)} (${payment.kind})`, contact: idOf(booking.contact), lead: booking.lead ? idOf(booking.lead) : undefined },
     })
-    await sendReceipt(req, payment, booking, state.balanceDue).catch((e) => req.payload.logger.warn(`receipt failed: ${e}`))
+    if (!req.context?.seeding) await sendReceipt(req, payment, booking, state.balanceDue).catch((e) => req.payload.logger.warn(`receipt failed: ${e}`))
   }
 }
 
