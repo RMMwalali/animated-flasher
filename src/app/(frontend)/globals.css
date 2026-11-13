@@ -1,0 +1,283 @@
+@import 'tailwindcss';
+
+/* Tokens mirror src/lib/brand/tokens.ts (AA pairs tested in tests/unit/contrast.test.ts). */
+@theme {
+  --color-cream: #efece5;
+  --color-paper: #f7f5f0;
+  --color-deep: #0e2b27;
+  --color-night: #0a1d19;
+  --color-teal: #0b99af;
+  --color-teal-ink: #086b7c;
+  --color-teal-300: #5fb8c8;
+  --color-green: #0f673f;
+  --color-green-light: #06764e;
+  --color-green-dark: #075c35;
+  --color-ochre: #d1974e;
+  --color-ochre-ink: #7f531a;
+  --color-orange: #c2621f;
+  --color-orange-600: #a3501a;
+  --color-orange-700: #8a4415;
+  --color-orange-300: #e8935a;
+  --color-sky-50: #e6f3f5;
+  --color-sky-100: #cde9ee;
+  --color-sky-200: #b5dfe6;
+  --color-line: #d9d4c8;
+
+  --font-display: var(--font-display-face), ui-rounded, system-ui, sans-serif;
+  --font-sans: var(--font-body-face), system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-cream);
+    color: var(--color-deep);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-cream);
+  }
+  ::selection {
+    background: var(--color-ochre);
+    color: var(--color-deep);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-orange-600);
+    outline-offset: 3px;
+  }
+  [data-tone='night'] :focus-visible,
+  [data-tone='safari'] :focus-visible {
+    outline-color: var(--color-ochre);
+  }
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@layer components {
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 0.98;
+    text-wrap: balance;
+  }
+  .statement {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(2.1rem, 5.6vw, 5.4rem);
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  .gutter {
+    padding-inline: max(1rem, 4vw);
+  }
+
+  /* Section tones (from the logo's bands) */
+  [data-tone='cream'] {
+    background: var(--color-cream);
+    color: var(--color-deep);
+  }
+  [data-tone='coast'] {
+    background: var(--color-sky-50);
+    color: var(--color-deep);
+  }
+  [data-tone='safari'] {
+    background: var(--color-green);
+    color: var(--color-cream);
+  }
+  [data-tone='night'] {
+    background: var(--color-deep);
+    color: var(--color-cream);
+  }
+  [data-tone='coast'] .tone-accent,
+  [data-tone='cream'] .tone-accent {
+    color: var(--color-teal-ink);
+  }
+  [data-tone='safari'] .tone-accent,
+  [data-tone='night'] .tone-accent {
+    color: var(--color-ochre);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 48px;
+    padding: 0.85rem 1.4rem;
+    border-radius: 999px;
+    font-weight: 600;
+    transition:
+      background 0.3s var(--ease-out-expo),
+      color 0.3s,
+      transform 0.3s var(--ease-out-expo);
+  }
+  .btn-primary {
+    background: var(--color-orange-600);
+    color: var(--color-cream);
+  }
+  .btn-primary:hover {
+    background: var(--color-orange-700);
+  }
+  .btn-ghost {
+    border: 1px solid currentColor;
+  }
+  .btn-ghost:hover {
+    background: currentColor;
+  }
+  .btn-ghost:hover > * {
+    color: var(--color-cream);
+    mix-blend-mode: difference;
+  }
+  .btn svg {
+    transition: transform 0.4s var(--ease-out-expo);
+  }
+  .btn:hover svg {
+    transform: translateX(4px);
+  }
+
+  .link-u {
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size 0.5s var(--ease-out-expo);
+  }
+  .link-u:hover,
+  .link-u:focus-visible {
+    background-size: 100% 1px;
+  }
+}
+
+/* Brush underline drawing (Emphasis). Starts drawn so no-JS and reduced motion look right. */
+.brush path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.js-motion .brush[data-draw] path {
+  stroke-dashoffset: 1;
+}
+.js-motion .brush[data-draw].is-drawn path {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1.1s var(--ease-in-out-quart) 0.15s;
+}
+
+/* Reveal primitives. Only hidden when JS motion is active, so content never disappears. */
+.js-motion [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 2.5rem, 0);
+}
+.js-motion [data-reveal='mask'] {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 100% 0);
+}
+.js-motion [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 0 0);
+  transition:
+    opacity 1s var(--ease-out-expo),
+    transform 1.2s var(--ease-out-expo),
+    clip-path 1.3s var(--ease-in-out-quart);
+  transition-delay: var(--d, 0s);
+}
+
+/* Intro gate: hidden instantly for repeat visitors (inline script), and
+   removed by a CSS failsafe if JS never runs. */
+.intro-gate {
+  animation: intro-failsafe 0s linear 6s forwards;
+}
+html[data-intro='seen'] .intro-gate,
+html[data-intro='done'] .intro-gate {
+  display: none;
+}
+@keyframes intro-failsafe {
+  to {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+/* Rotating circular badge */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin-slow {
+  animation: spin 22s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .intro-gate {
+    display: none;
+  }
+}
+
+/* Brush colours: burnt orange on light sections, ochre on dark ones. */
+.emphasis-brush {
+  color: var(--color-orange);
+}
+[data-tone='night'] .emphasis-brush,
+[data-tone='safari'] .emphasis-brush {
+  color: var(--color-ochre);
+}
+.menu-brush path {
+  stroke-dashoffset: 1;
+  opacity: 0;
+  transition:
+    stroke-dashoffset 0.6s var(--ease-in-out-quart),
+    opacity 0.2s;
+}
+.menu-link:hover .menu-brush path,
+.menu-link:focus-visible .menu-brush path {
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+.btn-ghost:hover {
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+.btn-ghost:hover > * {
+  color: inherit;
+  mix-blend-mode: normal;
+}
+/* Menu items rise in sequence when the overlay opens */
+@media (prefers-reduced-motion: no-preference) {
+  .menu-item {
+    animation: menu-rise 0.9s var(--ease-out-expo) both;
+    animation-delay: calc(0.18s + var(--i) * 0.05s);
+  }
+}
+@keyframes menu-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+}

@@ -1,0 +1,42 @@
+# Run the whole product on one machine:  docker compose up -d
+# Requires PAYLOAD_SECRET and POSTGRES_PASSWORD in .env (see .env.example).
+# Then open http://localhost:3000 (site) and http://localhost:3000/admin.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ngina
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: ngina
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ngina -d ngina']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build: .
+    image: ngina-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgres://ngina:${POSTGRES_PASSWORD:?}@db:5432/ngina
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?}
+      SITE_URL: ${SITE_URL:-http://localhost:3000}
+      SEED_ON_START: ${SEED_ON_START:-true}
+    ports:
+      - '3000:3000'
+    volumes:
+      - media:/app/media
+
+volumes:
+  db-data:
+  media:
