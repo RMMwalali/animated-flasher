@@ -397,3 +397,60 @@ html:not(.js) .stage-line:first-of-type .stage-brush path {
   font-style: italic;
   font-weight: 400;
 }
+
+/* ── Long-form reading (journal, legal, eTA) ───────────────────── */
+.prose-ngina {
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+.prose-ngina > * + * {
+  margin-top: 1.1em;
+}
+.prose-ngina h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  line-height: 1.15;
+  margin-top: 2em;
+}
+.prose-ngina h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-top: 1.6em;
+}
+.prose-ngina ul,
+.prose-ngina ol {
+  padding-left: 1.4em;
+}
+.prose-ngina ul {
+  list-style: disc;
+}
+.prose-ngina ol {
+  list-style: decimal;
+}
+.prose-ngina li + li {
+  margin-top: 0.4em;
+}
+.prose-ngina li::marker {
+  color: var(--color-orange-600);
+}
+.prose-ngina a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.prose-ngina strong {
+  font-weight: 650;
+}
+.prose-ngina blockquote {
+  border-left: 3px solid var(--color-ochre);
+  padding-left: 1em;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.35rem;
+}
+.map-pin:focus-visible {
+  outline: none;
+}
+.map-pin:focus-visible circle {
+  stroke: var(--color-orange-600);
+  stroke-width: 5;
+}

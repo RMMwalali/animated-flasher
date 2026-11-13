@@ -11,6 +11,8 @@ export const MENU = [
 ] as const
 
 export const LEGAL = [
+  { href: '/licences', label: 'Licences' },
+  { href: '/kenya-eta', label: 'Kenya eTA' },
   { href: '/privacy', label: 'Privacy' },
   { href: '/terms', label: 'Terms' },
   { href: '/cookies', label: 'Cookies' },

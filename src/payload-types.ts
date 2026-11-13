@@ -2505,16 +2505,32 @@ export interface SiteSetting {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Shown on the Licences & memberships page, journey pages and the footer. Expired items are hidden automatically.
+   */
   trust?:
     | {
         /**
-         * e.g. Tourism Regulatory Authority licence
+         * e.g. Tour operator licence
          */
         name: string;
+        kind?: ('licence' | 'membership' | 'certification') | null;
+        /**
+         * Issuing body, e.g. Tourism Regulatory Authority (TRA)
+         */
+        issuer?: string | null;
         /**
          * Licence / membership number
          */
         number?: string | null;
+        /**
+         * Expiry date (optional).
+         */
+        validUntil?: string | null;
+        /**
+         * One or two sentences: what it means for travellers.
+         */
+        description?: string | null;
         /**
          * Link to verify, if the body publishes one.
          */
@@ -2720,7 +2736,11 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | T
     | {
         name?: T;
+        kind?: T;
+        issuer?: T;
         number?: T;
+        validUntil?: T;
+        description?: T;
         url?: T;
         sample?: T;
         id?: T;

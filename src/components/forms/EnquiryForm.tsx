@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { Checkbox, Field, Label } from '@headlessui/react'
 import { useCallback, useState } from 'react'
 import { Icon } from '@/components/icons/Icon'
@@ -121,7 +122,7 @@ export function EnquiryForm({ ctaId, tripSlug, compact = false }: { ctaId: strin
         <button type="submit" className="btn btn-primary" disabled={state === 'sending'} data-cta={ctaId}>
           {state === 'sending' ? 'Sending…' : 'Send enquiry'} <Icon name="send" size={18} />
         </button>
-        <p id="enq-note" className="text-sm text-deep/80">We reply personally. <a href="/privacy" className="underline">Privacy</a></p>
+        <p id="enq-note" className="text-sm text-deep/80">We reply personally. <Link href="/privacy" className="underline">Privacy</Link></p>
       </div>
     </form>
   )
