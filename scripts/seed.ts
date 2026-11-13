@@ -5,6 +5,11 @@
  * Logins: SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD (and optional SEED_SALES_PASSWORD,
  * SEED_EDITOR_PASSWORD). Any password not provided is generated randomly and
  * printed once, only when that user is first created. Nothing is hardcoded.
+ *
+ * The seed never changes the database schema (no dev "push"): run
+ * `pnpm migrate` first on a new database. Pushing would mark the database as
+ * dev-managed and make later `payload migrate` runs (e.g. Vercel builds) stop
+ * at an interactive prompt. Set PAYLOAD_PUSH=true only for a throwaway dev DB.
  */
 try {
   process.loadEnvFile?.('.env')
@@ -12,12 +17,20 @@ try {
   /* no .env file: rely on the environment */
 }
 
+process.env.PAYLOAD_PUSH ??= 'false'
+
 const { randomBytes } = await import('node:crypto')
 const { getPayload } = await import('payload')
 const { default: config } = await import('../src/payload.config')
 const S = await import('../src/content/sample')
 
 const payload = await getPayload({ config })
+try {
+  await payload.count({ collection: 'users', overrideAccess: true })
+} catch {
+  console.error('[seed] The database has no tables yet. Run `pnpm migrate` first, then `pnpm seed`.')
+  process.exit(1)
+}
 const ctx = { seeding: true, skipRevalidate: true, skipLeadHooks: false }
 const reset = process.argv.includes('--reset')
 const log = (m: string) => console.log(`[seed] ${m}`)

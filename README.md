@@ -22,6 +22,10 @@ cp .env.example .env   # then set DATABASE_URL and PAYLOAD_SECRET
 ```
 
 ```bash
+pnpm migrate            # create the tables
+```
+
+```bash
 pnpm seed               # sample content + demo CRM data + admin user
 ```
 
@@ -45,14 +49,14 @@ This starts Postgres and the app, applies migrations, seeds sample content (`SEE
 
 | Script | What it does |
 | --- | --- |
-| `pnpm dev` | Dev server (schema auto-syncs to the database) |
+| `pnpm dev` | Dev server (schema auto-syncs to the database: never point it at production) |
 | `pnpm build` / `pnpm start` | Production build / server |
-| `pnpm vercel-build` | `migrate` then `build` (used automatically by Vercel) |
+| `pnpm vercel-build` | Used by Vercel (`vercel.json`): runs `migrate` when `DATABASE_URL` is set, then `build` |
 | `pnpm lint` / `pnpm typecheck` | ESLint / TypeScript |
 | `pnpm test` | Vitest unit tests (pricing, leads, payments, colour contrast) |
 | `pnpm test:e2e` | Playwright smoke tests (starts `pnpm start` on port 3100) |
 | `pnpm migrate` / `pnpm migrate:create <name>` | Apply / create Payload migrations (committed in `src/migrations`) |
-| `pnpm seed` | Idempotent sample content + demo data (`--reset` to wipe sample data first) |
+| `pnpm seed` | Idempotent sample content + demo data (`--reset` to wipe sample data first). Never changes the schema; run `migrate` first |
 | `pnpm generate:types` / `pnpm generate:importmap` | Payload types / admin import map |
 | `pnpm brand` | Re-sample logo colours and re-trace all logo parts from `public/brand/ngina-logo.jpg` (needs Python 3 with Pillow, numpy, scipy) |
 
@@ -84,8 +88,8 @@ scripts/brand/           logo colour sampling + segmentation + potrace tracing
 
 ## Deploying to Vercel
 
-1. Import the repo in Vercel (framework: Next.js). Vercel runs `pnpm vercel-build`, which applies migrations then builds.
-2. Add the environment variables from `.env.example` (at least `SITE_URL`, `DATABASE_URL`, `PAYLOAD_SECRET`, `CRON_SECRET`, plus R2 for media; local disk does not persist on Vercel).
-3. Run `pnpm seed` once against the production database from your machine if you want the sample content, then replace it.
+1. Import the repo in Vercel. `vercel.json` pins the framework to Next.js and the build to `pnpm vercel-build`, which applies migrations (when `DATABASE_URL` is set) and then builds. The production URL serves the `main` branch, so nothing appears there until this work is merged.
+2. Add the environment variables from `.env.example` (at least `SITE_URL`, `DATABASE_URL`, `PAYLOAD_SECRET`, `CRON_SECRET`, plus R2 for media; local disk does not persist on Vercel). Without `DATABASE_URL` the site still deploys with sample content, but the admin and enquiry form need the database.
+3. After the first successful deploy (tables now exist), run `pnpm seed` once against the production database from your machine if you want the sample content, then replace it. Never run `pnpm dev` against the production database: its schema push makes later migrations stop at an interactive prompt.
 
 See `docs/OWNER-GUIDE.md` for the full go-live checklist.
