@@ -2,7 +2,9 @@
  * Seed sample content + demo CRM data. Safe to re-run: it skips anything
  * that already exists (matched by slug / email). Run: `pnpm seed`
  *   --reset   delete existing sample content first
- * Admin login comes from SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD (dev defaults below).
+ * Logins: SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD (and optional SEED_SALES_PASSWORD,
+ * SEED_EDITOR_PASSWORD). Any password not provided is generated randomly and
+ * printed once, only when that user is first created. Nothing is hardcoded.
  */
 try {
   process.loadEnvFile?.('.env')
@@ -10,6 +12,7 @@ try {
   /* no .env file: rely on the environment */
 }
 
+const { randomBytes } = await import('node:crypto')
 const { getPayload } = await import('payload')
 const { default: config } = await import('../src/payload.config')
 const S = await import('../src/content/sample')
@@ -33,12 +36,22 @@ if (reset) {
 }
 
 // ---------- team ----------
+const created: string[] = []
+async function seedUser(email: string, envVar: string, data: Record<string, unknown>) {
+  const found = await payload.find({ collection: 'users', where: { email: { equals: email } }, limit: 1, depth: 0, overrideAccess: true })
+  if (found.docs[0]) return found.docs[0] as any
+  const fromEnv = process.env[envVar]
+  const password = fromEnv || randomBytes(12).toString('base64url')
+  const user = await payload.create({ collection: 'users', data: { email, password, ...data } as any, overrideAccess: true, context: ctx })
+  created.push(fromEnv ? `${email} (password from ${envVar})` : `${email}  password: ${password}`)
+  return user
+}
 const adminEmail = process.env.SEED_ADMIN_EMAIL ?? 'admin@ngina.local'
-const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? 'ngina-admin-2026'
-const admin = await upsert('users', { email: { equals: adminEmail } }, { email: adminEmail, password: adminPassword, name: 'Ngina Admin', roles: ['admin'], takesNewLeads: true })
-const agent = await upsert('users', { email: { equals: 'sales@ngina.local' } }, { email: 'sales@ngina.local', password: 'ngina-sales-2026', name: 'Amani (sample agent)', roles: ['sales'], title: 'Safari planner', signature: 'Amani\nNgina Trails & Safaris · Diani Beach, Kenya' })
-await upsert('users', { email: { equals: 'editor@ngina.local' } }, { email: 'editor@ngina.local', password: 'ngina-editor-2026', name: 'Content editor (sample)', roles: ['editor'], takesNewLeads: false })
+const admin = await seedUser(adminEmail, 'SEED_ADMIN_PASSWORD', { name: 'Ngina Admin', roles: ['admin'], takesNewLeads: true })
+const agent = await seedUser('sales@ngina.local', 'SEED_SALES_PASSWORD', { name: 'Amani (sample agent)', roles: ['sales'], title: 'Safari planner', signature: 'Amani\nNgina Trails & Safaris · Diani Beach, Kenya' })
+await seedUser('editor@ngina.local', 'SEED_EDITOR_PASSWORD', { name: 'Content editor (sample)', roles: ['editor'], takesNewLeads: false })
 log(`team ready (admin: ${adminEmail})`)
+if (created.length) log(`new logins (shown once, store them safely):\n  ${created.join('\n  ')}`)
 
 // ---------- globals ----------
 await payload.updateGlobal({ slug: 'site-settings', data: S.sampleSettings as any, overrideAccess: true, context: ctx })

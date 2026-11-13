@@ -24,7 +24,6 @@ jobs:
           --health-cmd "pg_isready -U ngina" --health-interval 5s --health-timeout 5s --health-retries 20
     env:
       DATABASE_URL: postgres://ngina:ngina@localhost:5432/ngina
-      PAYLOAD_SECRET: ci-only-secret-0123456789abcdef0123456789
       SITE_URL: http://localhost:3100
       PAYLOAD_PUSH: 'false'
       ENQUIRY_RATE_LIMIT: '100'
@@ -36,6 +35,13 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      - name: Generate throwaway secrets for this run
+        run: |
+          echo "PAYLOAD_SECRET=$(openssl rand -hex 32)" >> "$GITHUB_ENV"
+          pw=$(openssl rand -hex 16)
+          echo "::add-mask::$pw"
+          echo "SEED_ADMIN_PASSWORD=$pw" >> "$GITHUB_ENV"
+          echo "E2E_ADMIN_PASSWORD=$pw" >> "$GITHUB_ENV"
       - run: pnpm install --frozen-lockfile
       - name: Lint
         run: pnpm lint

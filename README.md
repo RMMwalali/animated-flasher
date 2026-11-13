@@ -29,9 +29,11 @@ pnpm seed               # sample content + demo CRM data + admin user
 pnpm dev                # http://localhost:3000 and http://localhost:3000/admin
 ```
 
-The seed creates `admin@ngina.local` (password from `SEED_ADMIN_PASSWORD`, default `ngina-admin-2026` in dev), a sample sales agent and a content editor.
+The seed creates `admin@ngina.local`, a sample sales agent and a content editor. Passwords come from `SEED_ADMIN_PASSWORD` / `SEED_SALES_PASSWORD` / `SEED_EDITOR_PASSWORD`; any you leave blank are generated randomly and printed once in the seed output. No login is hardcoded.
 
 ### With Docker Compose (single VPS)
+
+Set `PAYLOAD_SECRET` and `POSTGRES_PASSWORD` in `.env` first (Compose refuses to start without them), then:
 
 ```bash
 docker compose up -d --build
