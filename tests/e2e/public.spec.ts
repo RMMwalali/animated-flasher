@@ -46,3 +46,18 @@ test('structured data and SEO basics are present', async ({ page }) => {
   expect(ld).toContain('Diani Beach')
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /^https?:\/\/[^/]+\/?$/)
 })
+
+test('hero call-to-action is visible on first load (motion enabled)', async ({ browser }, testInfo) => {
+  const device = testInfo.project.use
+  const ctx = await browser.newContext({ ...device, reducedMotion: 'no-preference' })
+  await ctx.addInitScript(() => {
+    localStorage.setItem('ngina-consent', JSON.stringify({ analytics: false, at: '' }))
+    sessionStorage.setItem('ngina-intro', '1')
+  })
+  const page = await ctx.newPage()
+  await page.goto('/')
+  const cta = page.locator('[data-cta="home-hero-plan"]')
+  await expect(cta).toBeInViewport()
+  await expect.poll(async () => cta.evaluate((el) => Number(getComputedStyle(el.parentElement!).opacity)), { timeout: 5000 }).toBeGreaterThan(0.9)
+  await ctx.close()
+})
