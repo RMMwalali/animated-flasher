@@ -33,7 +33,14 @@ export type ExperienceVM = { slug: string; title: string; category: string; summ
 export type AuthorVM = { name: string; slug: string; role?: string | null; bio: string; expertise: string[]; qualifications: string[]; photo?: MediaVM | null }
 export type PostVM = { slug: string; title: string; excerpt: string; content: unknown; faqs: QA[]; author: AuthorVM; publishedAt: string; updatedAt?: string; topics: string[]; heroImage?: MediaVM | null; sample: boolean; seo?: SEO }
 export type PageVM = { slug: string; title: string; hero: { eyebrow?: string | null; statement?: string | null; emphasis?: string | null; intro?: string | null; image?: MediaVM | null; tone?: string | null }; layout: any[]; sample: boolean; seo?: SEO; updatedAt?: string }
-export type HomeVM = typeof S.sampleHome & { heroImage?: MediaVM | null; heroVideo?: MediaVM | null; coast: typeof S.sampleHome.coast & { image?: MediaVM | null; video?: MediaVM | null }; safari: typeof S.sampleHome.safari & { image?: MediaVM | null; video?: MediaVM | null } }
+export type StageSlide = { statement: string; emphasis?: string | null; scene: 'coast' | 'safari' | 'dawn' | 'night'; image?: MediaVM | null; video?: MediaVM | null }
+export type HomeVM = Omit<typeof S.sampleHome, 'stage' | 'welcome'> & {
+  heroImage?: MediaVM | null; heroVideo?: MediaVM | null; film?: MediaVM | null
+  welcome: { soundNote: string; enterLabel: string; quietLabel: string; ambientAudio?: MediaVM | null }
+  stage: StageSlide[]
+  coast: typeof S.sampleHome.coast & { image?: MediaVM | null; video?: MediaVM | null }
+  safari: typeof S.sampleHome.safari & { image?: MediaVM | null; video?: MediaVM | null }
+}
 export type SettingsVM = typeof S.sampleSettings & { fromSample: boolean }
 
 // ---------- payload access ----------
@@ -129,7 +136,8 @@ export const getSettings = cache(async (): Promise<SettingsVM> => {
 
 export const getHome = cache(async (): Promise<HomeVM> => {
   const h = (await q((p) => p.findGlobal({ slug: 'home', depth: 1 }))) as Home | null
-  if (!h || !h.heroStatement) return { ...S.sampleHome, coast: { ...S.sampleHome.coast }, safari: { ...S.sampleHome.safari } } as HomeVM
+  if (!h || !h.heroStatement)
+    return { ...S.sampleHome, welcome: { ...S.sampleHome.welcome }, stage: S.sampleHome.stage.map((x) => ({ ...x })), coast: { ...S.sampleHome.coast }, safari: { ...S.sampleHome.safari } } as HomeVM
   const ch = (c: Home['coast'], fb: typeof S.sampleHome.coast) => ({
     ...fb, ...Object.fromEntries(Object.entries(c ?? {}).filter(([, v]) => v != null && v !== '')),
     points: c?.points?.length ? c.points.map((x) => ({ title: x.title, text: x.text ?? '' })) : fb.points,
@@ -140,6 +148,17 @@ export const getHome = cache(async (): Promise<HomeVM> => {
     heroImage: media(h.heroImage as Media), heroVideo: media(h.heroVideo as Media),
     coast: ch(h.coast, S.sampleHome.coast) as HomeVM['coast'], safari: ch(h.safari, S.sampleHome.safari) as HomeVM['safari'],
     seasons: (h.seasons?.length ? h.seasons : S.sampleHome.seasons) as any,
+    welcome: {
+      soundNote: h.welcome?.soundNote || S.sampleHome.welcome.soundNote,
+      enterLabel: h.welcome?.enterLabel || S.sampleHome.welcome.enterLabel,
+      quietLabel: h.welcome?.quietLabel || S.sampleHome.welcome.quietLabel,
+      ambientAudio: media(h.welcome?.ambientAudio as Media),
+    },
+    stage: h.stage?.length
+      ? h.stage.map((x) => ({ statement: x.statement, emphasis: x.emphasis, scene: (x.scene ?? 'safari') as StageSlide['scene'], image: media(x.image as Media), video: media(x.video as Media) }))
+      : S.sampleHome.stage.map((x) => ({ ...x })),
+    slideSeconds: h.slideSeconds ?? S.sampleHome.slideSeconds,
+    film: media(h.film as Media),
   } as HomeVM
 })
 

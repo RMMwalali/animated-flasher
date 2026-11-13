@@ -4,7 +4,7 @@ import { AttributionCapture } from '@/components/site/Attribution'
 import { ConsentBanner } from '@/components/site/Consent'
 import { Footer } from '@/components/site/Footer'
 import { Header } from '@/components/site/Header'
-import { introScript } from '@/components/site/IntroGate'
+import { welcomeScript } from '@/components/site/WelcomeGate'
 import { LionWalker } from '@/components/site/LionWalker'
 import { Motion } from '@/components/site/Motion'
 import { SampleBanner } from '@/components/site/SampleBanner'
@@ -35,7 +35,10 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="en" className={fontVars} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: introScript }} />
+        <script dangerouslySetInnerHTML={{ __html: welcomeScript }} />
+        <noscript>
+          <style>{'.intro-gate{display:none!important}'}</style>
+        </noscript>
         <JsonLd data={[travelAgency(settings), website(settings)]} />
       </head>
       <body className="min-h-screen">

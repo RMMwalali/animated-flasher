@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import { Chapter } from '@/components/home/Chapter'
 import { Closing } from '@/components/home/Closing'
-import { Hero } from '@/components/home/Hero'
+import { Stage } from '@/components/home/Stage'
 import { Journeys } from '@/components/home/Journeys'
 import { Story } from '@/components/home/Story'
 import { Trust } from '@/components/home/Trust'
 import { WhenToGo } from '@/components/home/WhenToGo'
-import { IntroGate } from '@/components/site/IntroGate'
+import { WelcomeGate } from '@/components/site/WelcomeGate'
 import { getHome, getSettings, getTrips } from '@/lib/content'
 import { pageMeta } from '@/lib/seo/meta'
 
@@ -27,8 +27,10 @@ export default async function HomePage() {
   const trips = featured.length ? featured : (await getTrips()).slice(0, 6)
   return (
     <>
-      {home.playIntro && <IntroGate />}
-      <Hero home={home} />
+      {home.playIntro && (
+        <WelcomeGate soundNote={home.welcome.soundNote} enterLabel={home.welcome.enterLabel} quietLabel={home.welcome.quietLabel} audioUrl={home.welcome.ambientAudio?.url} />
+      )}
+      <Stage slides={home.stage} seconds={home.slideSeconds} film={home.film} title={`${settings.businessName}: safaris and coastal tours from Diani Beach, Kenya`} />
       <Story home={home} />
       <Chapter chapter={home.coast} tone="coast" n={2} />
       <Chapter chapter={home.safari} tone="safari" n={3} flip />

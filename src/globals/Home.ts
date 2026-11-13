@@ -41,6 +41,42 @@ export const Home: GlobalConfig = {
           ],
         },
         {
+          label: 'Welcome & stage',
+          description: 'The first screen visitors see: a welcome with a sound choice, then a full-screen stage that cycles through these slides.',
+          fields: [
+            {
+              name: 'welcome', type: 'group',
+              fields: [
+                { name: 'soundNote', type: 'text', defaultValue: 'Best with sound: the ocean and the bush', admin: { description: 'Short line above the enter button.' } },
+                { type: 'row', fields: [
+                  { name: 'enterLabel', type: 'text', defaultValue: 'Karibu', admin: { description: 'Enter button (with sound).' } },
+                  { name: 'quietLabel', type: 'text', defaultValue: 'Enter without sound' },
+                ] },
+                { name: 'ambientAudio', type: 'upload', relationTo: 'media', admin: { description: 'Optional ambient sound (MP3, a gentle loop under 2 MB). Without it a soft generated surf sound plays.' } },
+              ],
+            },
+            {
+              name: 'stage', type: 'array', label: 'Stage slides', minRows: 1, maxRows: 6,
+              admin: { description: 'Each slide shows one short statement over a photo or muted clip. 3 slides work best.', initCollapsed: true },
+              fields: [
+                { type: 'row', fields: [
+                  { name: 'statement', type: 'text', required: true },
+                  { name: 'emphasis', type: 'text', admin: { description: 'Word to underline.' } },
+                ] },
+                { type: 'row', fields: [
+                  { name: 'image', type: 'upload', relationTo: 'media' },
+                  { name: 'video', type: 'upload', relationTo: 'media', admin: { description: 'Optional muted clip (MP4).' } },
+                  { name: 'scene', type: 'select', defaultValue: 'safari', admin: { description: 'Illustration used until a photo is added.' }, options: [
+                    { label: 'Coast', value: 'coast' }, { label: 'Safari', value: 'safari' }, { label: 'Dawn', value: 'dawn' }, { label: 'Night', value: 'night' },
+                  ] },
+                ] },
+              ],
+            },
+            { name: 'slideSeconds', type: 'number', defaultValue: 6, min: 3, max: 15 },
+            { name: 'film', type: 'upload', relationTo: 'media', admin: { description: 'Optional full film (MP4) for the "Watch the film" button. Hidden when empty.' } },
+          ],
+        },
+        {
           label: 'Story',
           fields: [
             { name: 'storyStatement', type: 'textarea', required: true },

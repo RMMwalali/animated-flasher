@@ -48,6 +48,13 @@ export const sampleHome = {
   heroEmphasis: 'wild',
   heroIntro: 'A Diani Beach team guiding coastal days and safaris beyond: Tsavo, Amboseli, the Mara and the reefs on our doorstep.',
   playIntro: true,
+  welcome: { soundNote: 'Best with sound: the ocean and the bush', enterLabel: 'Karibu', quietLabel: 'Enter without sound' },
+  stage: [
+    { statement: 'Wake to the Indian Ocean.', emphasis: 'Ocean', scene: 'coast' },
+    { statement: 'Walk where the elephants run red.', emphasis: 'red', scene: 'safari' },
+    { statement: 'Sleep under an open sky.', emphasis: 'open', scene: 'night' },
+  ],
+  slideSeconds: 6,
   storyStatement: 'The coast is our home. The wild is our backyard.',
   storyEmphasis: 'home',
   storyBody:

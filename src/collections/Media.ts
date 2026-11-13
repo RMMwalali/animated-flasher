@@ -9,7 +9,7 @@ export const Media: CollectionConfig = {
   upload: {
     // local disk fallback (dev / VPS). With R2 configured, files go to the bucket instead.
     staticDir: process.env.MEDIA_DIR || 'media',
-    mimeTypes: ['image/*', 'video/mp4', 'video/webm', 'application/pdf'],
+    mimeTypes: ['image/*', 'video/mp4', 'video/webm', 'audio/mpeg', 'audio/mp4', 'audio/ogg', 'application/pdf'],
     focalPoint: true,
     crop: true,
     imageSizes: [

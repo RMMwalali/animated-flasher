@@ -281,3 +281,111 @@ html[data-intro='done'] .intro-gate {
     transform: translateY(1.5rem);
   }
 }
+
+/* ── Welcome gate ─────────────────────────────────────────────── */
+html.js .intro-gate {
+  animation: none; /* JS is running: the gate waits for the visitor */
+}
+.welcome-haze .haze {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: 0.75;
+  animation: haze-drift 26s ease-in-out infinite alternate;
+}
+.welcome-haze .haze-a {
+  width: 70vmax;
+  height: 50vmax;
+  left: -20vmax;
+  top: -18vmax;
+  background: var(--color-sky-100);
+}
+.welcome-haze .haze-b {
+  width: 55vmax;
+  height: 40vmax;
+  right: -18vmax;
+  bottom: -10vmax;
+  background: color-mix(in srgb, var(--color-ochre) 30%, transparent);
+  animation-duration: 32s;
+  animation-direction: alternate-reverse;
+}
+.welcome-haze .haze-c {
+  width: 40vmax;
+  height: 30vmax;
+  left: 30%;
+  top: 35%;
+  background: color-mix(in srgb, var(--color-sky-200) 55%, transparent);
+  animation-duration: 38s;
+}
+@keyframes haze-drift {
+  to {
+    transform: translate3d(8vmax, 5vmax, 0) scale(1.15);
+  }
+}
+
+/* ── Home stage ───────────────────────────────────────────────── */
+.stage-scene {
+  opacity: 0;
+  transition: opacity 1.6s var(--ease-in-out-quart);
+}
+.stage-scene.is-active {
+  opacity: 1;
+}
+.stage-media {
+  transform: scale(1.1);
+  transition: transform 9s linear;
+}
+.stage-scene.is-active .stage-media {
+  transform: scale(1);
+}
+.stage-line {
+  opacity: 0;
+  transform: translateY(-14px);
+  transition:
+    opacity 0.55s ease,
+    transform 0.7s var(--ease-out-expo);
+  pointer-events: none;
+}
+.stage-line.is-active {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.stage-word {
+  display: inline-block;
+}
+.stage-line.is-active .stage-word {
+  animation: word-in 1.15s var(--ease-out-expo) both;
+  animation-delay: calc(0.35s + var(--w) * 0.075s);
+}
+@keyframes word-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.55em) rotate(2deg);
+    filter: blur(10px);
+  }
+}
+.stage-brush path {
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.9s var(--ease-in-out-quart);
+}
+.stage-line.is-active .stage-brush path {
+  stroke-dashoffset: 0;
+  transition-delay: 1.15s;
+}
+/* Without JavaScript: show the first statement. */
+html:not(.js) .stage-line:first-of-type {
+  opacity: 1;
+  transform: none;
+}
+html:not(.js) .stage-line:first-of-type .stage-brush path {
+  stroke-dashoffset: 0;
+}
+.explore-cta .emphasis-brush path {
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.6s var(--ease-in-out-quart);
+}
+.explore-cta:hover .emphasis-brush path,
+.explore-cta:focus-visible .emphasis-brush path {
+  stroke-dashoffset: 0;
+}
