@@ -205,7 +205,7 @@ function Words({ text, emphasis }: { text: string; emphasis?: string | null }) {
           <Fragment key={k}>
             <span className="stage-word" style={{ ['--w' as string]: k }}>
               {isEm ? (
-                <span className="relative inline-block">
+                <span className="stage-em relative inline-block">
                   {core}
                   <Brush seed={core} draw={false} className="stage-brush emphasis-brush absolute -bottom-[0.1em] left-[-3%] h-[0.28em] w-[106%]" />
                 </span>

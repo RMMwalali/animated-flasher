@@ -38,7 +38,7 @@ export function ConsentBanner() {
   if (!show) return null
   return (
     <div role="dialog" aria-modal="false" aria-labelledby="consent-title" className="fixed inset-x-3 bottom-3 z-[70] mx-auto max-w-xl rounded-2xl bg-paper p-5 text-deep shadow-[0_20px_60px_-20px_rgb(14_43_39/0.45)] sm:bottom-5">
-      <p id="consent-title" className="font-display text-xl font-semibold">Your privacy</p>
+      <p id="consent-title" className="font-display text-xl font-medium">Your privacy</p>
       <p className="mt-2 text-sm leading-relaxed">
         We only use essential storage to run this site. With your permission we would also measure visits anonymously to improve it. <a className="underline" href="/cookies">Cookie policy</a>
       </p>

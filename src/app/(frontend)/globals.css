@@ -23,7 +23,8 @@
   --color-sky-200: #b5dfe6;
   --color-line: #d9d4c8;
 
-  --font-display: var(--font-display-face), ui-rounded, system-ui, sans-serif;
+  --font-display: var(--font-serif-face), Georgia, 'Times New Roman', serif;
+  --font-rounded: var(--font-display-face), ui-rounded, system-ui, sans-serif;
   --font-sans: var(--font-body-face), system-ui, sans-serif;
   --font-mono: var(--font-mono-face), ui-monospace, monospace;
 
@@ -77,17 +78,17 @@ html.lenis body {
   }
   .display {
     font-family: var(--font-display);
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: -0.01em;
     line-height: 0.98;
     text-wrap: balance;
   }
   .statement {
     font-family: var(--font-display);
-    font-weight: 500;
-    font-size: clamp(2.1rem, 5.6vw, 5.4rem);
-    line-height: 1.04;
-    letter-spacing: -0.015em;
+    font-weight: 400;
+    font-size: clamp(2.3rem, 6vw, 5.8rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
     text-wrap: balance;
   }
   .gutter {
@@ -388,4 +389,11 @@ html:not(.js) .stage-line:first-of-type .stage-brush path {
 .explore-cta:hover .emphasis-brush path,
 .explore-cta:focus-visible .emphasis-brush path {
   stroke-dashoffset: 0;
+}
+
+/* Emphasised word: italic serif + brush underline */
+.statement em,
+.stage-em {
+  font-style: italic;
+  font-weight: 400;
 }
