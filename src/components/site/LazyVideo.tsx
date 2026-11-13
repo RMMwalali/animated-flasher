@@ -14,8 +14,8 @@ export function LazyVideo({ src, poster, label, withSound = false }: { src: stri
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setPlaying(false)
-      return
+      const raf = requestAnimationFrame(() => setPlaying(false))
+      return () => cancelAnimationFrame(raf)
     }
     const conn = (navigator as { connection?: { saveData?: boolean } }).connection
     if (conn?.saveData) return

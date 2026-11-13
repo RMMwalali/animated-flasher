@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { useMemo, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import { Icon } from '@/components/icons/Icon'
 
@@ -35,7 +35,7 @@ export function PipelineBoard({ leads: initial, stages, mineOnly }: { leads: Boa
       }
     })
   }
-  const byStage = useMemo(() => Object.fromEntries(order.map((s) => [s, leads.filter((l) => l.status === s)])), [leads, order])
+  const byStage = Object.fromEntries(order.map((s) => [s, leads.filter((l) => l.status === s)]))
 
   return (
     <div className="ng-board-wrap" aria-busy={pending}>

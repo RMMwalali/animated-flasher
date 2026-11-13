@@ -22,7 +22,8 @@
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/seed.ts",
-    "brand": "python3 -I scripts/brand/sample-colours.py && python3 -I scripts/brand/segment.py && node scripts/brand/trace.mjs"
+    "brand": "python3 -I scripts/brand/sample-colours.py && python3 -I scripts/brand/segment.py && node scripts/brand/trace.mjs",
+    "vercel-build": "pnpm migrate && next build"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.10",

@@ -14,6 +14,7 @@ const s3Host = process.env.S3_PUBLIC_URL ? new URL(process.env.S3_PUBLIC_URL).ho
 const nextConfig: NextConfig = {
   output: process.env.NEXT_OUTPUT === 'standalone' ? 'standalone' : undefined,
   poweredByHeader: false,
+  agentRules: false,
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: s3Host ? [{ protocol: 'https', hostname: s3Host }] : [],

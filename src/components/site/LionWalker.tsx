@@ -35,9 +35,9 @@ export function LionWalker() {
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={0}
-      className="pointer-events-none fixed bottom-3 left-3 z-40 w-[112px] text-deep mix-blend-multiply sm:bottom-5 sm:left-5 sm:w-[150px] [--w:112px] sm:[--w:150px]"
+      className="pointer-events-none fixed bottom-5 left-5 z-40 hidden w-[150px] rounded-full bg-cream/90 px-4 pb-2.5 pt-1.5 text-deep shadow-[0_6px_24px_-12px_rgb(14_43_39/0.5)] backdrop-blur-sm [--w:118px] md:block"
     >
-      <div ref={lion} className="w-[34px] will-change-transform sm:w-[44px]">
+      <div ref={lion} className="w-[38px] will-change-transform">
         <svg viewBox={`${lx} ${ly} ${lw} ${lh}`} className="block h-auto w-full" aria-hidden="true">
           <path d={brandPaths.lion.d} fill="currentColor" fillRule="evenodd" />
         </svg>

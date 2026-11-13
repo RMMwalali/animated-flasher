@@ -49,9 +49,9 @@ export function Header({ contact, overHero = true, banner }: { contact: ContactI
         {banner}
         <div className="gutter grid h-[68px] grid-cols-[1fr_auto_1fr] items-center sm:h-20">
           <div className="flex items-center">
-            <button type="button" onClick={() => setOpen(true)} className="group -ml-2 flex min-h-11 items-center gap-3 rounded-full px-2" aria-haspopup="dialog" aria-expanded={open}>
+            <button type="button" onClick={() => setOpen(true)} className="group -ml-2 flex min-h-11 items-center gap-3 rounded-full px-2" aria-haspopup="dialog" aria-expanded={open} aria-label="Open menu">
               <Icon name="menu" size={26} />
-              <span className="eyebrow hidden sm:inline">Menu</span>
+              <span className="eyebrow hidden sm:inline" aria-hidden="true">Menu</span>
             </button>
           </div>
           <Link href="/" className="flex min-h-11 items-center justify-center px-2" aria-label="Ngina Trails & Safaris, home">

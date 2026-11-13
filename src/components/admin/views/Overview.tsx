@@ -1,5 +1,5 @@
 import type { AdminViewServerProps } from 'payload'
-import { DefaultTemplate } from '@payloadcms/next/templates'
+import Link from 'next/link'
 import { hasRole } from '@/access'
 import { missingFeatures } from '@/lib/env'
 import { stageLabel } from '@/lib/crm/stages'
@@ -16,7 +16,7 @@ const ago = (d?: string | null) => {
 }
 
 export async function OverviewView(props: AdminViewServerProps) {
-  const { initPageResult, params, searchParams } = props
+  const { initPageResult } = props
   const { req } = initPageResult
   const { payload, user } = req
   const sales = hasRole(user as never, 'admin', 'sales')
@@ -45,16 +45,7 @@ export async function OverviewView(props: AdminViewServerProps) {
   const missing = isAdmin ? missingFeatures() : []
 
   return (
-    <DefaultTemplate
-      i18n={req.i18n}
-      locale={initPageResult.locale}
-      params={params}
-      payload={payload}
-      permissions={initPageResult.permissions}
-      searchParams={searchParams}
-      user={user ?? undefined}
-      visibleEntities={initPageResult.visibleEntities}
-    >
+    <>
       <Page
         eyebrow={now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
         title={`Jambo, ${String((user as { name?: string })?.name ?? '').split(' ')[0] || 'team'}`}
@@ -63,7 +54,7 @@ export async function OverviewView(props: AdminViewServerProps) {
       >
         {missing.length > 0 && (
           <Notice title={`${missing.length} service${missing.length > 1 ? 's' : ''} not connected yet`}>
-            The site works without them, with reduced features. <a href="/admin/setup">See the go-live setup</a>.
+            The site works without them, with reduced features. <Link href="/admin/setup">See the go-live setup</Link>.
           </Notice>
         )}
 
@@ -81,7 +72,7 @@ export async function OverviewView(props: AdminViewServerProps) {
               />
             </div>
 
-            <Section n={1} title="Today's tasks" aside={<a href="/admin/collections/tasks/create">Add task</a>}>
+            <Section n={1} title="Today's tasks" aside={<Link href="/admin/collections/tasks/create">Add task</Link>}>
               <ArrowList
                 empty="No tasks due. Good work."
                 items={tasks!.docs.map((t) => ({
@@ -93,7 +84,7 @@ export async function OverviewView(props: AdminViewServerProps) {
               />
             </Section>
 
-            <Section n={2} title="New leads" aside={<a href="/admin/pipeline">Pipeline</a>}>
+            <Section n={2} title="New leads" aside={<Link href="/admin/pipeline">Pipeline</Link>}>
               <ArrowList
                 empty="No new leads right now."
                 items={leads!.docs.map((l) => ({
@@ -105,7 +96,7 @@ export async function OverviewView(props: AdminViewServerProps) {
               />
             </Section>
 
-            <Section n={3} title="Unanswered conversations" aside={<a href="/admin/inbox">Inbox</a>}>
+            <Section n={3} title="Unanswered conversations" aside={<Link href="/admin/inbox">Inbox</Link>}>
               <ArrowList
                 empty="Every guest has a reply."
                 items={unanswered!.docs.map((c) => ({
@@ -117,7 +108,7 @@ export async function OverviewView(props: AdminViewServerProps) {
               />
             </Section>
 
-            <Section n={4} title="Upcoming departures" aside={<a href="/admin/calendar">Calendar</a>}>
+            <Section n={4} title="Upcoming departures" aside={<Link href="/admin/calendar">Calendar</Link>}>
               <ArrowList
                 empty="No departures in the next 30 days."
                 items={bookings!.docs.map((b) => ({
@@ -161,6 +152,6 @@ export async function OverviewView(props: AdminViewServerProps) {
           </p>
         )}
       </Page>
-    </DefaultTemplate>
+    </>
   )
 }

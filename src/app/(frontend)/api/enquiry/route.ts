@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   }
   const payload = await getPayloadSafe()
   const ip = clientIp(req.headers)
-  const rl = await rateLimit(payload, `enquiry:${ip}`, 5, 10 * 60 * 1000)
+  const rl = await rateLimit(payload, `enquiry:${ip}`, Number(process.env.ENQUIRY_RATE_LIMIT ?? 5), 10 * 60 * 1000)
   if (!rl.ok) {
     return NextResponse.json({ ok: false, error: 'Too many enquiries from this connection. Please wait a few minutes or email us.' }, { status: 429, headers: { 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)) } })
   }

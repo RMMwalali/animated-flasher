@@ -1,0 +1,158 @@
+# Owner guide: Ngina Trails & Safaris website and back office
+
+This guide is for running the business, not for developers. You will not need to type any commands.
+
+- **Your website** is at your domain (for example `https://nginatrails.com`).
+- **Your back office** is at the same address followed by `/admin` (for example `https://nginatrails.com/admin`). Log in with your email and password.
+
+> **Status.** Areas marked *(next update)* are designed and planned but arrive in the next delivery. Everything else works today.
+
+---
+
+## 1. What each area of the back office does
+
+The left-hand menu is grouped and numbered. At the top is **Workspace**: the views you will use every day.
+
+### Workspace
+
+| Area | What it is for |
+| --- | --- |
+| **Overview** | Your day at a glance: tasks due, new leads, guests waiting for a reply, departures in the next 30 days and money received this month. Everything links to the record. |
+| **Inbox** *(next update)* | Every email and live-chat conversation with guests, one thread per person. Assign to a colleague, mark as waiting / closed, write internal notes the guest never sees, and insert saved replies. Unread counts update live. |
+| **Leads pipeline** | Every enquiry as a card, in columns: New → Contacted → Quoted → Deposit paid → Confirmed → Travelled → Review requested (and Lost). Use the arrows to move a lead along. Each card shows where it came from: the channel (form, plan-your-trip, chat), the button that was clicked and any campaign tag. Switch to **List** to see it as a table. |
+| **Departures** | A month calendar of bookings (teal) and scheduled departures (ochre). |
+| **Go-live setup** | Shows which services are connected and which content still needs your attention (admins only). |
+
+### 01 Sales
+
+| Area | What it is for |
+| --- | --- |
+| **Leads** | The full detail of each enquiry: dates, travellers, budget, the guest's message and the source. Leads are created automatically from the website. |
+| **Contacts** | Everyone who has been in touch. Open a contact and choose the **Timeline** tab to see every email, chat, quote, booking and payment for that person. |
+| **Companies** | Travel agents, partners and corporate clients. |
+| **Conversations** | The raw list of email/chat threads (the Inbox is the friendlier view). |
+| **Tasks** | Reminders for you or a colleague. Overdue tasks show on the Overview. |
+| **Saved replies** | Reusable answers for the inbox. `{firstName}` and `{agentName}` are filled in for you. |
+| **Review requests** | After every trip, each guest is asked for a review the same way, with one reminder. See section 3. |
+
+### 02 Operations
+
+| Area | What it is for |
+| --- | --- |
+| **Quotes** | Build a quote from one of your journeys: pick the journey and save, and the day-by-day plan and starting prices fill in. Adjust lines, discount and deposit %. *(next update: PDF, email to guest, and an online "Accept" button that creates the booking automatically.)* |
+| **Bookings** | Confirmed trips: dates, travellers, total, deposit, balance and the suppliers used. The amount paid and balance update automatically from payments. |
+| **Travellers** | The people on each booking. Only collect what the trip needs. |
+| **Departures** | Scheduled trips with their guide and vehicle. |
+| **Suppliers** | Lodges, camps, drivers, guides, boats and vehicles, with rates and licence notes. |
+
+### 03 Money
+
+| Area | What it is for |
+| --- | --- |
+| **Payments** | Every deposit and balance payment. Paystack payments (M-Pesa or card) are recorded automatically, and a receipt is emailed to the guest. Record bank transfers or cash as "manual". Tick **Reconciled** once you have matched a payment to your bank or Paystack statement. If a guest pays in KES for a US$ booking, enter the exchange rate and the booking is credited correctly. *(next update: one-click "Send deposit link" / "Send balance link" buttons.)* |
+
+### 04 Website
+
+| Area | What it is for |
+| --- | --- |
+| **Home page** | The big statements, chapter texts, photos and the when-to-go strip. |
+| **Journeys** | Safaris, coastal tours and walking trips: price from, days, best months, day-by-day plan, inclusions, Q&A and search settings. Tick **Featured** to show one on the home page. |
+| **Destinations** | One page per place, with key facts (distance from Diani, altitude, area) and Q&A. Keep these accurate: Google and AI assistants quote them. |
+| **Experiences, Wildlife guide, Journal, Guides & authors, Pages** | The rest of the site. Pages covers Our story, When to go, Privacy, Terms and Cookies. |
+| **Photos & videos** | Upload your own pictures. Always fill in the description (alt text). Use the focal point to choose which part of the photo stays visible on phones. |
+
+**Sample content.** Everything the setup created has a **Sample** tick box. Replace the text, photos and prices with your own and untick it. When you are done, turn off the "sample content" banner in **Business settings → Notifications**.
+
+**Drafts.** Pages, journeys, destinations and articles can be saved as drafts; only **Publish** makes them visible. Publishing refreshes the website within seconds and notifies search engines.
+
+### 05 Team
+
+| Area | What it is for |
+| --- | --- |
+| **Team** | Who can log in. **Admin**: everything. **Sales agent**: leads, inbox, quotes, bookings, payments. **Content editor**: website content only. Untick **Active** to block someone without deleting their history. |
+| **Audit log** | Who changed what and when (admins only, cannot be edited). |
+| **Business settings** | Your contact details, address, opening hours, licences & memberships, review links and notification emails. |
+
+---
+
+## 2. How website enquiries reach you
+
+Every button on the website that invites a guest to get in touch (the enquiry form, "Plan this journey", plan-your-trip and live chat) does the same things:
+
+1. Finds the guest in **Contacts** by email, or creates them.
+2. Creates a **Lead** in the pipeline, recording which page, button and campaign brought them.
+3. Assigns it to the sales agent with the fewest open leads (or the guest's existing agent).
+4. Puts the message in the **Inbox** so you can reply from there.
+5. Emails the guest a thank-you; their reply comes back into the same conversation.
+6. Emails the assigned agent.
+
+Spam is blocked quietly with a hidden trap field, a timing check, a limit of 5 enquiries per 10 minutes per connection and, optionally, Cloudflare Turnstile.
+
+## 3. Reviews: how and why
+
+When a booking is marked **Completed**, a review request is scheduled for two days later (you can change this). Every guest gets the same email with direct links to the review sites you set up (Google, TripAdvisor, SafariBookings), then **one** reminder a week later if they have not clicked.
+
+We never offer anything in return for a review and never choose who to ask. This is required by Google, TripAdvisor and SafariBookings. Guests who ask not to be contacted (tick **Do not contact** on the contact) are never emailed.
+
+---
+
+## 4. Go-live checklist
+
+Work through these in order. Each service gives you one or more **keys**: send them to your developer, or add them yourself in Vercel → your project → **Settings → Environment Variables**. The name of each variable is shown in `code`. Nothing breaks if a service is missing: the **Go-live setup** page in the back office shows what is still to do.
+
+### A. Hosting and database
+
+1. **Vercel** (website hosting, Pro plan). Create a team, then **Add New → Project** and import the GitHub repository. Set `SITE_URL` to your final address, e.g. `https://nginatrails.com`.
+2. **Neon** (database). Create a project in the EU or closest region, then copy the **pooled** connection string into `DATABASE_URL`.
+3. Create two long random passwords and set them as `PAYLOAD_SECRET` and `CRON_SECRET`. Your developer can generate these.
+4. Deploy. Open `/admin` and create your admin account (the first account is always an Admin), or ask your developer to run the setup script once to load the sample content.
+
+### B. Photos: Cloudflare R2
+
+5. In Cloudflare, go to **R2 → Create bucket** (e.g. `ngina-media`). Turn on public access or connect a custom domain such as `media.nginatrails.com`.
+6. **R2 → Manage API tokens → Create token** with read & write on that bucket. Set `S3_BUCKET`, `S3_ENDPOINT` (shown on the bucket page), `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, and `S3_PUBLIC_URL` (the public bucket address or your custom domain).
+
+### C. Email: Postmark
+
+7. Create a Postmark account and server. Add and verify your domain (Postmark shows the DNS records to add: DKIM and Return-Path).
+8. Set `POSTMARK_SERVER_TOKEN` (Server → API tokens) and `POSTMARK_FROM_EMAIL` (e.g. `Ngina Trails & Safaris <hello@nginatrails.com>`).
+9. Guest replies: in Postmark, open the server's **Inbound** stream and copy the inbound address into `POSTMARK_INBOUND_ADDRESS`. Choose a username and long password for `POSTMARK_INBOUND_WEBHOOK_USER` and `POSTMARK_INBOUND_WEBHOOK_PASSWORD`, and set the inbound webhook URL to `https://USER:PASSWORD@yourdomain/api/webhooks/postmark-inbound` *(next update)*.
+
+### D. Live chat: Pusher or Ably
+
+10. Choose one. **Pusher Channels**: create an app (cluster `eu`), then set `PUSHER_APP_ID`, `PUSHER_KEY`, `PUSHER_SECRET` and `PUSHER_CLUSTER`. **Ably**: create an app and set `ABLY_API_KEY`. Without either, chat still works but refreshes every few seconds.
+
+### E. Payments: Paystack (M-Pesa + card)
+
+11. Open a Paystack Kenya business account and complete verification (business registration and KRA PIN). Enable **M-Pesa** and **Cards**; ask Paystack to enable USD if you want to charge cards in dollars.
+12. Settings → API Keys & Webhooks: set `PAYSTACK_SECRET_KEY` and `PAYSTACK_PUBLIC_KEY`. Set the webhook URL to `https://yourdomain/api/webhooks/paystack` *(next update)*. Test with test keys first.
+
+### F. Your domain (DNS)
+
+13. In your domain provider (or Cloudflare DNS), add the records Vercel shows under **Project → Settings → Domains** (usually an `A` record for the root and a `CNAME` for `www`).
+14. Add Postmark's DKIM and Return-Path records (step 7) and, if you use Cloudflare for R2, the media subdomain.
+
+### G. Search and maps
+
+15. **Google Search Console**: add your domain as a property (DNS verification), then submit `https://yourdomain/sitemap.xml` *(sitemap: next update)*.
+16. **Bing Webmaster Tools**: import from Google Search Console. Optionally set `INDEXNOW_KEY` so Bing is told about every page you publish *(key file: next update)*.
+17. **Google Business Profile**: create or claim "Ngina Trails & Safaris" at your Diani Beach address, with the same name, phone and hours as Business settings. Copy its **Ask for reviews** link into Business settings → Reviews.
+
+### H. Review sites
+
+18. **TripAdvisor**: claim your listing (Management Center), then copy your "write a review" link into Business settings → Reviews.
+19. **SafariBookings**: list as an operator, then copy your review link from the operator dashboard into Business settings → Reviews.
+
+### I. Before you announce the site
+
+20. Fill in **Business settings**: email, phone, WhatsApp, address, hours and real licence numbers (only the ones you hold).
+21. Replace sample journeys, destinations text, photos and prices. Untick **Sample** on each.
+22. Have the Privacy, Terms and Cookies pages reviewed by a lawyer (they are starter text under Kenya's Data Protection Act 2019).
+23. Turn off the sample banner (Business settings → Notifications).
+24. Send yourself a test enquiry from your phone and check it appears in the Overview and your email.
+
+---
+
+## 5. Getting help
+
+If something looks wrong, check the **Go-live setup** page first. It lists any service that is not connected. For anything else, send your developer the page address and a screenshot.

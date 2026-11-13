@@ -119,12 +119,12 @@ if (existingLeads.totalDocs === 0) {
       if (p.status !== 'quoted') {
         const booking = await payload.create({
           collection: 'bookings', overrideAccess: true, context: ctx,
-          data: { title: t.title, contact: contact.id, lead: lead.id, quote: quote.id, trip: t.id, startDate: p.status === 'travelled' ? day(-10) : day(20 + i * 12), endDate: p.status === 'travelled' ? day(-8) : undefined, pax: 2, currency: 'USD', total: quote.total, depositDue: quote.deposit, status: 'pending_deposit' },
+          data: { title: t.title, contact: contact.id, lead: lead.id, quote: quote.id, trip: t.id, startDate: p.status === 'travelled' ? day(-10) : day(20 + i * 12), endDate: p.status === 'travelled' ? day(-8) : undefined, pax: 2, currency: 'USD', total: quote.total ?? 0, depositDue: quote.deposit ?? 0, status: 'pending_deposit' },
         })
         await payload.update({ collection: 'quotes', id: quote.id, data: { booking: booking.id }, overrideAccess: true, context: { ...ctx, skipQuoteHooks: true } })
-        await payload.create({ collection: 'payments', overrideAccess: true, context: ctx, data: { booking: booking.id, contact: contact.id, kind: 'deposit', amount: quote.deposit, currency: 'USD', status: 'success', provider: 'manual', method: 'bank', notes: 'SAMPLE payment' } })
+        await payload.create({ collection: 'payments', overrideAccess: true, context: ctx, data: { booking: booking.id, contact: contact.id, kind: 'deposit', amount: quote.deposit ?? 0, currency: 'USD', status: 'success', provider: 'manual', method: 'bank', notes: 'SAMPLE payment' } })
         if (p.status === 'travelled') {
-          await payload.create({ collection: 'payments', overrideAccess: true, context: ctx, data: { booking: booking.id, contact: contact.id, kind: 'balance', amount: quote.total - quote.deposit, currency: 'USD', status: 'success', provider: 'manual', method: 'card', notes: 'SAMPLE payment' } })
+          await payload.create({ collection: 'payments', overrideAccess: true, context: ctx, data: { booking: booking.id, contact: contact.id, kind: 'balance', amount: (quote.total ?? 0) - (quote.deposit ?? 0), currency: 'USD', status: 'success', provider: 'manual', method: 'card', notes: 'SAMPLE payment' } })
         }
       }
     }
@@ -138,3 +138,5 @@ if (existingLeads.totalDocs === 0) {
 
 log('done')
 process.exit(0)
+
+export {}

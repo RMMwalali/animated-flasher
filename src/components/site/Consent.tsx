@@ -21,10 +21,13 @@ export const readConsent = (): Consent | null => {
 export function ConsentBanner() {
   const [show, setShow] = useState(false)
   useEffect(() => {
-    setShow(!readConsent())
+    const raf = requestAnimationFrame(() => setShow(!readConsent()))
     const open = () => setShow(true)
     window.addEventListener('ngina:cookie-settings', open)
-    return () => window.removeEventListener('ngina:cookie-settings', open)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('ngina:cookie-settings', open)
+    }
   }, [])
   const save = (analytics: boolean) => {
     const c: Consent = { analytics, at: new Date().toISOString() }

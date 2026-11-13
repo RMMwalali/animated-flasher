@@ -7,6 +7,8 @@ export const Media: CollectionConfig = {
   admin: { group: '04 Website', description: 'Upload your own photos and videos. Always add a short description (alt text) for accessibility and Google.' },
   access: { read: anyone, create: editors, update: editors, delete: editors },
   upload: {
+    // local disk fallback (dev / VPS). With R2 configured, files go to the bucket instead.
+    staticDir: process.env.MEDIA_DIR || 'media',
     mimeTypes: ['image/*', 'video/mp4', 'video/webm', 'application/pdf'],
     focalPoint: true,
     crop: true,

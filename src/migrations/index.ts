@@ -1,2 +1,9 @@
-// Replaced by `pnpm migrate:create`. Kept so the config can import it before the first migration exists.
-export const migrations: { name: string; up: (args: any) => Promise<void>; down: (args: any) => Promise<void> }[] = []
+import * as migration_20261109_190403_initial from './20261109_190403_initial';
+
+export const migrations = [
+  {
+    up: migration_20261109_190403_initial.up,
+    down: migration_20261109_190403_initial.down,
+    name: '20261109_190403_initial'
+  },
+];

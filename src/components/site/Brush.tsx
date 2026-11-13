@@ -19,7 +19,7 @@ export function Brush({ seed, className = '', draw = true }: { seed: string; cla
   const d = PATHS[brushVariant(seed)]
   return (
     <svg className={`brush pointer-events-none ${className}`} data-draw={draw ? '' : undefined} viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      <path d={d} pathLength={1} fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+      <path d={d} pathLength={1} fill="none" stroke="currentColor" strokeWidth="4.5" strokeLinecap="round" />
     </svg>
   )
 }

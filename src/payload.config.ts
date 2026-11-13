@@ -20,8 +20,8 @@ import { AuditLogs, Bookings, Departures, Payments, Quotes, RateLimits, ReviewRe
 import { Home } from './globals/Home'
 import { SiteSettings } from './globals/SiteSettings'
 import { withAudit } from './hooks/audit'
+import { postmarkAdapter } from './lib/email/payloadAdapter'
 import { env, features } from './lib/env'
-import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -71,11 +71,12 @@ export default buildConfig({
   db: postgresAdapter({
     pool: { connectionString: env.DATABASE_URL || 'postgres://ngina:ngina@localhost:5432/ngina', max: env.NODE_ENV === 'production' ? 5 : 10 },
     migrationDir: path.resolve(dirname, 'migrations'),
-    // dev: schema auto-syncs; production: committed migrations run on start
+    // dev: schema auto-syncs. Production: committed migrations are applied by
+    // `pnpm migrate` (vercel-build script / Docker entrypoint), never during build.
     push: env.NODE_ENV !== 'production' && process.env.PAYLOAD_PUSH !== 'false',
-    prodMigrations: migrations,
   }),
   sharp,
+  email: postmarkAdapter,
   plugins: [
     s3Storage({
       enabled: features.storage,

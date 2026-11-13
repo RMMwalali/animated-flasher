@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 import { brandPaths } from '@/components/brand/paths'
 
-export const runtime = 'edge'
+export const dynamic = 'force-dynamic'
 
 /** Generated share image: cream card, traced acacia + horizon, title in Fredoka. */
 export async function GET(req: Request) {
