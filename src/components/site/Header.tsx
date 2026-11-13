@@ -28,8 +28,18 @@ export function Header({ contact, overHero = true, banner }: { contact: ContactI
   const [open, setOpen] = useState(false)
   const [solid, setSolid] = useState(false)
   const [hidden, setHidden] = useState(false)
+  const [creamTop, setCreamTop] = useState(false)
   const path = usePathname()
-  const darkStart = overHero && !['/privacy', '/terms', '/cookies', '/plan-your-trip', '/contact'].includes(path)
+  const darkStart = overHero && !creamTop
+
+  // Pages that open on a light (cream) section need dark header text from the start.
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      const first = document.querySelector<HTMLElement>('#main [data-tone]')
+      setCreamTop(first?.dataset.tone === 'cream')
+    })
+    return () => cancelAnimationFrame(raf)
+  }, [path])
 
   useEffect(() => {
     let last = window.scrollY

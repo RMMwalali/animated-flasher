@@ -57,11 +57,20 @@ export const SiteSettings: GlobalConfig = {
           fields: [
             {
               name: 'trust', type: 'array', label: 'Licences & memberships',
+              admin: { description: 'Shown on the Licences & memberships page, journey pages and the footer. Expired items are hidden automatically.' },
               fields: [
                 { type: 'row', fields: [
-                  { name: 'name', type: 'text', required: true, admin: { description: 'e.g. Tourism Regulatory Authority licence' } },
-                  { name: 'number', type: 'text', admin: { description: 'Licence / membership number' } },
+                  { name: 'name', type: 'text', required: true, admin: { description: 'e.g. Tour operator licence' } },
+                  { name: 'kind', type: 'select', defaultValue: 'licence', options: [
+                    { label: 'Licence / permit', value: 'licence' }, { label: 'Membership', value: 'membership' }, { label: 'Certification', value: 'certification' },
+                  ] },
                 ] },
+                { type: 'row', fields: [
+                  { name: 'issuer', type: 'text', admin: { description: 'Issuing body, e.g. Tourism Regulatory Authority (TRA)' } },
+                  { name: 'number', type: 'text', admin: { description: 'Licence / membership number' } },
+                  { name: 'validUntil', type: 'date', admin: { date: { pickerAppearance: 'dayOnly' }, description: 'Expiry date (optional).' } },
+                ] },
+                { name: 'description', type: 'textarea', admin: { description: 'One or two sentences: what it means for travellers.' } },
                 { name: 'url', type: 'text', admin: { description: 'Link to verify, if the body publishes one.' } },
                 { name: 'sample', type: 'checkbox', defaultValue: false, admin: { description: 'Placeholder. Hidden on the live site until you untick it.' } },
               ],

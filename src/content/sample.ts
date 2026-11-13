@@ -26,8 +26,25 @@ export const sampleSettings = {
   responseTime: 'one working day',
   social: [] as { platform: string; url: string }[],
   trust: [
-    { name: 'Tourism Regulatory Authority (TRA) licence', number: 'Add your licence number', url: 'https://www.tourismauthority.go.ke/', sample: true },
-    { name: 'Kenya Association of Tour Operators (KATO)', number: 'Add only if you are a member', url: 'https://katokenya.org/', sample: true },
+    {
+      name: 'Tour operator licence', kind: 'licence', issuer: 'Tourism Regulatory Authority (TRA)', number: '', sample: true,
+      url: 'https://www.tourismauthority.go.ke/',
+      description: 'Kenya\'s tourism regulator licenses tour operators under the Tourism Act, 2011. Travelling with a licensed operator is a legal requirement for organised tours.',
+    },
+    {
+      name: 'Association member', kind: 'membership', issuer: 'Kenya Association of Tour Operators (KATO)', number: '', sample: true,
+      url: 'https://katokenya.org/',
+      description: 'KATO members agree to the association\'s code of conduct, and the association offers a route for raising concerns about a member.',
+    },
+    {
+      name: 'Single business permit', kind: 'licence', issuer: 'County Government of Kwale', number: '', sample: true,
+      description: 'Our business permit for operating from Diani Beach, Kwale County.',
+    },
+    {
+      name: 'Eco-rating and certified guides', kind: 'certification', issuer: 'Ecotourism Kenya / Kenya Professional Safari Guides Association (KPSGA)', number: '', sample: true,
+      url: 'https://www.ecotourismkenya.org/',
+      description: 'Independent recognition of responsible tourism practice and of our guides\' professional training.',
+    },
   ],
   reviews: {
     delayDays: 2,
@@ -561,6 +578,43 @@ export const samplePages = [
         faq('What is the best month for a Kenya safari?', 'June to October and January to March are the driest and best for game viewing. July to October adds the Great Migration in the Maasai Mara.'),
         faq('Is it worth travelling in the rainy season?', 'Often, yes. Rain usually falls in short bursts, the parks are green and quiet, and prices are lower.'),
       ] },
+    ],
+  },
+  {
+    title: 'Kenya eTA guide', slug: 'kenya-eta',
+    hero: { eyebrow: 'Before you fly', statement: 'Your Kenya eTA, step by step.', emphasis: 'eTA', intro: 'Most visitors to Kenya need an Electronic Travel Authorisation (eTA), approved before they travel. Here is what it is, who needs one and how to apply. Checked against the official portal on 13 November 2026.', tone: 'coast' },
+    layout: [
+      { blockType: 'facts', heading: 'At a glance (checked 13 November 2026)', tone: 'cream', keyFacts: [
+        { label: 'Who needs one', value: 'All visitors, including infants and children, unless their nationality or status is exempt.' },
+        { label: 'Main exemptions', value: 'Citizens of East African Community countries (stays up to 180 days), and citizens of many Commonwealth and African countries (stays up to 90 or 60 days, depending on the country). Check your nationality on the official portal.' },
+        { label: 'Where to apply', value: 'Only on the official website, etakenya.go.ke, or the official "Kenya Travel Authorisation" app. One application per traveller.' },
+        { label: 'Cost', value: 'US$30 for a standard single-entry eTA. Transit eTA US$20. An expedited service costs extra.' },
+        { label: 'When to apply', value: 'At least 2 weeks before travel is recommended. Processing usually takes about 3 working days, sometimes longer.' },
+        { label: 'What you need', value: 'Passport valid for at least 6 months with a blank page, a photo or selfie, email and phone number, your itinerary and your accommodation confirmation.' },
+        { label: 'Good to know', value: 'An approved eTA is not a guarantee of entry: the final decision is made at the border.' },
+      ] },
+      { blockType: 'richText', content: lexical([
+        { h2: 'How to apply' },
+        { ul: [
+          'Go to **etakenya.go.ke** (or the official app) and choose Apply now. Avoid other websites offering to apply for a fee.',
+          'Fill in one application for each traveller, including children.',
+          'Upload your passport details and photo, and attach your itinerary and accommodation confirmation.',
+          'Pay online, then watch your email for the approval and keep a copy with your passport.',
+        ] },
+        { h2: 'How we help' },
+        'Once your trip is confirmed we send you the itinerary and accommodation confirmation the application asks for, and remind you to apply in good time. Applications are personal, so each traveller submits their own on the official site.',
+        { h2: 'Health and vaccinations' },
+        'Vaccination requirements depend on where you are travelling from. Check with your doctor or travel clinic and the official Kenyan guidance before you travel.',
+        'Rules change. Always confirm the current requirements on the official portal before you book flights.',
+      ]) },
+      { blockType: 'faq', heading: 'eTA questions', faqs: [
+        faq('Do children and babies need a Kenya eTA?', 'Yes. The official portal says all visitors, including infants and children, need an approved eTA unless they are exempt.'),
+        faq('How much does the Kenya eTA cost?', 'A standard single-entry eTA costs US$30, and a transit eTA US$20, according to the official portal (checked November 2026).'),
+        faq('How long does a Kenya eTA take?', 'Usually about 3 working days. The portal recommends applying at least 2 weeks before you travel.'),
+        faq('Do East African citizens need an eTA?', 'Citizens of East African Community countries are listed as exempt for stays of up to 180 days. Check the official portal for your nationality.'),
+        faq('Can Ngina apply for my eTA?', 'Each traveller applies on the official website or app. We send you the itinerary and accommodation confirmation you need to attach.'),
+      ] },
+      { blockType: 'cta', heading: 'Plan your trip, and we will send what you need.', label: 'Plan your trip', href: '/plan-your-trip', ctaId: 'eta-cta', tone: 'safari' },
     ],
   },
   {

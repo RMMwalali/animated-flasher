@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 const KEY = 'ngina-consent'
@@ -40,7 +41,7 @@ export function ConsentBanner() {
     <div role="dialog" aria-modal="false" aria-labelledby="consent-title" className="fixed inset-x-3 bottom-3 z-[70] mx-auto max-w-xl rounded-2xl bg-paper p-5 text-deep shadow-[0_20px_60px_-20px_rgb(14_43_39/0.45)] sm:bottom-5">
       <p id="consent-title" className="font-display text-xl font-medium">Your privacy</p>
       <p className="mt-2 text-sm leading-relaxed">
-        We only use essential storage to run this site. With your permission we would also measure visits anonymously to improve it. <a className="underline" href="/cookies">Cookie policy</a>
+        We only use essential storage to run this site. With your permission we would also measure visits anonymously to improve it. <Link className="underline" href="/cookies">Cookie policy</Link>
       </p>
       <div className="mt-4 flex flex-wrap gap-3">
         <button type="button" className="btn btn-primary !min-h-11 !py-2" onClick={() => save(true)}>Allow analytics</button>
