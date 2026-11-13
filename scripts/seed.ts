@@ -41,9 +41,9 @@ async function seedUser(email: string, envVar: string, data: Record<string, unkn
   const found = await payload.find({ collection: 'users', where: { email: { equals: email } }, limit: 1, depth: 0, overrideAccess: true })
   if (found.docs[0]) return found.docs[0] as any
   const fromEnv = process.env[envVar]
-  const password = fromEnv || randomBytes(12).toString('base64url')
-  const user = await payload.create({ collection: 'users', data: { email, password, ...data } as any, overrideAccess: true, context: ctx })
-  created.push(fromEnv ? `${email} (password from ${envVar})` : `${email}  password: ${password}`)
+  const generated = randomBytes(12).toString('base64url')
+  const user = await payload.create({ collection: 'users', data: { email, password: fromEnv || generated, ...data } as any, overrideAccess: true, context: ctx })
+  created.push(fromEnv ? `${email} (from ${envVar})` : `${email}  generated: ${generated}`)
   return user
 }
 const adminEmail = process.env.SEED_ADMIN_EMAIL ?? 'admin@ngina.local'
