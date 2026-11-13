@@ -43,11 +43,22 @@ const schema = z.object({
   INDEXNOW_KEY: z.string().optional(),
 })
 
-const parsed = schema.safeParse(process.env)
+/**
+ * Public address of the site. SITE_URL wins; on Vercel without it, use the
+ * production domain Vercel provides (so canonicals and the sitemap never
+ * point at localhost); otherwise the local dev address.
+ */
+export function resolveSiteUrl(e: Record<string, string | undefined>): string | undefined {
+  if (e.SITE_URL) return e.SITE_URL.replace(/\/+$/, '')
+  const vercel = e.VERCEL_PROJECT_PRODUCTION_URL || e.VERCEL_URL
+  return vercel ? `https://${vercel.replace(/^https?:\/\//, '')}` : undefined
+}
+
+const parsed = schema.safeParse({ ...process.env, SITE_URL: resolveSiteUrl(process.env) })
 if (!parsed.success) {
   console.warn('[env] invalid environment variables:', parsed.error.flatten().fieldErrors)
 }
-export const env = parsed.success ? parsed.data : schema.parse({})
+export const env = parsed.success ? parsed.data : schema.parse({ SITE_URL: resolveSiteUrl(process.env) })
 
 const realtime = (): 'pusher' | 'ably' | 'none' => {
   if (env.REALTIME_PROVIDER) return env.REALTIME_PROVIDER

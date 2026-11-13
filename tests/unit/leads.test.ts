@@ -84,3 +84,15 @@ describe('media URLs', () => {
     expect(localizeUrl('https://media.example.com/media/a.webp')).toBe('https://media.example.com/media/a.webp')
   })
 })
+
+describe('site URL', async () => {
+  const { resolveSiteUrl } = await import('@/lib/env')
+  it('prefers SITE_URL and trims the trailing slash', () => {
+    expect(resolveSiteUrl({ SITE_URL: 'https://nginatrails.com/', VERCEL_PROJECT_PRODUCTION_URL: 'x.vercel.app' })).toBe('https://nginatrails.com')
+  })
+  it('falls back to the Vercel production domain, never localhost', () => {
+    expect(resolveSiteUrl({ VERCEL_PROJECT_PRODUCTION_URL: 'animated-flasher.vercel.app', VERCEL_URL: 'abc.vercel.app' })).toBe('https://animated-flasher.vercel.app')
+    expect(resolveSiteUrl({ VERCEL_URL: 'abc.vercel.app' })).toBe('https://abc.vercel.app')
+    expect(resolveSiteUrl({})).toBeUndefined()
+  })
+})
