@@ -12,7 +12,11 @@ export function LionWalker() {
       const max = document.documentElement.scrollHeight - window.innerHeight
       const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0
       if (lion.current) lion.current.style.transform = `translateX(calc(${p} * (var(--w) - 100%)))`
-      if (bar.current) bar.current.setAttribute('aria-valuenow', String(Math.round(p * 100)))
+      if (bar.current) {
+        bar.current.setAttribute('aria-valuenow', String(Math.round(p * 100)))
+        // stay out of the way of full-screen openings (e.g. the home stage)
+        bar.current.style.opacity = window.scrollY > window.innerHeight * 0.6 ? '1' : '0'
+      }
     }
     const onScroll = () => {
       cancelAnimationFrame(raf)
@@ -35,7 +39,7 @@ export function LionWalker() {
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={0}
-      className="pointer-events-none fixed bottom-5 left-5 z-40 hidden w-[150px] rounded-full bg-cream/90 px-4 pb-2.5 pt-1.5 text-deep shadow-[0_6px_24px_-12px_rgb(14_43_39/0.5)] backdrop-blur-sm [--w:118px] md:block"
+      className="pointer-events-none fixed bottom-5 left-5 z-40 hidden w-[150px] rounded-full bg-cream/90 px-4 pb-2.5 pt-1.5 text-deep opacity-0 transition-opacity duration-500 shadow-[0_6px_24px_-12px_rgb(14_43_39/0.5)] backdrop-blur-sm [--w:118px] md:block"
     >
       <div ref={lion} className="w-[38px] will-change-transform">
         <svg viewBox={`${lx} ${ly} ${lw} ${lh}`} className="block h-auto w-full" aria-hidden="true">

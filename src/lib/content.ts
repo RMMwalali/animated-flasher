@@ -7,7 +7,9 @@ import config from '@payload-config'
 import { getPayload, type Payload } from 'payload'
 import { cache } from 'react'
 import * as S from '@/content/sample'
+import { photos, type PhotoKey } from '@/content/photos'
 import { env } from '@/lib/env'
+import { localizeUrl } from '@/lib/media-url'
 import type { Destination, Experience, Home, Media, Page, Post, SiteSetting, Trip, Wildlife } from '@/payload-types'
 
 export type MediaVM = { url: string; alt: string; width?: number; height?: number; mimeType?: string; focalX?: number; focalY?: number; poster?: MediaVM | null }
@@ -33,7 +35,14 @@ export type ExperienceVM = { slug: string; title: string; category: string; summ
 export type AuthorVM = { name: string; slug: string; role?: string | null; bio: string; expertise: string[]; qualifications: string[]; photo?: MediaVM | null }
 export type PostVM = { slug: string; title: string; excerpt: string; content: unknown; faqs: QA[]; author: AuthorVM; publishedAt: string; updatedAt?: string; topics: string[]; heroImage?: MediaVM | null; sample: boolean; seo?: SEO }
 export type PageVM = { slug: string; title: string; hero: { eyebrow?: string | null; statement?: string | null; emphasis?: string | null; intro?: string | null; image?: MediaVM | null; tone?: string | null }; layout: any[]; sample: boolean; seo?: SEO; updatedAt?: string }
-export type HomeVM = typeof S.sampleHome & { heroImage?: MediaVM | null; heroVideo?: MediaVM | null; coast: typeof S.sampleHome.coast & { image?: MediaVM | null; video?: MediaVM | null }; safari: typeof S.sampleHome.safari & { image?: MediaVM | null; video?: MediaVM | null } }
+export type StageSlide = { statement: string; emphasis?: string | null; scene: 'coast' | 'safari' | 'dawn' | 'night'; image?: MediaVM | null; video?: MediaVM | null }
+export type HomeVM = Omit<typeof S.sampleHome, 'stage' | 'welcome'> & {
+  heroImage?: MediaVM | null; heroVideo?: MediaVM | null; film?: MediaVM | null
+  welcome: { soundNote: string; enterLabel: string; quietLabel: string; ambientAudio?: MediaVM | null }
+  stage: StageSlide[]
+  coast: typeof S.sampleHome.coast & { image?: MediaVM | null; video?: MediaVM | null }
+  safari: typeof S.sampleHome.safari & { image?: MediaVM | null; video?: MediaVM | null }
+}
 export type SettingsVM = typeof S.sampleSettings & { fromSample: boolean }
 
 // ---------- payload access ----------
@@ -62,10 +71,17 @@ async function q<T>(fn: (p: Payload) => Promise<T>): Promise<T | null> {
 }
 
 // ---------- mappers ----------
+/** Sample photo (self-hosted) as a MediaVM. */
+export const samplePhoto = (key?: PhotoKey | null): MediaVM | null => {
+  if (!key) return null
+  const p = photos[key]
+  return { url: p.url, alt: p.alt, width: p.width, height: p.height, mimeType: 'image/webp' }
+}
+const sampleStage = () => S.sampleHome.stage.map(({ photo, ...x }) => ({ ...x, image: samplePhoto(photo) }))
 export function media(m: Media | number | null | undefined): MediaVM | null {
   if (!m || typeof m !== 'object' || !m.url) return null
   return {
-    url: m.url, alt: m.alt ?? '', width: m.width ?? undefined, height: m.height ?? undefined, mimeType: m.mimeType ?? undefined,
+    url: localizeUrl(m.url), alt: m.alt ?? '', width: m.width ?? undefined, height: m.height ?? undefined, mimeType: m.mimeType ?? undefined,
     focalX: m.focalX ?? undefined, focalY: m.focalY ?? undefined, poster: media(m.poster as Media | null),
   }
 }
@@ -91,7 +107,7 @@ function tripFromDoc(t: Trip): TripVM {
 }
 function tripFromSample(t: (typeof S.sampleTrips)[number]): TripVM {
   return {
-    ...t, startsFrom: 'Diani Beach', keyFacts: [], gallery: [], heroImage: null, sample: true, featured: Boolean(t.featured),
+    ...t, startsFrom: 'Diani Beach', keyFacts: [], gallery: [], heroImage: samplePhoto(t.photo), sample: true, featured: Boolean(t.featured),
     highlights: [...t.highlights], inclusions: [...t.inclusions], exclusions: [...t.exclusions], bestMonths: [...t.bestMonths],
     itinerary: t.itinerary.map((d) => ({ ...d, meals: d.meals ? [...d.meals] : [] })), faqs: [...t.faqs],
     destinations: t.destinations.map((slug) => ({ slug, name: destName(slug) })),
@@ -108,7 +124,7 @@ function destFromDoc(d: Destination): DestinationVM {
 function destFromSample(d: (typeof S.sampleDestinations)[number]): DestinationVM {
   return {
     ...d, region: d.region, bestMonths: [...d.bestMonths], keyFacts: d.keyFacts.map((f) => ({ ...f })), highlights: d.highlights.map((h) => h.text),
-    faqs: d.faqs.map((f) => ({ ...f })), heroImage: null, sample: true,
+    faqs: d.faqs.map((f) => ({ ...f })), heroImage: samplePhoto('photo' in d ? d.photo : null), sample: true,
   }
 }
 
@@ -129,7 +145,12 @@ export const getSettings = cache(async (): Promise<SettingsVM> => {
 
 export const getHome = cache(async (): Promise<HomeVM> => {
   const h = (await q((p) => p.findGlobal({ slug: 'home', depth: 1 }))) as Home | null
-  if (!h || !h.heroStatement) return { ...S.sampleHome, coast: { ...S.sampleHome.coast }, safari: { ...S.sampleHome.safari } } as HomeVM
+  if (!h || !h.heroStatement)
+    return {
+      ...S.sampleHome, welcome: { ...S.sampleHome.welcome }, stage: sampleStage(),
+      coast: { ...S.sampleHome.coast, image: samplePhoto(S.sampleHome.coast.photo) },
+      safari: { ...S.sampleHome.safari, image: samplePhoto(S.sampleHome.safari.photo) },
+    } as HomeVM
   const ch = (c: Home['coast'], fb: typeof S.sampleHome.coast) => ({
     ...fb, ...Object.fromEntries(Object.entries(c ?? {}).filter(([, v]) => v != null && v !== '')),
     points: c?.points?.length ? c.points.map((x) => ({ title: x.title, text: x.text ?? '' })) : fb.points,
@@ -140,6 +161,17 @@ export const getHome = cache(async (): Promise<HomeVM> => {
     heroImage: media(h.heroImage as Media), heroVideo: media(h.heroVideo as Media),
     coast: ch(h.coast, S.sampleHome.coast) as HomeVM['coast'], safari: ch(h.safari, S.sampleHome.safari) as HomeVM['safari'],
     seasons: (h.seasons?.length ? h.seasons : S.sampleHome.seasons) as any,
+    welcome: {
+      soundNote: h.welcome?.soundNote || S.sampleHome.welcome.soundNote,
+      enterLabel: h.welcome?.enterLabel || S.sampleHome.welcome.enterLabel,
+      quietLabel: h.welcome?.quietLabel || S.sampleHome.welcome.quietLabel,
+      ambientAudio: media(h.welcome?.ambientAudio as Media),
+    },
+    stage: h.stage?.length
+      ? h.stage.map((x) => ({ statement: x.statement, emphasis: x.emphasis, scene: (x.scene ?? 'safari') as StageSlide['scene'], image: media(x.image as Media), video: media(x.video as Media) }))
+      : sampleStage(),
+    slideSeconds: h.slideSeconds ?? S.sampleHome.slideSeconds,
+    film: media(h.film as Media),
   } as HomeVM
 })
 
@@ -187,7 +219,7 @@ export const getWildlife = cache(async (): Promise<WildlifeVM[]> => {
       slug: w.slug, name: w.name, swahiliName: w.swahiliName, scientificName: w.scientificName, group: w.group, description: w.description, tip: w.tip,
       whereToSee: (w.whereToSee ?? []).map(ref).filter(Boolean) as WildlifeVM['whereToSee'], bestMonths: w.bestMonths ?? [], image: media(w.image as Media),
     }))
-  return S.sampleWildlife.map((w) => ({ ...w, tip: 'tip' in w ? w.tip : null, bestMonths: 'bestMonths' in w ? [...w.bestMonths] : [], whereToSee: w.whereToSee.map((slug) => ({ slug, name: destName(slug) })), image: null }))
+  return S.sampleWildlife.map((w) => ({ ...w, tip: 'tip' in w ? w.tip : null, bestMonths: 'bestMonths' in w ? [...w.bestMonths] : [], whereToSee: w.whereToSee.map((slug) => ({ slug, name: destName(slug) })), image: samplePhoto('photo' in w ? w.photo : null) }))
 })
 
 export const getExperiences = cache(async (): Promise<ExperienceVM[]> => {

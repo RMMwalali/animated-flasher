@@ -27,7 +27,15 @@ export function Motion() {
       },
       { rootMargin: '0px 0px -12% 0px', threshold: 0.05 },
     )
-    const observe = () => document.querySelectorAll('[data-reveal]:not(.is-in), .brush[data-draw]:not(.is-drawn)').forEach((el) => io.observe(el))
+    const observe = () =>
+      document.querySelectorAll('[data-reveal]:not(.is-in), .brush[data-draw]:not(.is-drawn)').forEach((el) => {
+        // Anything already on screen (e.g. hero buttons near the bottom of a
+        // phone screen) reveals right away; the rest waits until scrolled to.
+        const r = el.getBoundingClientRect()
+        if (r.top < window.innerHeight && r.bottom > 0) {
+          requestAnimationFrame(() => el.classList.add(el.classList.contains('brush') ? 'is-drawn' : 'is-in'))
+        } else io.observe(el)
+      })
 
     if (reduce) {
       return () => io.disconnect()

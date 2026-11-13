@@ -4,6 +4,7 @@ import { normalizeSource, pickAgent, splitName } from '@/lib/crm/source'
 import { enquirySchema } from '@/lib/forms/schemas'
 import { spamSignals } from '@/lib/security/spam'
 import { windowStep } from '@/lib/security/rate-limit'
+import { localizeUrl } from '@/lib/media-url'
 
 describe('pipeline', () => {
   it('has the agreed stage order', () => {
@@ -70,5 +71,16 @@ describe('enquiry validation and spam', () => {
     })
     expect(results).toEqual([true, true, true, false])
     expect(windowStep(st, 1001, 3, 1000).result.ok).toBe(true)
+  })
+})
+
+describe('media URLs', () => {
+  it('turns our own media URLs into relative paths', () => {
+    expect(localizeUrl('http://localhost:3000/api/media/file/a.webp')).toBe('/api/media/file/a.webp')
+    expect(localizeUrl('https://animated-flasher.vercel.app/api/media/file/a.webp?x=1')).toBe('/api/media/file/a.webp?x=1')
+    expect(localizeUrl('/sample/a.webp')).toBe('/sample/a.webp')
+  })
+  it('leaves external storage URLs absolute', () => {
+    expect(localizeUrl('https://media.example.com/media/a.webp')).toBe('https://media.example.com/media/a.webp')
   })
 })

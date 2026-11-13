@@ -19,7 +19,7 @@ export function Emphasis({ text, emphasis, className = '' }: { text: string; emp
     <Fragment>
       {before}
       <span className="whitespace-nowrap">
-        <em className={`relative inline-block not-italic ${className}`}>
+        <em className={`relative inline-block italic ${className}`}>
           {word}
           <Brush seed={word} className="emphasis-brush absolute -bottom-[0.12em] left-[-2%] h-[0.28em] w-[104%]" />
         </em>

@@ -1,3 +1,5 @@
+import Link from 'next/link'
+import { Icon } from '@/components/icons/Icon'
 import { Emphasis } from '@/components/site/Emphasis'
 import type { HomeVM } from '@/lib/content'
 
@@ -10,7 +12,18 @@ export function Story({ home }: { home: HomeVM }) {
           <Emphasis text={home.storyStatement} emphasis={home.storyEmphasis} />
         </h2>
         <div className="grid gap-10 md:grid-cols-[1fr_1fr] md:gap-16">
-          <p className="text-xl leading-relaxed" data-reveal>{home.storyBody}</p>
+          <div className="grid content-start gap-6" data-reveal>
+            {home.heroIntro && <p className="text-xl font-medium leading-relaxed">{home.heroIntro}</p>}
+            <p className="text-lg leading-relaxed">{home.storyBody}</p>
+            <div className="flex flex-wrap gap-4 pt-2">
+              <Link href="/plan-your-trip" className="btn btn-primary" data-cta="home-story-plan">
+                Plan your trip <Icon name="arrow-right" size={18} />
+              </Link>
+              <Link href="#journeys" className="btn btn-ghost" data-cta="home-story-journeys">
+                <span>See journeys</span> <Icon name="arrow-down" size={18} />
+              </Link>
+            </div>
+          </div>
           <ol className="grid content-start gap-0 border-t border-deep/80" data-reveal style={{ ['--d' as string]: '0.15s' }}>
             {[
               ['Coast by day', 'Diani, Kisite, Mombasa, Lamu'],

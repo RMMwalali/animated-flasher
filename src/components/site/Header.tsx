@@ -3,15 +3,26 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, type ReactNode } from 'react'
 import { Icon } from '@/components/icons/Icon'
-import { ExploreButton } from './Explore'
+import { BrushCircle } from './BrushCircle'
 import { HeaderLogo } from './Logo'
 import { Menu } from './Menu'
+import { SoundToggle } from './SoundToggle'
 import type { ContactInfo } from './types'
 
+const LEFT = [
+  { href: '/safaris', label: 'Safaris' },
+  { href: '/coastal-tours', label: 'Coastal tours' },
+  { href: '/destinations', label: 'Destinations' },
+]
+const RIGHT = [
+  { href: '/our-story', label: 'Our story' },
+  { href: '/journal', label: 'Journal' },
+]
+
 /**
- * Centred logo with Menu (left) and Explore + Plan (right). Transparent with
- * cream text over dark heroes, cream background after scrolling; hides while
- * scrolling down and returns on scroll up.
+ * Desktop: menu + key links left, centred logo, links + "Plan your trip"
+ * right. Phone: sound and menu in hand-drawn rings either side of the logo.
+ * Transparent over dark heroes, cream once scrolled; hides on scroll down.
  */
 export function Header({ contact, overHero = true, banner }: { contact: ContactInfo; overHero?: boolean; banner?: ReactNode }) {
   const [open, setOpen] = useState(false)
@@ -39,32 +50,51 @@ export function Header({ contact, overHero = true, banner }: { contact: ContactI
   }, [path])
 
   const light = solid || !darkStart
+  const link = 'eyebrow link-u whitespace-nowrap py-2'
   return (
     <>
       <header
+        id="site-header"
         className={`fixed inset-x-0 top-0 z-50 transition-[transform,background-color,color] duration-500 ease-[var(--ease-out-expo)] ${hidden && !open ? '-translate-y-full' : ''} ${
           light ? 'bg-cream/92 text-deep shadow-[0_1px_0_var(--color-line)] backdrop-blur-md' : 'bg-transparent text-cream'
         }`}
       >
         {banner}
-        <div className="gutter grid h-[68px] grid-cols-[1fr_auto_1fr] items-center sm:h-20">
-          <div className="flex items-center">
-            <button type="button" onClick={() => setOpen(true)} className="group -ml-2 flex min-h-11 items-center gap-3 rounded-full px-2" aria-haspopup="dialog" aria-expanded={open} aria-label="Open menu">
-              <Icon name="menu" size={26} />
-              <span className="eyebrow hidden sm:inline" aria-hidden="true">Menu</span>
+        <div className="gutter grid h-[76px] grid-cols-[1fr_auto_1fr] items-center sm:h-[88px]">
+          <div className="flex items-center gap-6">
+            <SoundToggle className="lg:hidden" />
+            <button type="button" onClick={() => setOpen(true)} className="relative hidden size-12 place-items-center rounded-full lg:grid" aria-haspopup="dialog" aria-expanded={open} aria-label="Open menu">
+              <BrushCircle className="absolute inset-0 size-full text-orange" />
+              <Icon name="menu" size={20} />
             </button>
+            <nav aria-label="Journeys" className="hidden items-center gap-6 lg:flex">
+              {LEFT.map((l) => (
+                <Link key={l.href} href={l.href} className={link} aria-current={path.startsWith(l.href) ? 'page' : undefined}>
+                  {l.label}
+                </Link>
+              ))}
+            </nav>
           </div>
+
           <Link href="/" className="flex min-h-11 items-center justify-center px-2" aria-label="Ngina Trails & Safaris, home">
             <HeaderLogo />
           </Link>
-          <div className="flex items-center justify-end gap-3">
-            <ExploreButton className="hidden lg:grid" />
-            <Link href="/plan-your-trip" data-cta="header-plan" className="btn btn-primary hidden !min-h-11 !px-5 !py-2.5 text-sm sm:inline-flex">
+
+          <div className="flex items-center justify-end gap-6">
+            <nav aria-label="About" className="hidden items-center gap-6 lg:flex">
+              {RIGHT.map((l) => (
+                <Link key={l.href} href={l.href} className={link} aria-current={path.startsWith(l.href) ? 'page' : undefined}>
+                  {l.label}
+                </Link>
+              ))}
+            </nav>
+            <Link href="/plan-your-trip" data-cta="header-plan" className="btn btn-primary hidden !min-h-11 !px-5 !py-2.5 text-sm lg:inline-flex">
               Plan your trip
             </Link>
-            <Link href="/plan-your-trip" data-cta="header-plan-mobile" className="grid size-11 place-items-center rounded-full sm:hidden" aria-label="Plan your trip">
-              <Icon name="calendar" size={24} />
-            </Link>
+            <button type="button" onClick={() => setOpen(true)} className="relative grid size-12 place-items-center rounded-full lg:hidden" aria-haspopup="dialog" aria-expanded={open} aria-label="Open menu">
+              <BrushCircle className="absolute inset-0 size-full text-orange" />
+              <Icon name="menu" size={20} />
+            </button>
           </div>
         </div>
       </header>

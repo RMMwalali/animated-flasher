@@ -11,7 +11,7 @@ export function Footer({ settings }: { settings: SettingsVM }) {
   const year = new Date().getFullYear()
   const a = settings.address
   return (
-    <footer className="relative bg-night text-cream" data-tone="night">
+    <footer id="site-footer" className="relative bg-night text-cream" data-tone="night">
       <svg viewBox={brandPaths.horizon.box.join(' ')} preserveAspectRatio="none" className="absolute -top-px left-0 h-5 w-full -translate-y-full text-night" aria-hidden="true">
         <path d={brandPaths.horizon.d} fill="currentColor" />
       </svg>

@@ -2583,6 +2583,48 @@ export interface Home {
    */
   heroVideo?: (number | null) | Media;
   playIntro?: boolean | null;
+  welcome?: {
+    /**
+     * Short line above the enter button.
+     */
+    soundNote?: string | null;
+    /**
+     * Enter button (with sound).
+     */
+    enterLabel?: string | null;
+    quietLabel?: string | null;
+    /**
+     * Optional ambient sound (MP3, a gentle loop under 2 MB). Without it a soft generated surf sound plays.
+     */
+    ambientAudio?: (number | null) | Media;
+  };
+  /**
+   * Each slide shows one short statement over a photo or muted clip. 3 slides work best.
+   */
+  stage?:
+    | {
+        statement: string;
+        /**
+         * Word to underline.
+         */
+        emphasis?: string | null;
+        image?: (number | null) | Media;
+        /**
+         * Optional muted clip (MP4).
+         */
+        video?: (number | null) | Media;
+        /**
+         * Illustration used until a photo is added.
+         */
+        scene?: ('coast' | 'safari' | 'dawn' | 'night') | null;
+        id?: string | null;
+      }[]
+    | null;
+  slideSeconds?: number | null;
+  /**
+   * Optional full film (MP4) for the "Watch the film" button. Hidden when empty.
+   */
+  film?: (number | null) | Media;
   storyStatement: string;
   storyEmphasis?: string | null;
   storyBody?: string | null;
@@ -2720,6 +2762,26 @@ export interface HomeSelect<T extends boolean = true> {
   heroImage?: T;
   heroVideo?: T;
   playIntro?: T;
+  welcome?:
+    | T
+    | {
+        soundNote?: T;
+        enterLabel?: T;
+        quietLabel?: T;
+        ambientAudio?: T;
+      };
+  stage?:
+    | T
+    | {
+        statement?: T;
+        emphasis?: T;
+        image?: T;
+        video?: T;
+        scene?: T;
+        id?: T;
+      };
+  slideSeconds?: T;
+  film?: T;
   storyStatement?: T;
   storyEmphasis?: T;
   storyBody?: T;
