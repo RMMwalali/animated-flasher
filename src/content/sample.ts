@@ -6,6 +6,7 @@
  * No reviews, ratings, awards or memberships are invented.
  */
 import { lexical } from './lexical'
+import type { PhotoKey } from './photos'
 
 type M = 'jan' | 'feb' | 'mar' | 'apr' | 'may' | 'jun' | 'jul' | 'aug' | 'sep' | 'oct' | 'nov' | 'dec'
 const DRY: M[] = ['jan', 'feb', 'mar', 'jun', 'jul', 'aug', 'sep', 'oct']
@@ -50,9 +51,10 @@ export const sampleHome = {
   playIntro: true,
   welcome: { soundNote: 'Best with sound: the ocean and the bush', enterLabel: 'Karibu', quietLabel: 'Enter without sound' },
   stage: [
-    { statement: 'Wake to the Indian Ocean.', emphasis: 'Ocean', scene: 'coast' },
-    { statement: 'Walk where the elephants run red.', emphasis: 'red', scene: 'safari' },
-    { statement: 'Sleep under an open sky.', emphasis: 'open', scene: 'night' },
+    { statement: 'Wake to the Indian Ocean.', emphasis: 'Ocean', scene: 'coast', photo: 'dianiSunset' as PhotoKey },
+    { statement: 'Walk where the elephants run red.', emphasis: 'red', scene: 'safari', photo: 'samburuElephants' as PhotoKey },
+    { statement: 'Follow the great migration.', emphasis: 'migration', scene: 'safari', photo: 'maraMigration' as PhotoKey },
+    { statement: 'Sleep under an open sky.', emphasis: 'open', scene: 'night', photo: 'maraSunset' as PhotoKey },
   ],
   slideSeconds: 6,
   storyStatement: 'The coast is our home. The wild is our backyard.',
@@ -72,6 +74,7 @@ export const sampleHome = {
     ],
     linkLabel: 'Coastal tours',
     linkHref: '/coastal-tours',
+    photo: 'dianiSunset' as PhotoKey,
   },
   safari: {
     eyebrow: 'Beyond · The wild',
@@ -86,6 +89,7 @@ export const sampleHome = {
     ],
     linkLabel: 'Safaris',
     linkHref: '/safaris',
+    photo: 'maraGiraffeZebra' as PhotoKey,
   },
   whenStatement: 'Kenya is a year-round country. Here is how the seasons fall.',
   seasons: [
@@ -105,7 +109,7 @@ const faq = (question: string, answer: string) => ({ question, answer })
 
 export const sampleDestinations = [
   {
-    name: 'Diani Beach', slug: 'diani', region: 'coast', order: 1,
+    name: 'Diani Beach', slug: 'diani', photo: 'dianiSunset' as PhotoKey, region: 'coast', order: 1,
     summary: 'Our home: a long white-sand beach on Kenya\'s south coast, fringed by coral reef and coastal forest.',
     statement: 'Our home on the south coast.', emphasis: 'home',
     county: 'Kwale County', distanceFromDiani: 'You are here', altitude: 'Sea level', area: '', lat: -4.3167, lng: 39.5833,
@@ -151,7 +155,7 @@ export const sampleDestinations = [
     faqs: [faq('Can I visit Shimba Hills in a morning?', 'Yes. It is close enough for a half-day game drive and walk, returning to Diani for lunch.')],
   },
   {
-    name: 'Tsavo East', slug: 'tsavo-east', region: 'safari', order: 4,
+    name: 'Tsavo East', slug: 'tsavo-east', photo: 'tsavoElephants' as PhotoKey, region: 'safari', order: 4,
     summary: 'One of Kenya\'s largest national parks, known for elephants coloured red by the soil, the Galana River and Lugard Falls.',
     statement: 'Where the elephants turn red.', emphasis: 'red',
     county: 'Taita-Taveta', distanceFromDiani: 'About 160 km / 3 h to Buchuma gate', altitude: 'About 150 to 1,000 m', area: '13,747 km²', lat: -2.9833, lng: 38.5000,
@@ -182,7 +186,7 @@ export const sampleDestinations = [
     faqs: [faq('Is Tsavo West different from Tsavo East?', 'Yes. Tsavo West is hillier and more volcanic, with springs and lava flows; Tsavo East is flatter and more open.')],
   },
   {
-    name: 'Amboseli', slug: 'amboseli', region: 'safari', order: 6,
+    name: 'Amboseli', slug: 'amboseli', photo: 'kilimanjaro' as PhotoKey, region: 'safari', order: 6,
     summary: 'A compact park of swamps and dry lakebed at the foot of Kilimanjaro, famous for large elephant herds.',
     statement: 'Elephants beneath Kilimanjaro.', emphasis: 'Kilimanjaro',
     county: 'Kajiado County', distanceFromDiani: 'About 440 km / 7 to 8 h, usually via Tsavo West', altitude: 'About 1,150 m', area: '392 km²', lat: -2.6500, lng: 37.2500,
@@ -196,7 +200,7 @@ export const sampleDestinations = [
     faqs: [faq('Will I see Kilimanjaro from Amboseli?', 'Often, especially at dawn and dusk. The mountain is frequently hidden by cloud during the middle of the day.')],
   },
   {
-    name: 'Maasai Mara', slug: 'maasai-mara', region: 'safari', order: 7,
+    name: 'Maasai Mara', slug: 'maasai-mara', photo: 'maraMigration' as PhotoKey, region: 'safari', order: 7,
     summary: 'Kenya\'s best-known reserve: open grassland, big cats and, from about July to October, the Great Migration.',
     statement: 'The plains of the Great Migration.', emphasis: 'Migration',
     county: 'Narok County', distanceFromDiani: 'By light aircraft from Ukunda (Diani) airstrip, usually via Nairobi', altitude: 'About 1,500 to 2,100 m', area: '1,510 km²', lat: -1.4833, lng: 35.1500,
@@ -210,7 +214,7 @@ export const sampleDestinations = [
     faqs: [faq('When is the Great Migration in the Maasai Mara?', 'Usually from about July to October, but it depends on the rains, so exact crossing dates cannot be guaranteed.')],
   },
   {
-    name: 'Samburu', slug: 'samburu', region: 'safari', order: 8,
+    name: 'Samburu', slug: 'samburu', photo: 'samburuElephants' as PhotoKey, region: 'safari', order: 8,
     summary: 'Semi-arid reserve along the Ewaso Ng\'iro River, home to the "Samburu special five" found mostly north of the equator.',
     statement: 'The special five of the north.', emphasis: 'five',
     county: 'Samburu County', distanceFromDiani: 'Fly via Nairobi', altitude: 'About 800 to 1,200 m', area: '165 km²', lat: 0.6167, lng: 37.5333,
@@ -295,6 +299,7 @@ export const sampleDestinations = [
 ] as const
 
 type TripSeed = {
+  photo?: PhotoKey
   title: string; slug: string; type: 'safari' | 'coastal' | 'walking'; featured?: boolean; order: number
   summary: string; statement: string; emphasis: string; days: number; nights: number; priceFrom: number; priceBasis?: string
   difficulty?: 'easy' | 'moderate' | 'challenging'; groupSizeMax?: number; bestMonths: M[]; destinations: string[]
@@ -307,7 +312,7 @@ const SAFARI_EXC = ['International flights and visas (eTA)', 'Travel insurance',
 
 export const sampleTrips: TripSeed[] = [
   {
-    title: 'Tsavo East & Taita Hills', slug: 'tsavo-east-taita-hills', type: 'safari', featured: true, order: 1,
+    title: 'Tsavo East & Taita Hills', photo: 'tsavoElephants', slug: 'tsavo-east-taita-hills', type: 'safari', featured: true, order: 1,
     summary: 'Our most popular safari from the coast: red elephants of Tsavo East and a night in the Taita Hills.',
     statement: 'Three days, two parks, one red-earth horizon.', emphasis: 'red-earth',
     days: 3, nights: 2, priceFrom: 780, priceBasis: 'per person sharing, sample price', difficulty: 'easy', groupSizeMax: 6,
@@ -322,7 +327,7 @@ export const sampleTrips: TripSeed[] = [
     faqs: [faq('Is three days enough for Tsavo?', 'Three days gives two full game-drive sessions in Tsavo East plus the Taita Hills. Add a night for a slower pace.')],
   },
   {
-    title: 'Amboseli & Tsavo West', slug: 'amboseli-tsavo-west', type: 'safari', featured: true, order: 2,
+    title: 'Amboseli & Tsavo West', photo: 'kilimanjaro', slug: 'amboseli-tsavo-west', type: 'safari', featured: true, order: 2,
     summary: 'Volcanic Tsavo West and the elephants of Amboseli beneath Kilimanjaro, by road from Diani.',
     statement: 'From lava fields to the foot of Kilimanjaro.', emphasis: 'Kilimanjaro',
     days: 5, nights: 4, priceFrom: 1650, priceBasis: 'per person sharing, sample price', difficulty: 'easy', groupSizeMax: 6,
@@ -339,7 +344,7 @@ export const sampleTrips: TripSeed[] = [
     faqs: [faq('Can we fly back instead of driving?', 'Yes. We can arrange a light-aircraft flight from Amboseli to Ukunda via Nairobi to save the long drive.')],
   },
   {
-    title: 'Maasai Mara fly-in from Diani', slug: 'maasai-mara-fly-in', type: 'safari', featured: true, order: 3,
+    title: 'Maasai Mara fly-in from Diani', photo: 'maraMigration', slug: 'maasai-mara-fly-in', type: 'safari', featured: true, order: 3,
     summary: 'Fly from the beach to the plains for three nights in the Mara, timed for the migration if you wish.',
     statement: 'Beach in the morning. Lions by the afternoon.', emphasis: 'Lions',
     days: 4, nights: 3, priceFrom: 2450, priceBasis: 'per person sharing, sample price, flights included', difficulty: 'easy', groupSizeMax: 6,
@@ -355,7 +360,7 @@ export const sampleTrips: TripSeed[] = [
     faqs: [faq('Is the migration guaranteed?', 'No. It usually reaches the Mara from about July to October, but its timing depends on the rains.')],
   },
   {
-    title: 'Samburu & Lake Nakuru', slug: 'samburu-lake-nakuru', type: 'safari', order: 4,
+    title: 'Samburu & Lake Nakuru', photo: 'samburuElephants', slug: 'samburu-lake-nakuru', type: 'safari', order: 4,
     summary: 'The arid north and the Rift Valley: Samburu\'s special five and the rhinos of Lake Nakuru.',
     statement: 'North of the equator, into the Rift.', emphasis: 'Rift',
     days: 6, nights: 5, priceFrom: 2300, priceBasis: 'per person sharing, sample price', difficulty: 'easy', groupSizeMax: 6,
@@ -465,8 +470,8 @@ export const sampleTrips: TripSeed[] = [
 ]
 
 export const sampleWildlife = [
-  { name: 'African elephant', slug: 'african-elephant', swahiliName: 'Tembo', scientificName: 'Loxodonta africana', group: 'grazers', description: 'The largest land animal. In Tsavo they often look red from dust-bathing in the soil.', whereToSee: ['tsavo-east', 'amboseli', 'tsavo-west', 'shimba-hills'], tip: 'Watch the waterholes around midday in the dry season.', order: 1 },
-  { name: 'Lion', slug: 'lion', swahiliName: 'Simba', scientificName: 'Panthera leo', group: 'predators', description: 'Kenya\'s most sought-after sighting. Most active at dawn and dusk.', whereToSee: ['maasai-mara', 'tsavo-east', 'amboseli'], tip: 'Early starts matter: lions are often moving at first light.', order: 2 },
+  { name: 'African elephant', slug: 'african-elephant', photo: 'tsavoElephants' as PhotoKey, swahiliName: 'Tembo', scientificName: 'Loxodonta africana', group: 'grazers', description: 'The largest land animal. In Tsavo they often look red from dust-bathing in the soil.', whereToSee: ['tsavo-east', 'amboseli', 'tsavo-west', 'shimba-hills'], tip: 'Watch the waterholes around midday in the dry season.', order: 1 },
+  { name: 'Lion', slug: 'lion', photo: 'maraLioness' as PhotoKey, swahiliName: 'Simba', scientificName: 'Panthera leo', group: 'predators', description: 'Kenya\'s most sought-after sighting. Most active at dawn and dusk.', whereToSee: ['maasai-mara', 'tsavo-east', 'amboseli'], tip: 'Early starts matter: lions are often moving at first light.', order: 2 },
   { name: 'Leopard', slug: 'leopard', swahiliName: 'Chui', scientificName: 'Panthera pardus', group: 'predators', description: 'Elusive and mostly nocturnal; often rests in trees along rivers.', whereToSee: ['maasai-mara', 'samburu', 'tsavo-west'], tip: 'Scan the branches of large acacias and fig trees.', order: 3 },
   { name: 'Cheetah', slug: 'cheetah', swahiliName: 'Duma', scientificName: 'Acinonyx jubatus', group: 'predators', description: 'Built for speed on open grassland; hunts by day.', whereToSee: ['maasai-mara', 'tsavo-east', 'samburu'], order: 4 },
   { name: 'Grevy\'s zebra', slug: 'grevys-zebra', swahiliName: 'Punda milia', scientificName: 'Equus grevyi', group: 'grazers', description: 'An endangered zebra with narrow stripes, found mainly in northern Kenya.', whereToSee: ['samburu'], order: 5 },

@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
@@ -90,15 +91,14 @@ export function Stage({ slides, seconds, film, title, children }: Props) {
         >
           <div className="stage-media absolute inset-0">
             {s.image?.url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={s.image.url}
-                alt=""
-                className="h-full w-full object-cover"
+                alt={k === i ? s.image.alt : ''}
+                fill
+                sizes="100vw"
+                priority={k === 0}
+                className="object-cover"
                 style={{ objectPosition: s.image.focalX != null ? `${s.image.focalX}% ${s.image.focalY}%` : undefined }}
-                fetchPriority={k === 0 ? 'high' : 'low'}
-                loading={k === 0 ? 'eager' : 'lazy'}
-                decoding="async"
               />
             ) : (
               <Scene kind={s.scene} parallax={false} />

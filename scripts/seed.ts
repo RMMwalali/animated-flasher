@@ -23,6 +23,8 @@ const { randomBytes } = await import('node:crypto')
 const { getPayload } = await import('payload')
 const { default: config } = await import('../src/payload.config')
 const S = await import('../src/content/sample')
+const { photos } = await import('../src/content/photos')
+const path = await import('node:path')
 
 const payload = await getPayload({ config })
 try {
@@ -67,23 +69,58 @@ log(`team ready (admin: ${adminEmail})`)
 if (created.length) log(`new logins (shown once, store them safely):\n  ${created.join('\n  ')}`)
 
 // ---------- globals ----------
+// ---------- sample photos (free stock, see docs/PHOTO-CREDITS.md) ----------
+const media: Record<string, number> = {}
+for (const [key, p] of Object.entries(photos)) {
+  const filename = path.basename(p.url)
+  const found = await payload.find({ collection: 'media', where: { filename: { equals: filename } }, limit: 1, depth: 0, overrideAccess: true })
+  const doc =
+    found.docs[0] ??
+    (await payload.create({
+      collection: 'media', overrideAccess: true, context: ctx,
+      data: { alt: p.alt, credit: p.credit, caption: 'Sample photo: replace with your own' },
+      filePath: path.resolve('public', p.url.replace(/^\//, '')),
+    }))
+  media[key] = doc.id
+}
+const photoId = (k?: string | null) => (k ? media[k] : undefined)
+log(`photos (${Object.keys(media).length})`)
+
 await payload.updateGlobal({ slug: 'site-settings', data: S.sampleSettings as any, overrideAccess: true, context: ctx })
-await payload.updateGlobal({ slug: 'home', data: { ...S.sampleHome, _status: 'published' } as any, overrideAccess: true, context: ctx })
+const { stage, coast, safari, ...homeRest } = S.sampleHome
+await payload.updateGlobal({
+  slug: 'home', overrideAccess: true, context: ctx,
+  data: {
+    ...homeRest, _status: 'published',
+    stage: stage.map(({ photo, ...s }) => ({ ...s, image: photoId(photo) })),
+    coast: { ...coast, photo: undefined, image: photoId(coast.photo) },
+    safari: { ...safari, photo: undefined, image: photoId(safari.photo) },
+  } as any,
+})
 log('settings + home')
+
+/** Attach a sample photo to an existing doc that has none yet (re-runs fill gaps, never overwrite). */
+async function ensurePhoto(collection: any, doc: any, field: string, key?: string | null) {
+  const id = photoId(key)
+  if (id && !doc[field]) await payload.update({ collection, id: doc.id, data: { [field]: id } as any, overrideAccess: true, context: ctx })
+}
 
 // ---------- content ----------
 const author = await upsert('authors', { slug: { equals: S.sampleAuthor.slug } }, { ...S.sampleAuthor, sample: true })
 const dest: Record<string, number> = {}
 for (const d of S.sampleDestinations) {
+  const { photo, ...dd } = d as typeof d & { photo?: string }
   const doc = await upsert('destinations', { slug: { equals: d.slug } }, {
-    ...d, sample: true, bestMonths: [...d.bestMonths], keyFacts: d.keyFacts.map((f) => ({ ...f })), highlights: d.highlights.map((h) => ({ ...h })), faqs: d.faqs.map((f) => ({ ...f })),
+    ...dd, sample: true, heroImage: photoId(photo), bestMonths: [...d.bestMonths], keyFacts: d.keyFacts.map((f) => ({ ...f })), highlights: d.highlights.map((h) => ({ ...h })), faqs: d.faqs.map((f) => ({ ...f })),
   }, { draft: false })
+  await ensurePhoto('destinations', doc, 'heroImage', photo)
   dest[d.slug] = doc.id
 }
 const trips: Record<string, any> = {}
 for (const t of S.sampleTrips) {
+  const { photo, ...tt } = t
   trips[t.slug] = await upsert('trips', { slug: { equals: t.slug } }, {
-    ...t, sample: true, startsFrom: 'Diani Beach', childPercent: 50,
+    ...tt, sample: true, heroImage: photoId(photo), startsFrom: 'Diani Beach', childPercent: 50,
     destinations: t.destinations.map((s) => dest[s]).filter(Boolean),
     highlights: t.highlights.map((text) => ({ text })), inclusions: t.inclusions.map((text) => ({ text })), exclusions: t.exclusions.map((text) => ({ text })),
     itinerary: t.itinerary.map((d) => ({ ...d, meals: d.meals ? [...d.meals] : [] })),
@@ -93,9 +130,12 @@ for (const t of S.sampleTrips) {
       ...(t.difficulty ? [{ label: 'Difficulty', value: t.difficulty }] : []),
     ],
   }, { draft: false })
+  await ensurePhoto('trips', trips[t.slug], 'heroImage', photo)
 }
 for (const w of S.sampleWildlife) {
-  await upsert('wildlife', { slug: { equals: w.slug } }, { ...w, sample: true, whereToSee: w.whereToSee.map((s) => dest[s]).filter(Boolean), bestMonths: 'bestMonths' in w ? [...w.bestMonths] : [] })
+  const { photo, ...ww } = w as typeof w & { photo?: string }
+  const wdoc = await upsert('wildlife', { slug: { equals: w.slug } }, { ...ww, sample: true, image: photoId(photo), whereToSee: w.whereToSee.map((s) => dest[s]).filter(Boolean), bestMonths: 'bestMonths' in w ? [...w.bestMonths] : [] })
+  await ensurePhoto('wildlife', wdoc, 'image', photo)
 }
 for (const e of S.sampleExperiences) await upsert('experiences', { slug: { equals: e.slug } }, { ...e, sample: true, location: dest[e.location] })
 for (const p of S.samplePosts) {
