@@ -251,11 +251,15 @@ html[data-intro='done'] .intro-gate {
 }
 .menu-brush path {
   stroke-dashoffset: 1;
-  transition: stroke-dashoffset 0.6s var(--ease-in-out-quart);
+  opacity: 0;
+  transition:
+    stroke-dashoffset 0.6s var(--ease-in-out-quart),
+    opacity 0.2s;
 }
 .menu-link:hover .menu-brush path,
 .menu-link:focus-visible .menu-brush path {
   stroke-dashoffset: 0;
+  opacity: 1;
 }
 .btn-ghost:hover {
   background: color-mix(in srgb, currentColor 12%, transparent);
