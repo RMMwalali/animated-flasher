@@ -834,6 +834,15 @@ export interface Booking {
     | null;
   notes?: string | null;
   reviewRequested?: boolean | null;
+  portalToken?: string | null;
+  /**
+   * Filled in automatically when each email goes out.
+   */
+  emails?: {
+    confirmationSentAt?: string | null;
+    balanceReminderSentAt?: string | null;
+    etaReminderSentAt?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -891,6 +900,9 @@ export interface Quote {
   sentAt?: string | null;
   viewedAt?: string | null;
   acceptedAt?: string | null;
+  acceptedName?: string | null;
+  declinedAt?: string | null;
+  declineReason?: string | null;
   booking?: (number | null) | Booking;
   updatedAt: string;
   createdAt: string;
@@ -1824,6 +1836,9 @@ export interface QuotesSelect<T extends boolean = true> {
   sentAt?: T;
   viewedAt?: T;
   acceptedAt?: T;
+  acceptedName?: T;
+  declinedAt?: T;
+  declineReason?: T;
   booking?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1864,6 +1879,14 @@ export interface BookingsSelect<T extends boolean = true> {
       };
   notes?: T;
   reviewRequested?: T;
+  portalToken?: T;
+  emails?:
+    | T
+    | {
+        confirmationSentAt?: T;
+        balanceReminderSentAt?: T;
+        etaReminderSentAt?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

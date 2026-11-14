@@ -459,3 +459,19 @@ html:not(.js) .stage-line:first-of-type .stage-brush path {
   stroke: var(--color-orange-600);
   stroke-width: 5;
 }
+
+/* Printing a quote or trip page (or "Save as PDF"): content only. */
+@media print {
+  #site-header,
+  #site-footer,
+  [data-no-print],
+  .fixed {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  @page {
+    margin: 16mm;
+  }
+}

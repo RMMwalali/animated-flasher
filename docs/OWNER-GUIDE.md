@@ -39,8 +39,8 @@ The left-hand menu is grouped and numbered. At the top is **Workspace**: the vie
 
 | Area | What it is for |
 | --- | --- |
-| **Quotes** | Build a quote from one of your journeys: pick the journey and save, and the day-by-day plan and starting prices fill in. Adjust lines, discount and deposit %. *(next update: PDF, email to guest, and an online "Accept" button that creates the booking automatically.)* |
-| **Bookings** | Confirmed trips: dates, travellers, total, deposit, balance and the suppliers used. The amount paid and balance update automatically from payments. |
+| **Quotes** | Build a quote from one of your journeys: pick the journey and save, and the day-by-day plan and starting prices fill in. Adjust lines, discount and deposit %. Then press **Send to guest** (see section 2A). **Copy guest link** / **Open guest page** show exactly what the guest sees. |
+| **Bookings** | Confirmed trips: dates, travellers, total, deposit, balance and the suppliers used. The amount paid and balance update automatically from payments. Buttons at the top: **Request deposit / balance** (emails the guest a pay link), **Request in KES (M-Pesa)** (for US$ bookings: enter today's rate and the guest gets an M-Pesa or card link in shillings), **Send confirmation** and **Copy trip page link**. |
 | **Travellers** | The people on each booking. Only collect what the trip needs. |
 | **Departures** | Scheduled trips with their guide and vehicle. |
 | **Suppliers** | Lodges, camps, drivers, guides, boats and vehicles, with rates and licence notes. |
@@ -49,7 +49,7 @@ The left-hand menu is grouped and numbered. At the top is **Workspace**: the vie
 
 | Area | What it is for |
 | --- | --- |
-| **Payments** | Every deposit and balance payment. Paystack payments (M-Pesa or card) are recorded automatically, and a receipt is emailed to the guest. Record bank transfers or cash as "manual". Tick **Reconciled** once you have matched a payment to your bank or Paystack statement. If a guest pays in KES for a US$ booking, enter the exchange rate and the booking is credited correctly. *(next update: one-click "Send deposit link" / "Send balance link" buttons.)* |
+| **Payments** | Every deposit and balance payment. Paystack payments (M-Pesa or card) are recorded automatically, and a receipt is emailed to the guest. Record bank transfers or cash as "manual". Tick **Reconciled** once you have matched a payment to your bank or Paystack statement. If a guest pays in KES for a US$ booking, enter the exchange rate and the booking is credited correctly. If a Paystack payment still shows "Waiting for guest", press **Check with Paystack**. |
 
 ### 04 Website
 
@@ -89,6 +89,20 @@ Every button on the website that invites a guest to get in touch (the enquiry fo
 
 Spam is blocked quietly with a hidden trap field, a timing check, a limit of 5 enquiries per 10 minutes per connection and, optionally, Cloudflare Turnstile.
 
+## 2A. From quote to trip: what the guest sees
+
+1. **You send the quote.** In **Quotes**, press **Send to guest**. The guest gets an email with a private link to their trip plan: day by day, what is included, the price, deposit and balance. They can save it as a PDF or print it. When they open it, the quote shows as **Viewed**.
+2. **The guest accepts online.** They type their name, tick that they agree to your booking terms and press **Accept and book**. A **Booking** is created automatically (awaiting deposit), the lead moves along the pipeline, the guest gets a confirmation email and the team is emailed. If they press **No thanks**, the quote shows as **Declined** with their reason.
+3. **The guest pays the deposit** from their private **My trip** page, by card (US$) or by M-Pesa or card (KES bookings, or a KES link you send). Payments are checked with Paystack before they are recorded; the booking updates and a receipt is emailed automatically.
+4. **Every morning** the website does the routine work for you (needs `CRON_SECRET`, see section 4):
+   - quotes past their "valid until" date become **Expired** (send again to give the guest 14 more days);
+   - **balance reminder** once, 7 days before the balance due date (30 days before travel);
+   - **eTA reminder** once, 21 days before travel, with the official link;
+   - bookings move to **Travelling** on the first day and **Completed** the day after the trip, which schedules the review request (section 3).
+5. **The My trip page** always shows the plan, payments, balance, a "before you fly" checklist and how to reach you. The link is private: only share it with the guest.
+
+Your **Terms** page is linked from the Accept button: have it reviewed before you take real bookings (deposits, cancellations, refunds).
+
 ## 3. Reviews: how and why
 
 When a booking is marked **Completed**, a review request is scheduled for two days later (you can change this). Every guest gets the same email with direct links to the review sites you set up (Google, TripAdvisor, SafariBookings), then **one** reminder a week later if they have not clicked.
@@ -112,7 +126,7 @@ The website already runs on Vercel. The back office (`/admin`) and the enquiry f
 5. Open `https://animated-flasher.vercel.app/admin` and **create your account**. The first account is always an Admin.
 6. Go to **Go-live setup → Sample content → Load sample content** to fill the site with the sample journeys, destinations and photos. Then edit or replace them; it never overwrites your own changes.
 
-Optional but recommended: in **Settings → Environment Variables** add `PAYLOAD_SECRET` (any long random text, e.g. from a password manager) and `CRON_SECRET` the same way, then redeploy. Without `PAYLOAD_SECRET` the site derives one from the database connection, which works but logs everyone out if the database password ever changes.
+Also in **Settings → Environment Variables** add `CRON_SECRET` (any long random text, e.g. from a password manager): it switches on the daily automation (reminders, quote expiry, review requests). Recommended: add `PAYLOAD_SECRET` the same way. Then redeploy. Without `PAYLOAD_SECRET` the site derives one from the database connection, which works but logs everyone out if the database password ever changes.
 
 When you move to your own domain (e.g. `nginatrails.com`), add `SITE_URL` with that address.
 
@@ -142,7 +156,7 @@ Once the back office is on:
 ### E. Payments: Paystack (M-Pesa + card)
 
 11. Open a Paystack Kenya business account and complete verification (business registration and KRA PIN). Enable **M-Pesa** and **Cards**; ask Paystack to enable USD if you want to charge cards in dollars.
-12. Settings → API Keys & Webhooks: set `PAYSTACK_SECRET_KEY` and `PAYSTACK_PUBLIC_KEY`. Set the webhook URL to `https://yourdomain/api/webhooks/paystack` *(next update)*. Test with test keys first.
+12. Settings → API Keys & Webhooks: set `PAYSTACK_SECRET_KEY` and `PAYSTACK_PUBLIC_KEY`. Set the webhook URL to `https://yourdomain/api/webhooks/paystack`. Test with test keys first: send yourself a quote, accept it, and pay the deposit with Paystack's test card.
 
 ### F. Your domain (DNS)
 
