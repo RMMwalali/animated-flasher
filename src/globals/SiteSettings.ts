@@ -1,6 +1,19 @@
 import type { GlobalConfig } from 'payload'
 import { admins, anyone } from '@/access'
 import { revalidateGlobal } from '@/hooks/revalidateGlobal'
+import { coordsFromMapsUrl } from '@/lib/seo/text'
+
+/** Pin from a Google Maps link; short maps.app.goo.gl links are expanded first. */
+async function pinFromLink(url: string) {
+  const direct = coordsFromMapsUrl(url)
+  if (direct || !/^https:\/\/(maps\.app\.goo\.gl|goo\.gl\/maps)\//.test(url)) return direct
+  try {
+    const res = await fetch(url, { redirect: 'manual', signal: AbortSignal.timeout(5000) })
+    return coordsFromMapsUrl(res.headers.get('location'))
+  } catch {
+    return null
+  }
+}
 
 export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
@@ -30,10 +43,15 @@ export const SiteSettings: GlobalConfig = {
                   { name: 'postalCode', type: 'text' },
                   { name: 'country', type: 'text', defaultValue: 'KE', admin: { description: 'Two-letter code.' } },
                 ] },
+                {
+                  name: 'googleMapsUrl', type: 'text', label: 'Google Maps link',
+                  admin: { description: 'Open your business (or your exact spot) in Google Maps, press Share → Copy link, and paste it here. The map pin below fills in automatically when you save.' },
+                },
                 { type: 'row', fields: [
-                  { name: 'lat', type: 'number', defaultValue: -4.3167, admin: { step: 0.0001 } },
-                  { name: 'lng', type: 'number', defaultValue: 39.5833, admin: { step: 0.0001 } },
+                  { name: 'lat', type: 'number', label: 'Pin latitude', defaultValue: -4.3167, admin: { step: 0.000001, description: 'Filled from the link. Or right-click the spot in Google Maps and click the numbers to copy them.' } },
+                  { name: 'lng', type: 'number', label: 'Pin longitude', defaultValue: 39.5833, admin: { step: 0.000001 } },
                 ] },
+                { name: 'showMap', type: 'checkbox', defaultValue: true, label: 'Show a map on the Contact page', admin: { description: 'The map only loads when a visitor clicks it (no Google cookies before that).' } },
               ],
             },
             {
@@ -45,10 +63,36 @@ export const SiteSettings: GlobalConfig = {
               ] }],
             },
             { name: 'responseTime', type: 'text', defaultValue: 'one working day', admin: { description: 'Shown on the website and in emails: "we reply within …", e.g. 24 hours.' } },
-            { name: 'social', type: 'array', fields: [{ type: 'row', fields: [
-              { name: 'platform', type: 'select', required: true, options: ['instagram', 'facebook', 'tiktok', 'youtube', 'tripadvisor', 'google'] },
+            { name: 'social', type: 'array', label: 'Profiles on other sites', admin: { description: 'Your Google Business Profile, TripAdvisor, SafariBookings and social pages. Search engines and AI assistants use these to confirm they are all the same business.' }, fields: [{ type: 'row', fields: [
+              { name: 'platform', type: 'select', required: true, options: ['google', 'tripadvisor', 'safaribookings', 'instagram', 'facebook', 'tiktok', 'youtube', 'linkedin', 'x', 'other'] },
               { name: 'url', type: 'text', required: true },
             ] }] },
+          ],
+        },
+        {
+          label: 'Search & Google',
+          description: 'How your website appears on Google, Bing and AI assistants. Every page and article also gets its own title and description automatically (see "Search & sharing" on each one).',
+          fields: [
+            {
+              name: 'search', type: 'group', label: false,
+              fields: [
+                { type: 'row', fields: [
+                  { name: 'siteName', type: 'text', label: 'Site name in search results', admin: { description: 'The name shown above your results on Google. Leave empty to use the business name.' } },
+                  { name: 'alternateName', type: 'text', label: 'Also known as', admin: { description: 'Optional short name, e.g. "Ngina Safaris".' } },
+                ] },
+                { name: 'defaultDescription', type: 'textarea', label: 'Home page description', maxLength: 200, admin: { description: 'Shown under your home page on Google (about 155 characters). Other pages describe themselves automatically.' } },
+                { type: 'row', fields: [
+                  { name: 'siteIcon', type: 'upload', relationTo: 'media', label: 'Site icon', admin: { description: 'The small square logo next to your name in Google results and browser tabs. Square PNG, at least 512×512. Leave empty to use the elephant.' } },
+                  { name: 'shareImage', type: 'upload', relationTo: 'media', label: 'Default share image', admin: { description: 'Used when the home page is shared on WhatsApp or social media (1200×630). Other pages make their own.' } },
+                ] },
+                { type: 'collapsible', label: 'Verify ownership (Google Search Console, Bing)', admin: { initCollapsed: false }, fields: [
+                  { name: 'googleVerification', type: 'text', label: 'Google verification code', admin: { description: 'Search Console → Add property → URL prefix → HTML tag. Paste only the code inside content="…", or the whole tag.' } },
+                  { name: 'bingVerification', type: 'text', label: 'Bing verification code', admin: { description: 'Bing Webmaster Tools → Add site → HTML Meta Tag. Paste the code or the whole tag.' } },
+                ] },
+                { name: 'allowAiCrawlers', type: 'checkbox', defaultValue: true, label: 'Let AI assistants read the website (ChatGPT, Claude, Perplexity, Gemini)', admin: { description: 'Recommended: they can only recommend you if they can read your pages.' } },
+                { name: 'hideFromSearch', type: 'checkbox', defaultValue: false, label: 'Hide the whole website from search engines', admin: { description: 'Only for testing or before launch. While ticked, Google and Bing are asked to drop every page.' } },
+              ],
+            },
           ],
         },
         {
@@ -119,5 +163,23 @@ export const SiteSettings: GlobalConfig = {
       ],
     },
   ],
-  hooks: { afterChange: [revalidateGlobal] },
+  hooks: {
+    beforeChange: [
+      async ({ data, originalDoc }) => {
+        const a = data.address ?? {}
+        const changed = a.googleMapsUrl && a.googleMapsUrl !== originalDoc?.address?.googleMapsUrl
+        if (changed) {
+          const pin = await pinFromLink(String(a.googleMapsUrl))
+          if (pin) data.address = { ...a, lat: pin.lat, lng: pin.lng }
+        }
+        // accept a whole <meta …> tag as well as the bare code
+        for (const k of ['googleVerification', 'bingVerification'] as const) {
+          const v = data.search?.[k]
+          if (typeof v === 'string') data.search[k] = /content=["']([^"']+)["']/.exec(v)?.[1] ?? v.trim()
+        }
+        return data
+      },
+    ],
+    afterChange: [revalidateGlobal],
+  },
 }

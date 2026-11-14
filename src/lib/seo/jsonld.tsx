@@ -1,4 +1,5 @@
 import { env } from '@/lib/env'
+import { mapsLink } from './text'
 import type { DestinationVM, PostVM, QA, SettingsVM, TripVM } from '@/lib/content'
 import { tripHref } from '@/lib/routes'
 
@@ -15,8 +16,10 @@ export function travelAgency(s: SettingsVM) {
     name: s.businessName,
     description: s.tagline,
     url: abs('/'),
-    logo: abs('/brand/icon-512.png'),
-    image: abs('/brand/og-default.png'),
+    alternateName: s.search.alternateName || undefined,
+    logo: s.search.siteIcon?.url ? abs(s.search.siteIcon.url) : abs('/brand/icon-512.png'),
+    image: s.search.shareImage?.url ? abs(s.search.shareImage.url) : abs('/brand/og-default.png'),
+    hasMap: mapsLink(a) ?? undefined,
     email: s.email || undefined,
     telephone: s.phone || undefined,
     address: { '@type': 'PostalAddress', streetAddress: a.street || undefined, addressLocality: a.locality, addressRegion: a.region, postalCode: a.postalCode || undefined, addressCountry: a.country },
@@ -30,7 +33,12 @@ export function travelAgency(s: SettingsVM) {
 }
 
 export function website(s: SettingsVM) {
-  return { '@context': 'https://schema.org', '@type': 'WebSite', '@id': abs('/#website'), name: s.businessName, url: abs('/'), publisher: { '@id': ORG_ID() }, inLanguage: 'en' }
+  // Google reads the site name shown above results from here
+  return {
+    '@context': 'https://schema.org', '@type': 'WebSite', '@id': abs('/#website'),
+    name: s.search.siteName || s.businessName, alternateName: s.search.alternateName || undefined,
+    url: abs('/'), publisher: { '@id': ORG_ID() }, inLanguage: 'en',
+  }
 }
 
 export function breadcrumbs(items: { name: string; path: string }[]) {

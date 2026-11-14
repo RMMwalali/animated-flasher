@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Blocks } from '@/components/page/Blocks'
 import { PageHero } from '@/components/page/PageHero'
-import { getPage } from '@/lib/content'
+import { getPage, getPages } from '@/lib/content'
 import { pageMeta } from '@/lib/seo/meta'
 
 export const revalidate = 3600
@@ -13,7 +13,7 @@ type Props = { params: Promise<{ slug: string }> }
 const RESERVED = new Set(['experiences', 'when-to-go'])
 
 export async function generateStaticParams() {
-  return ['our-story', 'kenya-eta', 'privacy', 'terms', 'cookies'].map((slug) => ({ slug }))
+  return (await getPages()).filter((p) => !RESERVED.has(p.slug)).map((p) => ({ slug: p.slug }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

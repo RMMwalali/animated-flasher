@@ -66,13 +66,21 @@ The left-hand menu is grouped and numbered. At the top is **Workspace**: the vie
 
 **Drafts.** Pages, journeys, destinations and articles can be saved as drafts; only **Publish** makes them visible. Publishing refreshes the website within seconds and notifies search engines.
 
+**Search & sharing (every page, journey, destination and article).** Each one shows a **Google preview** of exactly how it will appear in search. Everything is written automatically:
+- **Address:** made from the title.
+- **Title:** the page's own title; your business name is added when it fits.
+- **Description:** taken from the summary or excerpt and trimmed to Google's length.
+- **Share image:** made automatically with the title.
+
+Only fill in "Search title" or "Search description" to change what Google shows. Tick **Hide from search engines** to keep a page off Google and out of the sitemap. New pages you create appear in the sitemap automatically.
+
 ### 05 Team
 
 | Area | What it is for |
 | --- | --- |
 | **Team** | Who can log in. **Admin**: everything. **Sales agent**: leads, inbox, quotes, bookings, payments. **Content editor**: website content only. Untick **Active** to block someone without deleting their history. |
 | **Audit log** | Who changed what and when (admins only, cannot be edited). |
-| **Business settings** | Your contact details, address, opening hours, licences & memberships, review links and notification emails. |
+| **Business settings** | Your contact details, address and **map pin**, opening hours (optional: leave empty to show "Enquire any time"), profiles on other sites, licences & memberships, review links and notification emails. The **Search & Google** tab controls how the whole site appears on Google, Bing and AI assistants (see section 4G). |
 
 ---
 
@@ -164,6 +172,20 @@ Once the back office is on:
 14. Add Postmark's DKIM and Return-Path records (step 7) and, if you use Cloudflare for R2, the media subdomain.
 
 ### G. Search and maps
+
+Everything here is in the back office: **Business settings**.
+- **Map pin.** In Google Maps, open your business (or the exact spot) and press **Share → Copy link**. Paste the link into **Business → Google Maps link** and save: the pin fills in by itself, and the Contact page shows the map.
+- **Search & Google tab:**
+  - **Site name:** the name Google shows above your results.
+  - **Home page description.**
+  - **Site icon:** the small square logo next to your name in Google and browser tabs. Use a square PNG of at least 512×512.
+  - **Default share image.**
+  - **Google and Bing verification codes:** paste the code or the whole tag; no DNS needed.
+  - **AI assistants** switch.
+  - **Hide from search engines** switch: only before launch.
+- **Profiles on other sites (Business tab).** Add your Google Business Profile, TripAdvisor, SafariBookings, Instagram and Facebook links. Search engines and AI assistants use them to confirm these are all you.
+- **The links under your result on Google ("sitelinks").** Google picks these itself; no website can set them. They come from a clear menu, breadcrumbs and distinct titles and descriptions on every page, which the website already has, plus time and traffic.
+
 
 15. **Google Search Console**: add your domain as a property (DNS verification), then submit `https://yourdomain/sitemap.xml` *(sitemap: next update)*.
 16. **Bing Webmaster Tools**: import from Google Search Console. Optionally set `INDEXNOW_KEY` so Bing is told about every page you publish *(key file: next update)*.

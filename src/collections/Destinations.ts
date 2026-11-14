@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { contentAccess } from '@/access'
-import { bestMonthsField, faqsField, keyFactsField, sampleField, seoField, slugField } from '@/fields'
+import { bestMonthsField, faqsField, keyFactsField, sampleField, seoFieldWith, slugField } from '@/fields'
 import { revalidateAfterChange } from '@/hooks/revalidate'
 
 export const Destinations: CollectionConfig = {
@@ -46,7 +46,7 @@ export const Destinations: CollectionConfig = {
           ],
         },
         { label: 'Q&A', fields: [faqsField] },
-        { label: 'SEO', fields: [seoField] },
+        { label: 'SEO', fields: [seoFieldWith({ titleField: 'name', descriptionFields: ['summary'], basePath: '/destinations/' })] },
       ],
     },
     sampleField,

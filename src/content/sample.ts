@@ -18,7 +18,7 @@ export const sampleSettings = {
   email: 'cngina35@gmail.com',
   phone: '+254 720 972 512',
   whatsapp: '+254 720 972 512',
-  address: { street: '', locality: 'Diani Beach', region: 'Kwale County', postalCode: '', country: 'KE', lat: -4.3167, lng: 39.5833 },
+  address: { street: '', locality: 'Diani Beach', region: 'Kwale County', postalCode: '', country: 'KE', lat: -4.3167, lng: 39.5833, googleMapsUrl: '', showMap: true },
   // No fixed office hours: guests from every time zone can enquire any time.
   hours: [] as { days: string[]; opens: string; closes: string }[],
   responseTime: '24 hours',
@@ -54,6 +54,15 @@ export const sampleSettings = {
     ],
   },
   notifications: { teamEmails: 'cngina35@gmail.com' },
+  search: {
+    siteName: '',
+    alternateName: 'Ngina Safaris',
+    defaultDescription: 'Diani Beach tour operator: safaris to Tsavo, Amboseli and the Maasai Mara, Kisite-Mpunguti dhow days, Lamu, Mombasa and Mount Kenya treks.',
+    googleVerification: '',
+    bingVerification: '',
+    allowAiCrawlers: true,
+    hideFromSearch: false,
+  },
   defaultDepositPercent: 30,
   showSampleBanner: true,
 }

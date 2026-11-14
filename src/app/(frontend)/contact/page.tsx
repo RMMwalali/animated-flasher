@@ -3,9 +3,11 @@ import { EnquiryForm } from '@/components/forms/EnquiryForm'
 import { Icon } from '@/components/icons/Icon'
 import { PageHero } from '@/components/page/PageHero'
 import { LocationLine } from '@/components/site/Logo'
+import { MapEmbed } from '@/components/site/MapEmbed'
 import { formatHours } from '@/components/site/hours'
 import { getSettings } from '@/lib/content'
 import { pageMeta } from '@/lib/seo/meta'
+import { mapsLink } from '@/lib/seo/text'
 
 export const revalidate = 3600
 export const metadata: Metadata = pageMeta({ title: 'Contact us in Diani Beach, Kenya', description: 'Email, phone or message our team in Diani Beach, Kwale County, Kenya. We reply personally.', path: '/contact' })
@@ -38,6 +40,9 @@ export default async function ContactPage() {
                 <p className="eyebrow text-teal-ink">When to reach us</p>
                 <p className="mt-3 text-lg">Any time, from any time zone. Send a message or WhatsApp and we reply within {s.responseTime || '24 hours'}.</p>
               </div>
+            )}
+            {s.address.showMap !== false && s.address.lat != null && s.address.lng != null && (
+              <MapEmbed lat={s.address.lat} lng={s.address.lng} label={[s.address.street, s.address.locality].filter(Boolean).join(', ') || 'Diani Beach'} link={mapsLink(s.address)!} />
             )}
             <LocationLine className="h-3 w-56 text-deep" />
           </div>

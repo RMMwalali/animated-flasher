@@ -11,16 +11,31 @@ import { SampleBanner } from '@/components/site/SampleBanner'
 import { getSettings } from '@/lib/content'
 import { env } from '@/lib/env'
 import { fontVars } from '@/lib/fonts'
+import { clampText } from '@/lib/seo/text'
 import { JsonLd, travelAgency, website } from '@/lib/seo/jsonld'
 import './globals.css'
 
-export const metadata: Metadata = {
-  metadataBase: new URL(env.SITE_URL),
-  title: { default: 'Ngina Trails and Safaris · Safaris and coastal tours from Diani Beach, Kenya', template: '%s · Ngina Trails and Safaris' },
-  description: 'Diani Beach based tour company: Tsavo, Amboseli and Maasai Mara safaris, Kisite-Mpunguti dhow days, Lamu, Mombasa and Mount Kenya treks.',
-  applicationName: 'Ngina Trails and Safaris',
-  manifest: '/manifest.webmanifest',
-  formatDetection: { telephone: true, email: true },
+/** Site-wide search settings, all editable in Business settings → Search & Google. */
+export async function generateMetadata(): Promise<Metadata> {
+  const s = await getSettings()
+  const name = s.search.siteName || s.businessName
+  const icon = s.search.siteIcon?.url
+  return {
+    metadataBase: new URL(env.SITE_URL),
+    title: { default: `${name} · Safaris and coastal tours from Diani Beach, Kenya`, template: `%s · ${name}` },
+    description: clampText(s.search.defaultDescription || s.tagline),
+    applicationName: name,
+    manifest: '/manifest.webmanifest',
+    formatDetection: { telephone: true, email: true },
+    // an uploaded icon replaces the default elephant (browser tabs and Google results)
+    icons: icon ? { icon: [{ url: icon }], apple: [{ url: icon }] } : undefined,
+    verification: {
+      google: s.search.googleVerification || undefined,
+      other: s.search.bingVerification ? { 'msvalidate.01': s.search.bingVerification } : undefined,
+    },
+    robots: s.search.hideFromSearch ? { index: false, follow: false } : undefined,
+    openGraph: { siteName: name, locale: 'en_KE', images: s.search.shareImage?.url ? [{ url: s.search.shareImage.url, width: 1200, height: 630 }] : undefined },
+  }
 }
 
 export const viewport: Viewport = {
