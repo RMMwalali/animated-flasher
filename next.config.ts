@@ -17,7 +17,10 @@ const nextConfig: NextConfig = {
   agentRules: false,
   images: {
     formats: ['image/avif', 'image/webp'],
-    remotePatterns: s3Host ? [{ protocol: 'https', hostname: s3Host }] : [],
+    remotePatterns: [
+      ...(s3Host ? [{ protocol: 'https' as const, hostname: s3Host }] : []),
+      { protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
+    ],
   },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }]

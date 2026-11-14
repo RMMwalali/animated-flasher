@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { z } from 'zod'
 
 /**
@@ -19,6 +20,7 @@ const schema = z.object({
   S3_ACCESS_KEY_ID: z.string().optional(),
   S3_SECRET_ACCESS_KEY: z.string().optional(),
   S3_PUBLIC_URL: z.string().optional(),
+  BLOB_READ_WRITE_TOKEN: z.string().optional(),
 
   POSTMARK_SERVER_TOKEN: z.string().optional(),
   POSTMARK_FROM_EMAIL: z.string().optional(),
@@ -43,11 +45,44 @@ const schema = z.object({
   INDEXNOW_KEY: z.string().optional(),
 })
 
-const parsed = schema.safeParse(process.env)
+/**
+ * Public address of the site. SITE_URL wins; on Vercel without it, use the
+ * production domain Vercel provides (so canonicals and the sitemap never
+ * point at localhost); otherwise the local dev address.
+ */
+export function resolveSiteUrl(e: Record<string, string | undefined>): string | undefined {
+  if (e.SITE_URL) return e.SITE_URL.replace(/\/+$/, '')
+  const vercel = e.VERCEL_PROJECT_PRODUCTION_URL || e.VERCEL_URL
+  return vercel ? `https://${vercel.replace(/^https?:\/\//, '')}` : undefined
+}
+
+/**
+ * Database URL. Vercel's Neon integration (Storage tab) sets DATABASE_URL and
+ * POSTGRES_URL; either works, so connecting the database needs no typing.
+ */
+export function resolveDatabaseUrl(e: Record<string, string | undefined>): string | undefined {
+  return e.DATABASE_URL || e.POSTGRES_URL || e.DATABASE_URL_UNPOOLED || undefined
+}
+
+/**
+ * Secret that signs admin logins. Use PAYLOAD_SECRET when set. Otherwise
+ * derive one from the database URL (itself a server-only secret), so the
+ * admin works as soon as a database is connected. Setting PAYLOAD_SECRET is
+ * still recommended; changing it (or the database password) logs everyone out.
+ */
+export function resolvePayloadSecret(e: Record<string, string | undefined>, dbUrl?: string): string | undefined {
+  if (e.PAYLOAD_SECRET) return e.PAYLOAD_SECRET
+  if (dbUrl) return createHash('sha256').update(`ngina-payload-secret:${dbUrl}`).digest('hex')
+  return undefined
+}
+
+const dbUrl = resolveDatabaseUrl(process.env)
+const resolved = { SITE_URL: resolveSiteUrl(process.env), DATABASE_URL: dbUrl, PAYLOAD_SECRET: resolvePayloadSecret(process.env, dbUrl) }
+const parsed = schema.safeParse({ ...process.env, ...resolved })
 if (!parsed.success) {
   console.warn('[env] invalid environment variables:', parsed.error.flatten().fieldErrors)
 }
-export const env = parsed.success ? parsed.data : schema.parse({})
+export const env = parsed.success ? parsed.data : schema.parse(resolved)
 
 const realtime = (): 'pusher' | 'ably' | 'none' => {
   if (env.REALTIME_PROVIDER) return env.REALTIME_PROVIDER
@@ -58,7 +93,8 @@ const realtime = (): 'pusher' | 'ably' | 'none' => {
 
 export const features = {
   database: Boolean(env.DATABASE_URL),
-  storage: Boolean(env.S3_BUCKET && env.S3_ACCESS_KEY_ID && env.S3_SECRET_ACCESS_KEY),
+  storage: Boolean((env.S3_BUCKET && env.S3_ACCESS_KEY_ID && env.S3_SECRET_ACCESS_KEY) || env.BLOB_READ_WRITE_TOKEN),
+  storageProvider: (env.S3_BUCKET && env.S3_ACCESS_KEY_ID && env.S3_SECRET_ACCESS_KEY ? 's3' : env.BLOB_READ_WRITE_TOKEN ? 'vercel-blob' : 'local') as 's3' | 'vercel-blob' | 'local',
   email: Boolean(env.POSTMARK_SERVER_TOKEN && env.POSTMARK_FROM_EMAIL),
   inboundEmail: Boolean(env.POSTMARK_INBOUND_WEBHOOK_USER && env.POSTMARK_INBOUND_WEBHOOK_PASSWORD),
   realtime: realtime(),
@@ -70,7 +106,7 @@ export const features = {
 /** Human-readable list for the admin "setup" notices. */
 export function missingFeatures(): { key: keyof typeof features; label: string; vars: string }[] {
   const list: { key: keyof typeof features; label: string; vars: string }[] = []
-  if (!features.storage) list.push({ key: 'storage', label: 'Photo storage (Cloudflare R2): uploads are saved on this server only', vars: 'S3_BUCKET, S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY, S3_PUBLIC_URL' })
+  if (!features.storage) list.push({ key: 'storage', label: 'Photo storage (Vercel Blob or Cloudflare R2): uploads are saved on this server only, and are lost on Vercel', vars: 'BLOB_READ_WRITE_TOKEN (Vercel Storage tab) or S3_*' })
   if (!features.email) list.push({ key: 'email', label: 'Email (Postmark): emails are logged, not sent', vars: 'POSTMARK_SERVER_TOKEN, POSTMARK_FROM_EMAIL' })
   if (!features.inboundEmail) list.push({ key: 'inboundEmail', label: 'Guest email replies (Postmark inbound): replies will not reach the inbox', vars: 'POSTMARK_INBOUND_WEBHOOK_USER, POSTMARK_INBOUND_WEBHOOK_PASSWORD, POSTMARK_INBOUND_ADDRESS' })
   if (features.realtime === 'none') list.push({ key: 'realtime', label: 'Real-time chat (Pusher or Ably): chat refreshes every few seconds instead', vars: 'PUSHER_APP_ID, PUSHER_KEY, PUSHER_SECRET, PUSHER_CLUSTER or ABLY_API_KEY' })

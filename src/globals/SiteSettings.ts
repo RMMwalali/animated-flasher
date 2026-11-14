@@ -71,6 +71,7 @@ export const SiteSettings: GlobalConfig = {
                   { name: 'validUntil', type: 'date', admin: { date: { pickerAppearance: 'dayOnly' }, description: 'Expiry date (optional).' } },
                 ] },
                 { name: 'description', type: 'textarea', admin: { description: 'One or two sentences: what it means for travellers.' } },
+                { name: 'certificate', type: 'upload', relationTo: 'media', admin: { description: 'Optional: a photo or PDF of the certificate. Shown as "View certificate" on the Licences page.' } },
                 { name: 'url', type: 'text', admin: { description: 'Link to verify, if the body publishes one.' } },
                 { name: 'sample', type: 'checkbox', defaultValue: false, admin: { description: 'Placeholder. Hidden on the live site until you untick it.' } },
               ],

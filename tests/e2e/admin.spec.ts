@@ -19,3 +19,8 @@ test('admin API rejects anonymous access to CRM data', async ({ request }) => {
   const res = await request.get('/api/leads')
   expect([401, 403]).toContain(res.status())
 })
+
+test('loading sample content is admin-only', async ({ request }) => {
+  const res = await request.post('/api/admin/load-sample')
+  expect(res.status()).toBe(403)
+})

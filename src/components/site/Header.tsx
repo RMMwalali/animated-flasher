@@ -5,6 +5,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Icon } from '@/components/icons/Icon'
 import { BrushCircle } from './BrushCircle'
 import { HeaderLogo } from './Logo'
+import { initialHeaderState, nextHeaderState } from './headerState'
 import { Menu } from './Menu'
 import { SoundToggle } from './SoundToggle'
 import type { ContactInfo } from './types'
@@ -41,22 +42,29 @@ export function Header({ contact, overHero = true, banner }: { contact: ContactI
     return () => cancelAnimationFrame(raf)
   }, [path])
 
+  // Hide on scroll down, show on scroll up, with hysteresis: smooth scrolling
+  // produces tiny back-and-forth deltas, so we only act after a clear move
+  // in one direction (see nextHeaderState).
   useEffect(() => {
-    let last = window.scrollY
+    const st = initialHeaderState(Math.max(0, window.scrollY))
     let raf = 0
+    const update = () => {
+      const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight)
+      const next = nextHeaderState(st, Math.min(max, Math.max(0, window.scrollY)), window.innerHeight)
+      if (next.hidden !== st.hidden) setHidden(next.hidden)
+      if (next.solid !== st.solid) setSolid(next.solid)
+      Object.assign(st, next)
+    }
     const onScroll = () => {
       cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(() => {
-        const y = window.scrollY
-        setSolid(y > window.innerHeight * 0.6)
-        setHidden(y > 320 && y > last + 4)
-        if (y < last - 4) setHidden(false)
-        last = y
-      })
+      raf = requestAnimationFrame(update)
     }
-    onScroll()
+    update()
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+    }
   }, [path])
 
   const light = solid || !darkStart
@@ -65,7 +73,7 @@ export function Header({ contact, overHero = true, banner }: { contact: ContactI
     <>
       <header
         id="site-header"
-        className={`fixed inset-x-0 top-0 z-50 transition-[transform,background-color,color] duration-500 ease-[var(--ease-out-expo)] ${hidden && !open ? '-translate-y-full' : ''} ${
+        className={`fixed inset-x-0 top-0 z-50 transform-gpu transition-[transform,background-color,color] duration-500 ease-[var(--ease-out-expo)] will-change-transform ${hidden && !open ? '-translate-y-full' : ''} ${
           light ? 'bg-cream/92 text-deep shadow-[0_1px_0_var(--color-line)] backdrop-blur-md' : 'bg-transparent text-cream'
         }`}
       >

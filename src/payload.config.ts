@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { s3Storage } from '@payloadcms/storage-s3'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { buildConfig } from 'payload'
 import sharp from 'sharp'
 
@@ -78,8 +79,16 @@ export default buildConfig({
   sharp,
   email: postmarkAdapter,
   plugins: [
+    // Photo storage: Cloudflare R2 (S3) if configured, else Vercel Blob, else local disk.
+    vercelBlobStorage({
+      enabled: features.storageProvider === 'vercel-blob',
+      // serve files straight from Vercel's CDN (media is public anyway)
+      collections: { media: { prefix: 'media', disablePayloadAccessControl: true } },
+      token: env.BLOB_READ_WRITE_TOKEN ?? '',
+      clientUploads: true,
+    }),
     s3Storage({
-      enabled: features.storage,
+      enabled: features.storageProvider === 's3',
       collections: { media: { prefix: 'media', generateFileURL: env.S3_PUBLIC_URL ? ({ filename, prefix }) => `${env.S3_PUBLIC_URL}/${prefix}/${filename}` : undefined } },
       bucket: env.S3_BUCKET ?? '',
       config: {

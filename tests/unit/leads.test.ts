@@ -84,3 +84,42 @@ describe('media URLs', () => {
     expect(localizeUrl('https://media.example.com/media/a.webp')).toBe('https://media.example.com/media/a.webp')
   })
 })
+
+describe('site URL', async () => {
+  const { resolveSiteUrl } = await import('@/lib/env')
+  it('prefers SITE_URL and trims the trailing slash', () => {
+    expect(resolveSiteUrl({ SITE_URL: 'https://nginatrails.com/', VERCEL_PROJECT_PRODUCTION_URL: 'x.vercel.app' })).toBe('https://nginatrails.com')
+  })
+  it('falls back to the Vercel production domain, never localhost', () => {
+    expect(resolveSiteUrl({ VERCEL_PROJECT_PRODUCTION_URL: 'animated-flasher.vercel.app', VERCEL_URL: 'abc.vercel.app' })).toBe('https://animated-flasher.vercel.app')
+    expect(resolveSiteUrl({ VERCEL_URL: 'abc.vercel.app' })).toBe('https://abc.vercel.app')
+    expect(resolveSiteUrl({})).toBeUndefined()
+  })
+})
+
+describe('header scroll behaviour', async () => {
+  const { nextHeaderState } = await import('@/components/site/headerState')
+  const run = (ys: number[]) => {
+    let s = { last: 0, anchor: 0, hidden: false, solid: false }
+    const out: boolean[] = []
+    for (const y of ys) {
+      s = nextHeaderState(s, y, 900)
+      out.push(s.hidden)
+    }
+    return out
+  }
+  it('does not flicker on tiny back-and-forth deltas while scrolling down', () => {
+    const ys: number[] = []
+    for (let y = 0; y < 900; y += 6) ys.push(y, Math.max(0, y - 2)) // jittery smooth-scroll from the top
+    const states = run(ys)
+    const flips = states.filter((h, i) => i > 0 && h !== states[i - 1]).length
+    expect(flips).toBe(1) // hides once, stays hidden
+  })
+  it('shows again after a clear scroll up, and always near the top', () => {
+    const states = run([400, 500, 600, 590, 575, 560, 100])
+    expect(states[2]).toBe(true)
+    expect(states[3]).toBe(true) // 10px up: still hidden
+    expect(states[5]).toBe(false) // 40px up: shown
+    expect(states[6]).toBe(false)
+  })
+})

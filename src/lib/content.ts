@@ -132,14 +132,14 @@ function destFromSample(d: (typeof S.sampleDestinations)[number]): DestinationVM
 const PUBLISHED = { _status: { equals: 'published' } } as const
 
 export const getSettings = cache(async (): Promise<SettingsVM> => {
-  const s = await q((p) => p.findGlobal({ slug: 'site-settings', depth: 0 }))
+  const s = await q((p) => p.findGlobal({ slug: 'site-settings', depth: 1 }))
   if (!s) return { ...S.sampleSettings, fromSample: true }
   const g = s as SiteSetting
   return {
     ...S.sampleSettings, ...(g as any), fromSample: false,
     address: { ...S.sampleSettings.address, ...(g.address ?? {}) },
     hours: (g.hours?.length ? g.hours : S.sampleSettings.hours) as any,
-    trust: (g.trust ?? []) as any, social: (g.social ?? []) as any,
+    trust: (g.trust ?? []).map((t) => ({ ...t, certificate: media(t.certificate as Media) })) as any, social: (g.social ?? []) as any,
   }
 })
 
