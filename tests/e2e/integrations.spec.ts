@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto'
 import { expect, test } from '@playwright/test'
 
 const email = process.env.E2E_ADMIN_EMAIL ?? 'admin@ngina.local'
@@ -10,14 +11,17 @@ test('integrations are admin-only and keys never come back in full', async ({ re
   test.skip(!password, 'needs the seeded admin password')
   const { token } = (await (await request.post('/api/users/login', { data: { email, password } })).json()) as { token: string }
   const headers = { Authorization: `JWT ${token}` }
-  const save = await request.post('/api/globals/integrations', { headers, data: { indexNow: { key: 'e2e0123456789abcdef0123456789abcd' }, google: { placesApiKey: 'AIzaE2E-not-a-real-key-1234' } } })
+  // throwaway values made up for this run (never real keys)
+  const indexNowKey = randomBytes(16).toString('hex')
+  const fakeApiKey = `test-only-${randomBytes(6).toString('hex')}-1234`
+  const save = await request.post('/api/globals/integrations', { headers, data: { indexNow: { key: indexNowKey }, google: { placesApiKey: fakeApiKey } } })
   expect(save.ok()).toBeTruthy()
   const read = (await (await request.get('/api/globals/integrations', { headers })).json()) as any
   expect(read.google.placesApiKey).toBe('••••••••1234')
   // saving the masked value back keeps the key; the public key file uses the stored IndexNow key
   await request.post('/api/globals/integrations', { headers, data: { google: { placesApiKey: read.google.placesApiKey } } })
   expect(((await (await request.get('/api/globals/integrations', { headers })).json()) as any).google.placesApiKey).toBe('••••••••1234')
-  await expect.poll(async () => (await request.get('/indexnow-key.txt')).text(), { timeout: 40_000, intervals: [2000] }).toBe('e2e0123456789abcdef0123456789abcd')
+  await expect.poll(async () => (await request.get('/indexnow-key.txt')).text(), { timeout: 40_000, intervals: [2000] }).toBe(indexNowKey)
   const t = (await (await request.post('/api/admin/integrations/test', { headers, data: { service: 'paystack' } })).json()) as { ok: boolean; message: string }
   expect(t.ok).toBe(false)
   expect(t.message).toMatch(/secret key/i)
