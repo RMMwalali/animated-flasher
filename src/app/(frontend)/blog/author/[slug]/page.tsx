@@ -22,7 +22,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const a = await authorData((await params).slug)
   if (!a) return {}
-  return pageMeta({ title: `${a.author.name}: guides and articles`, description: a.author.bio, path: `/journal/author/${a.author.slug}` })
+  return pageMeta({ title: `${a.author.name}: guides and articles`, description: a.author.bio, path: `/blog/author/${a.author.slug}` })
 }
 
 export default async function AuthorPage({ params }: Props) {
@@ -31,8 +31,8 @@ export default async function AuthorPage({ params }: Props) {
   const { author, posts } = a
   return (
     <>
-      <JsonLd data={{ '@context': 'https://schema.org', '@type': 'Person', name: author.name, jobTitle: author.role ?? undefined, description: author.bio, knowsAbout: author.expertise, url: new URL(`/journal/author/${author.slug}`, env.SITE_URL).toString(), worksFor: { '@id': new URL('/#organization', env.SITE_URL).toString() } }} />
-      <PageHero eyebrow="Author" title={author.name} intro={author.role} tone="cream" compact crumbs={[{ name: 'Journal', path: '/journal' }, { name: author.name, path: `/journal/author/${author.slug}` }]} />
+      <JsonLd data={{ '@context': 'https://schema.org', '@type': 'Person', name: author.name, jobTitle: author.role ?? undefined, description: author.bio, knowsAbout: author.expertise, url: new URL(`/blog/author/${author.slug}`, env.SITE_URL).toString(), worksFor: { '@id': new URL('/#organization', env.SITE_URL).toString() } }} />
+      <PageHero eyebrow="Author" title={author.name} intro={author.role} tone="cream" compact crumbs={[{ name: 'Blog', path: '/blog' }, { name: author.name, path: `/blog/author/${author.slug}` }]} />
       <section data-tone="cream" className="pb-24">
         <div className="gutter mx-auto grid max-w-5xl gap-12 md:grid-cols-[1fr_1.4fr]">
           <div>
@@ -43,7 +43,7 @@ export default async function AuthorPage({ params }: Props) {
           <ul className="border-t border-deep">
             {posts.map((p) => (
               <li key={p.slug} className="border-b border-line py-5">
-                <Link href={`/journal/${p.slug}`} className="font-display text-2xl link-u">{p.title}</Link>
+                <Link href={`/blog/${p.slug}`} className="font-display text-2xl link-u">{p.title}</Link>
                 <p className="mt-1 opacity-85">{p.excerpt}</p>
               </li>
             ))}

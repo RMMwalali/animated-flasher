@@ -7,7 +7,7 @@ export const MENU = [
   { href: '/experiences', label: 'Experiences', note: 'Dhows, balloons, forest walks' },
   { href: '/when-to-go', label: 'When to go', note: 'The seasons, month by month' },
   { href: '/our-story', label: 'Our story', note: 'A Diani Beach team' },
-  { href: '/journal', label: 'Journal', note: 'Guides and field notes' },
+  { href: '/blog', label: 'Blog', note: 'Guides and field notes' },
 ] as const
 
 export const LEGAL = [

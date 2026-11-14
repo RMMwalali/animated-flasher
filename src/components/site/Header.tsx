@@ -17,7 +17,7 @@ const LEFT = [
 ]
 const RIGHT = [
   { href: '/our-story', label: 'Our story' },
-  { href: '/journal', label: 'Journal' },
+  { href: '/blog', label: 'Blog' },
 ]
 
 /**

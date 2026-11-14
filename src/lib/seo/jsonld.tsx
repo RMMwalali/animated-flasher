@@ -92,8 +92,8 @@ export function article(p: PostVM) {
     description: p.excerpt,
     datePublished: p.publishedAt,
     dateModified: p.updatedAt ?? p.publishedAt,
-    mainEntityOfPage: abs(`/journal/${p.slug}`),
-    author: { '@type': 'Person', name: p.author.name, jobTitle: p.author.role ?? undefined, description: p.author.bio, knowsAbout: p.author.expertise, url: abs(`/journal/author/${p.author.slug}`) },
+    mainEntityOfPage: abs(`/blog/${p.slug}`),
+    author: { '@type': 'Person', name: p.author.name, jobTitle: p.author.role ?? undefined, description: p.author.bio, knowsAbout: p.author.expertise, url: abs(`/blog/author/${p.author.slug}`) },
     publisher: { '@id': ORG_ID() },
     image: p.heroImage?.url ? abs(p.heroImage.url) : abs('/brand/og-default.png'),
   }

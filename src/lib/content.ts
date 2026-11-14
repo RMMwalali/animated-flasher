@@ -242,7 +242,10 @@ export const getPosts = cache(async (): Promise<PostVM[]> => {
       publishedAt: d.publishedAt ?? d.createdAt, updatedAt: d.updatedAt, topics: d.topics ?? [], heroImage: media(d.heroImage as Media), sample: Boolean(d.sample), seo: seo(d.seo),
     }))
   if (res && !(await isEmptyDb())) return []
-  return S.samplePosts.map((d, i) => ({ ...d, faqs: [...d.faqs], topics: [...d.topics], author: authorFrom(null), publishedAt: new Date(Date.UTC(2026, 9, 1 + i * 10)).toISOString(), heroImage: null, sample: true }))
+  // newest first, like the database query; dates are illustrative
+  return S.samplePosts
+    .map(({ photo, ...d }, i) => ({ ...d, faqs: [...d.faqs], topics: [...d.topics], author: authorFrom(null), publishedAt: new Date(Date.UTC(2026, 6, 1 + i * 14)).toISOString(), heroImage: samplePhoto(photo), sample: true }))
+    .reverse()
 })
 
 export const getPost = cache(async (slug: string) => (await getPosts()).find((p) => p.slug === slug) ?? null)

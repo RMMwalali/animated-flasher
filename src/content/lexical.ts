@@ -6,9 +6,17 @@ const el = (type: string, children: Node[], extra: Node = {}): Node => ({ type, 
 
 export type RichBlock = string | { h2: string } | { h3: string } | { ul: string[] }
 
-/** `**bold**` inside strings is supported. */
+/** `**bold**` and `[link text](/path)` inside strings are supported. */
 function inline(s: string): Node[] {
-  return s.split(/(\*\*[^*]+\*\*)/g).filter(Boolean).map((part) => (part.startsWith('**') ? text(part.slice(2, -2), 1) : text(part)))
+  return s
+    .split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)\s]+\))/g)
+    .filter(Boolean)
+    .map((part) => {
+      if (part.startsWith('**')) return text(part.slice(2, -2), 1)
+      const link = /^\[([^\]]+)\]\(([^)\s]+)\)$/.exec(part)
+      if (link) return { ...el('link', [text(link[1]!)], { fields: { linkType: 'custom', url: link[2], newTab: false } }), version: 3 }
+      return text(part)
+    })
 }
 
 export function lexical(blocks: RichBlock[]) {

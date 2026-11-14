@@ -29,7 +29,7 @@ export async function GET() {
     `- [Kenya eTA guide](${u('/kenya-eta')}): who needs an Electronic Travel Authorisation and how to apply.`,
     `- [When to go](${u('/when-to-go')}): Kenya seasons month by month.`,
     `- [Wildlife guide](${u('/wildlife')})`,
-    ...posts.map((p) => `- [${p.title}](${u(`/journal/${p.slug}`)}): ${p.excerpt}`),
+    ...posts.map((p) => `- [${p.title}](${u(`/blog/${p.slug}`)}): ${p.excerpt}`),
     '',
     '## Optional',
     `- [Plan your trip / request to book](${u('/plan-your-trip')})`,

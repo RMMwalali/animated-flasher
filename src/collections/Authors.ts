@@ -5,7 +5,7 @@ import { sampleField, slugField } from '@/fields'
 export const Authors: CollectionConfig = {
   slug: 'authors',
   labels: { singular: 'Guide / author', plural: 'Guides & authors' },
-  admin: { useAsTitle: 'name', group: '04 Website', description: 'People who write journal articles and guides. Bios build trust with readers and search engines.' },
+  admin: { useAsTitle: 'name', group: '04 Website', description: 'People who write blog articles and guides. Bios build trust with readers and search engines.' },
   access: contentAccessNoDrafts,
   fields: [
     { name: 'name', type: 'text', required: true },
