@@ -43,15 +43,28 @@ export const sampleField: Field = {
   },
 }
 
+/** "Search & sharing" with a live Google preview built from the page's own fields. */
+export const seoFieldWith = (preview: { titleField: string; descriptionFields: string[]; basePath?: string; typePaths?: Record<string, string> }): Field => {
+  const base = seoField as Extract<Field, { type: 'group' }>
+  return {
+    ...base,
+    admin: { ...base.admin, description: 'Written automatically from this page. Fill in a field only to change what Google shows.' },
+    fields: [
+      { name: 'preview', type: 'ui', admin: { components: { Field: { path: '/components/admin/SearchPreview#SearchPreview', clientProps: preview } } } },
+      ...base.fields,
+    ],
+  } as Field
+}
+
 export const seoField: Field = {
   name: 'seo',
   type: 'group',
   label: 'Search & sharing',
   admin: { description: 'How this page appears on Google and when shared. Leave blank to use the defaults.' },
   fields: [
-    { name: 'title', type: 'text', maxLength: 70, admin: { description: 'Up to ~60 characters.' } },
-    { name: 'description', type: 'textarea', maxLength: 200, admin: { description: 'Up to ~155 characters.' } },
-    { name: 'image', type: 'upload', relationTo: 'media', admin: { description: 'Share image (1200×630).' } },
+    { name: 'title', type: 'text', maxLength: 70, label: 'Search title (optional)', admin: { description: 'Leave empty to use the page title. Up to ~60 characters.' } },
+    { name: 'description', type: 'textarea', maxLength: 200, label: 'Search description (optional)', admin: { description: 'Leave empty to use the summary. Up to ~155 characters.' } },
+    { name: 'image', type: 'upload', relationTo: 'media', label: 'Share image (optional)', admin: { description: 'Leave empty to use a generated image with the title (1200×630).' } },
     { name: 'noIndex', type: 'checkbox', defaultValue: false, label: 'Hide from search engines' },
   ],
 }

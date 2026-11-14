@@ -29,7 +29,7 @@ export function Chapter({ chapter, tone, n, flip = false }: { chapter: Ch; tone:
           <ol className="grid max-w-lg border-t border-current/40">
             {chapter.points.map((p, i) => (
               <li key={p.title} className="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-current/25 py-5" data-reveal style={{ ['--d' as string]: `${i * 0.08}s` }}>
-                <span className="tone-accent font-mono text-sm">{String(i + 1).padStart(2, '0')}</span>
+                <span className="tone-accent font-semibold tabular-nums text-sm">{String(i + 1).padStart(2, '0')}</span>
                 <span>
                   <span className="block font-display text-2xl font-medium leading-tight">{p.title}</span>
                   {p.text && <span className="mt-1 block opacity-85">{p.text}</span>}

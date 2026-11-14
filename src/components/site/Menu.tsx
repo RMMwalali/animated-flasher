@@ -51,7 +51,7 @@ export function Menu({ open, onClose, contact }: { open: boolean; onClose: () =>
               {MENU.map((m, i) => (
                 <li key={m.href} className="menu-item" style={{ ['--i' as string]: i }}>
                   <Link href={m.href} onClick={onClose} className="menu-link group flex items-baseline gap-4 py-1.5 sm:gap-6">
-                    <span className="hidden font-mono text-xs text-ochre sm:text-sm lg:inline">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="hidden font-semibold tabular-nums text-xs text-ochre sm:text-sm lg:inline">{String(i + 1).padStart(2, '0')}</span>
                     <span className="relative font-display text-[2rem] font-medium leading-none sm:text-5xl lg:text-6xl">
                       {m.label}
                       <Brush seed={m.label} draw={false} className="menu-brush absolute -bottom-2 left-0 h-3 w-full text-orange-300" />
@@ -79,13 +79,15 @@ export function Menu({ open, onClose, contact }: { open: boolean; onClose: () =>
                 <li><Link className="link-u inline-flex items-center gap-3" href="/contact" onClick={onClose}><Icon name="chat" size={20} />Send us a message</Link></li>
               </ul>
             </div>
-            {contact.hours.length > 0 && (
+            {contact.hours.length > 0 ? (
               <div>
                 <p className="eyebrow text-teal-300">Office hours (EAT)</p>
                 <ul className="mt-3 grid gap-1 text-cream/85">
                   {formatHours(contact.hours).map((h) => <li key={h}>{h}</li>)}
                 </ul>
               </div>
+            ) : (
+              <p className="text-cream/85">Enquire any time: we reply within 24 hours.</p>
             )}
             <div className="flex items-center gap-6">
               <ExploreButton />

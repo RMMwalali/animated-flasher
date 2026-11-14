@@ -79,6 +79,9 @@ export const Quotes: CollectionConfig = {
     { name: 'sentAt', type: 'date', admin: { readOnly: true, position: 'sidebar' } },
     { name: 'viewedAt', type: 'date', admin: { readOnly: true, position: 'sidebar' } },
     { name: 'acceptedAt', type: 'date', admin: { readOnly: true, position: 'sidebar' } },
+    { name: 'acceptedName', type: 'text', label: 'Accepted by (name typed)', admin: { readOnly: true, position: 'sidebar' } },
+    { name: 'declinedAt', type: 'date', admin: { readOnly: true, position: 'sidebar', condition: (d) => Boolean(d?.declinedAt) } },
+    { name: 'declineReason', type: 'textarea', label: 'Guest\'s reason for declining', admin: { readOnly: true, condition: (d) => Boolean(d?.declineReason) } },
     { name: 'booking', type: 'relationship', relationTo: 'bookings', admin: { readOnly: true, position: 'sidebar' } },
   ],
   hooks: { beforeChange: [onQuoteChange.before], afterChange: [onQuoteChange.after] },
@@ -144,6 +147,15 @@ export const Bookings: CollectionConfig = {
     },
     { name: 'notes', type: 'textarea' },
     { name: 'reviewRequested', type: 'checkbox', defaultValue: false, admin: { readOnly: true, position: 'sidebar' } },
+    { name: 'portalToken', type: 'text', index: true, admin: { hidden: true } },
+    {
+      name: 'emails', type: 'group', label: 'Emails to the guest', admin: { position: 'sidebar', description: 'Filled in automatically when each email goes out.' },
+      fields: [
+        { name: 'confirmationSentAt', type: 'date', label: 'Booking confirmation', admin: { readOnly: true } },
+        { name: 'balanceReminderSentAt', type: 'date', label: 'Balance reminder', admin: { readOnly: true } },
+        { name: 'etaReminderSentAt', type: 'date', label: 'eTA reminder', admin: { readOnly: true } },
+      ],
+    },
   ],
   hooks: { beforeChange: [onBookingChange.before], afterChange: [onBookingChange.after] },
 }

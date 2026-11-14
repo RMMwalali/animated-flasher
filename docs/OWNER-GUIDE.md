@@ -1,4 +1,4 @@
-# Owner guide: Ngina Trails & Safaris website and back office
+# Owner guide: Ngina Trails and Safaris website and back office
 
 This guide is for running the business, not for developers. You will not need to type any commands.
 
@@ -39,8 +39,8 @@ The left-hand menu is grouped and numbered. At the top is **Workspace**: the vie
 
 | Area | What it is for |
 | --- | --- |
-| **Quotes** | Build a quote from one of your journeys: pick the journey and save, and the day-by-day plan and starting prices fill in. Adjust lines, discount and deposit %. *(next update: PDF, email to guest, and an online "Accept" button that creates the booking automatically.)* |
-| **Bookings** | Confirmed trips: dates, travellers, total, deposit, balance and the suppliers used. The amount paid and balance update automatically from payments. |
+| **Quotes** | Build a quote from one of your journeys: pick the journey and save, and the day-by-day plan and starting prices fill in. Adjust lines, discount and deposit %. Then press **Send to guest** (see section 2A). **Copy guest link** / **Open guest page** show exactly what the guest sees. |
+| **Bookings** | Confirmed trips: dates, travellers, total, deposit, balance and the suppliers used. The amount paid and balance update automatically from payments. Buttons at the top: **Request deposit / balance** (emails the guest a pay link), **Request in KES (M-Pesa)** (for US$ bookings: enter today's rate and the guest gets an M-Pesa or card link in shillings), **Send confirmation** and **Copy trip page link**. |
 | **Travellers** | The people on each booking. Only collect what the trip needs. |
 | **Departures** | Scheduled trips with their guide and vehicle. |
 | **Suppliers** | Lodges, camps, drivers, guides, boats and vehicles, with rates and licence notes. |
@@ -49,7 +49,7 @@ The left-hand menu is grouped and numbered. At the top is **Workspace**: the vie
 
 | Area | What it is for |
 | --- | --- |
-| **Payments** | Every deposit and balance payment. Paystack payments (M-Pesa or card) are recorded automatically, and a receipt is emailed to the guest. Record bank transfers or cash as "manual". Tick **Reconciled** once you have matched a payment to your bank or Paystack statement. If a guest pays in KES for a US$ booking, enter the exchange rate and the booking is credited correctly. *(next update: one-click "Send deposit link" / "Send balance link" buttons.)* |
+| **Payments** | Every deposit and balance payment. Paystack payments (M-Pesa or card) are recorded automatically, and a receipt is emailed to the guest. Record bank transfers or cash as "manual". Tick **Reconciled** once you have matched a payment to your bank or Paystack statement. If a guest pays in KES for a US$ booking, enter the exchange rate and the booking is credited correctly. If a Paystack payment still shows "Waiting for guest", press **Check with Paystack**. |
 
 ### 04 Website
 
@@ -66,13 +66,21 @@ The left-hand menu is grouped and numbered. At the top is **Workspace**: the vie
 
 **Drafts.** Pages, journeys, destinations and articles can be saved as drafts; only **Publish** makes them visible. Publishing refreshes the website within seconds and notifies search engines.
 
+**Search & sharing (every page, journey, destination and article).** Each one shows a **Google preview** of exactly how it will appear in search. Everything is written automatically:
+- **Address:** made from the title.
+- **Title:** the page's own title; your business name is added when it fits.
+- **Description:** taken from the summary or excerpt and trimmed to Google's length.
+- **Share image:** made automatically with the title.
+
+Only fill in "Search title" or "Search description" to change what Google shows. Tick **Hide from search engines** to keep a page off Google and out of the sitemap. New pages you create appear in the sitemap automatically.
+
 ### 05 Team
 
 | Area | What it is for |
 | --- | --- |
 | **Team** | Who can log in. **Admin**: everything. **Sales agent**: leads, inbox, quotes, bookings, payments. **Content editor**: website content only. Untick **Active** to block someone without deleting their history. |
 | **Audit log** | Who changed what and when (admins only, cannot be edited). |
-| **Business settings** | Your contact details, address, opening hours, licences & memberships, review links and notification emails. |
+| **Business settings** | Your contact details, address and **map pin**, opening hours (optional: leave empty to show "Enquire any time"), profiles on other sites, licences & memberships, review links and notification emails. The **Search & Google** tab controls how the whole site appears on Google, Bing and AI assistants (see section 4G). |
 
 ---
 
@@ -88,6 +96,20 @@ Every button on the website that invites a guest to get in touch (the enquiry fo
 6. Emails the assigned agent.
 
 Spam is blocked quietly with a hidden trap field, a timing check, a limit of 5 enquiries per 10 minutes per connection and, optionally, Cloudflare Turnstile.
+
+## 2A. From quote to trip: what the guest sees
+
+1. **You send the quote.** In **Quotes**, press **Send to guest**. The guest gets an email with a private link to their trip plan: day by day, what is included, the price, deposit and balance. They can save it as a PDF or print it. When they open it, the quote shows as **Viewed**.
+2. **The guest accepts online.** They type their name, tick that they agree to your booking terms and press **Accept and book**. A **Booking** is created automatically (awaiting deposit), the lead moves along the pipeline, the guest gets a confirmation email and the team is emailed. If they press **No thanks**, the quote shows as **Declined** with their reason.
+3. **The guest pays the deposit** from their private **My trip** page, by card (US$) or by M-Pesa or card (KES bookings, or a KES link you send). Payments are checked with Paystack before they are recorded; the booking updates and a receipt is emailed automatically.
+4. **Every morning** the website does the routine work for you (needs `CRON_SECRET`, see section 4):
+   - quotes past their "valid until" date become **Expired** (send again to give the guest 14 more days);
+   - **balance reminder** once, 7 days before the balance due date (30 days before travel);
+   - **eTA reminder** once, 21 days before travel, with the official link;
+   - bookings move to **Travelling** on the first day and **Completed** the day after the trip, which schedules the review request (section 3).
+5. **The My trip page** always shows the plan, payments, balance, a "before you fly" checklist and how to reach you. The link is private: only share it with the guest.
+
+Your **Terms** page is linked from the Accept button: have it reviewed before you take real bookings (deposits, cancellations, refunds).
 
 ## 3. Reviews: how and why
 
@@ -112,7 +134,7 @@ The website already runs on Vercel. The back office (`/admin`) and the enquiry f
 5. Open `https://animated-flasher.vercel.app/admin` and **create your account**. The first account is always an Admin.
 6. Go to **Go-live setup → Sample content → Load sample content** to fill the site with the sample journeys, destinations and photos. Then edit or replace them; it never overwrites your own changes.
 
-Optional but recommended: in **Settings → Environment Variables** add `PAYLOAD_SECRET` (any long random text, e.g. from a password manager) and `CRON_SECRET` the same way, then redeploy. Without `PAYLOAD_SECRET` the site derives one from the database connection, which works but logs everyone out if the database password ever changes.
+Also in **Settings → Environment Variables** add `CRON_SECRET` (any long random text, e.g. from a password manager): it switches on the daily automation (reminders, quote expiry, review requests). Recommended: add `PAYLOAD_SECRET` the same way. Then redeploy. Without `PAYLOAD_SECRET` the site derives one from the database connection, which works but logs everyone out if the database password ever changes.
 
 When you move to your own domain (e.g. `nginatrails.com`), add `SITE_URL` with that address.
 
@@ -132,7 +154,7 @@ Once the back office is on:
 ### C. Email: Postmark
 
 7. Create a Postmark account and server. Add and verify your domain (Postmark shows the DNS records to add: DKIM and Return-Path).
-8. Set `POSTMARK_SERVER_TOKEN` (Server → API tokens) and `POSTMARK_FROM_EMAIL` (e.g. `Ngina Trails & Safaris <hello@nginatrails.com>`).
+8. Set `POSTMARK_SERVER_TOKEN` (Server → API tokens) and `POSTMARK_FROM_EMAIL` (e.g. `Ngina Trails and Safaris <hello@nginatrails.com>`).
 9. Guest replies: in Postmark, open the server's **Inbound** stream and copy the inbound address into `POSTMARK_INBOUND_ADDRESS`. Choose a username and long password for `POSTMARK_INBOUND_WEBHOOK_USER` and `POSTMARK_INBOUND_WEBHOOK_PASSWORD`, and set the inbound webhook URL to `https://USER:PASSWORD@yourdomain/api/webhooks/postmark-inbound` *(next update)*.
 
 ### D. Live chat: Pusher or Ably
@@ -142,7 +164,7 @@ Once the back office is on:
 ### E. Payments: Paystack (M-Pesa + card)
 
 11. Open a Paystack Kenya business account and complete verification (business registration and KRA PIN). Enable **M-Pesa** and **Cards**; ask Paystack to enable USD if you want to charge cards in dollars.
-12. Settings → API Keys & Webhooks: set `PAYSTACK_SECRET_KEY` and `PAYSTACK_PUBLIC_KEY`. Set the webhook URL to `https://yourdomain/api/webhooks/paystack` *(next update)*. Test with test keys first.
+12. Settings → API Keys & Webhooks: set `PAYSTACK_SECRET_KEY` and `PAYSTACK_PUBLIC_KEY`. Set the webhook URL to `https://yourdomain/api/webhooks/paystack`. Test with test keys first: send yourself a quote, accept it, and pay the deposit with Paystack's test card.
 
 ### F. Your domain (DNS)
 
@@ -151,9 +173,23 @@ Once the back office is on:
 
 ### G. Search and maps
 
+Everything here is in the back office: **Business settings**.
+- **Map pin.** In Google Maps, open your business (or the exact spot) and press **Share → Copy link**. Paste the link into **Business → Google Maps link** and save: the pin fills in by itself, and the Contact page shows the map.
+- **Search & Google tab:**
+  - **Site name:** the name Google shows above your results.
+  - **Home page description.**
+  - **Site icon:** the small square logo next to your name in Google and browser tabs. Use a square PNG of at least 512×512.
+  - **Default share image.**
+  - **Google and Bing verification codes:** paste the code or the whole tag; no DNS needed.
+  - **AI assistants** switch.
+  - **Hide from search engines** switch: only before launch.
+- **Profiles on other sites (Business tab).** Add your Google Business Profile, TripAdvisor, SafariBookings, Instagram and Facebook links. Search engines and AI assistants use them to confirm these are all you.
+- **The links under your result on Google ("sitelinks").** Google picks these itself; no website can set them. They come from a clear menu, breadcrumbs and distinct titles and descriptions on every page, which the website already has, plus time and traffic.
+
+
 15. **Google Search Console**: add your domain as a property (DNS verification), then submit `https://yourdomain/sitemap.xml` *(sitemap: next update)*.
 16. **Bing Webmaster Tools**: import from Google Search Console. Optionally set `INDEXNOW_KEY` so Bing is told about every page you publish *(key file: next update)*.
-17. **Google Business Profile**: create or claim "Ngina Trails & Safaris" at your Diani Beach address, with the same name, phone and hours as Business settings. Copy its **Ask for reviews** link into Business settings → Reviews.
+17. **Google Business Profile**: create or claim "Ngina Trails and Safaris" at your Diani Beach address, with the same name, phone and hours as Business settings. Copy its **Ask for reviews** link into Business settings → Reviews.
 
 ### H. Review sites
 

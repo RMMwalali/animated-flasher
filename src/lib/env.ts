@@ -101,6 +101,7 @@ export const features = {
   payments: Boolean(env.PAYSTACK_SECRET_KEY),
   turnstile: Boolean(env.TURNSTILE_SECRET_KEY && env.NEXT_PUBLIC_TURNSTILE_SITE_KEY),
   indexNow: Boolean(env.INDEXNOW_KEY),
+  dailyJob: Boolean(env.CRON_SECRET),
 }
 
 /** Human-readable list for the admin "setup" notices. */
@@ -111,6 +112,7 @@ export function missingFeatures(): { key: keyof typeof features; label: string; 
   if (!features.inboundEmail) list.push({ key: 'inboundEmail', label: 'Guest email replies (Postmark inbound): replies will not reach the inbox', vars: 'POSTMARK_INBOUND_WEBHOOK_USER, POSTMARK_INBOUND_WEBHOOK_PASSWORD, POSTMARK_INBOUND_ADDRESS' })
   if (features.realtime === 'none') list.push({ key: 'realtime', label: 'Real-time chat (Pusher or Ably): chat refreshes every few seconds instead', vars: 'PUSHER_APP_ID, PUSHER_KEY, PUSHER_SECRET, PUSHER_CLUSTER or ABLY_API_KEY' })
   if (!features.payments) list.push({ key: 'payments', label: 'Payments (Paystack: M-Pesa + card): payment links are disabled', vars: 'PAYSTACK_SECRET_KEY, PAYSTACK_PUBLIC_KEY' })
+  if (!features.dailyJob) list.push({ key: 'dailyJob', label: 'Daily automation (balance and eTA reminders, quote expiry, review requests): not running', vars: 'CRON_SECRET (any long random text)' })
   if (!features.turnstile) list.push({ key: 'turnstile', label: 'Cloudflare Turnstile (optional extra spam check)', vars: 'TURNSTILE_SECRET_KEY, NEXT_PUBLIC_TURNSTILE_SITE_KEY' })
   return list
 }

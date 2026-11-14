@@ -70,6 +70,6 @@ test('sitemap, robots and llms.txt', async ({ request }) => {
   for (const bot of ['GPTBot', 'OAI-SearchBot', 'ClaudeBot', 'PerplexityBot', 'Google-Extended', 'Bingbot']) expect(robots).toContain(bot)
   expect(robots).toContain('Disallow: /admin')
   const llms = await (await request.get('/llms.txt')).text()
-  expect(llms).toContain('# Ngina Trails & Safaris')
+  expect(llms).toContain('# Ngina Trails and Safaris')
   expect(llms).toContain('Kenya eTA guide')
 })

@@ -55,7 +55,7 @@ export function TripFilter({ trips, ctaPrefix }: { trips: TripVM[]; ctaPrefix: s
         <Select label="When" value={month} onChange={setMonth} options={MONTHS as unknown as readonly (readonly [string, string])[]} />
         <Select label="Length" value={length} onChange={setLength} options={LENGTHS as unknown as readonly (readonly [string, string])[]} />
         <Select label="Sort" value={sort} onChange={(v) => setSort(v as typeof sort)} options={[['order', 'Recommended'], ['price', 'Price'], ['days', 'Length']] as const} />
-        <p className="ml-auto font-mono text-xs uppercase tracking-[0.14em]" aria-live="polite">{shown.length} {shown.length === 1 ? 'journey' : 'journeys'}</p>
+        <p className="ml-auto font-semibold tabular-nums text-xs uppercase tracking-[0.06em]" aria-live="polite">{shown.length} {shown.length === 1 ? 'journey' : 'journeys'}</p>
       </div>
       {shown.length ? (
         <div className="mt-12 grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">

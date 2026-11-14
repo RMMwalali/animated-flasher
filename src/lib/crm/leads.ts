@@ -98,14 +98,14 @@ export async function captureEnquiry(payload: Payload, input: EnquiryInput) {
   const settings = await getSettings({ payload })
   const ack = await sendEmail({
     to: contact.email!,
-    subject: 'We have your enquiry · Ngina Trails & Safaris',
+    subject: 'We have your enquiry · Ngina Trails and Safaris',
     replyTo: threadReplyTo(threadKey),
     tag: 'enquiry-ack',
     content: {
       preheader: 'Thank you. A member of our Diani team will reply personally.',
       heading: `Thank you, ${contact.firstName}`,
       paragraphs: [
-        `We have received your enquiry${tripTitle ? ` about ${tripTitle}` : ''}. A member of our team in Diani Beach will reply personally, usually within ${settings.responseTime || 'one working day'}.`,
+        `We have received your enquiry${tripTitle ? ` about ${tripTitle}` : ''}. A member of our team in Diani Beach will reply personally, usually within ${settings.responseTime || '24 hours'}.`,
         'You can reply to this email to add anything else: dates, who is travelling, or questions.',
       ],
       facts: [

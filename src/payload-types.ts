@@ -456,19 +456,19 @@ export interface Trip {
       }[]
     | null;
   /**
-   * How this page appears on Google and when shared. Leave blank to use the defaults.
+   * Written automatically from this page. Fill in a field only to change what Google shows.
    */
   seo?: {
     /**
-     * Up to ~60 characters.
+     * Leave empty to use the page title. Up to ~60 characters.
      */
     title?: string | null;
     /**
-     * Up to ~155 characters.
+     * Leave empty to use the summary. Up to ~155 characters.
      */
     description?: string | null;
     /**
-     * Share image (1200×630).
+     * Leave empty to use a generated image with the title (1200×630).
      */
     image?: (number | null) | Media;
     noIndex?: boolean | null;
@@ -622,19 +622,19 @@ export interface Destination {
       }[]
     | null;
   /**
-   * How this page appears on Google and when shared. Leave blank to use the defaults.
+   * Written automatically from this page. Fill in a field only to change what Google shows.
    */
   seo?: {
     /**
-     * Up to ~60 characters.
+     * Leave empty to use the page title. Up to ~60 characters.
      */
     title?: string | null;
     /**
-     * Up to ~155 characters.
+     * Leave empty to use the summary. Up to ~155 characters.
      */
     description?: string | null;
     /**
-     * Share image (1200×630).
+     * Leave empty to use a generated image with the title (1200×630).
      */
     image?: (number | null) | Media;
     noIndex?: boolean | null;
@@ -834,6 +834,15 @@ export interface Booking {
     | null;
   notes?: string | null;
   reviewRequested?: boolean | null;
+  portalToken?: string | null;
+  /**
+   * Filled in automatically when each email goes out.
+   */
+  emails?: {
+    confirmationSentAt?: string | null;
+    balanceReminderSentAt?: string | null;
+    etaReminderSentAt?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -891,6 +900,9 @@ export interface Quote {
   sentAt?: string | null;
   viewedAt?: string | null;
   acceptedAt?: string | null;
+  acceptedName?: string | null;
+  declinedAt?: string | null;
+  declineReason?: string | null;
   booking?: (number | null) | Booking;
   updatedAt: string;
   createdAt: string;
@@ -1183,19 +1195,19 @@ export interface Page {
    */
   sample?: boolean | null;
   /**
-   * How this page appears on Google and when shared. Leave blank to use the defaults.
+   * Written automatically from this page. Fill in a field only to change what Google shows.
    */
   seo?: {
     /**
-     * Up to ~60 characters.
+     * Leave empty to use the page title. Up to ~60 characters.
      */
     title?: string | null;
     /**
-     * Up to ~155 characters.
+     * Leave empty to use the summary. Up to ~155 characters.
      */
     description?: string | null;
     /**
-     * Share image (1200×630).
+     * Leave empty to use a generated image with the title (1200×630).
      */
     image?: (number | null) | Media;
     noIndex?: boolean | null;
@@ -1323,19 +1335,19 @@ export interface Post {
    */
   sample?: boolean | null;
   /**
-   * How this page appears on Google and when shared. Leave blank to use the defaults.
+   * Written automatically from this page. Fill in a field only to change what Google shows.
    */
   seo?: {
     /**
-     * Up to ~60 characters.
+     * Leave empty to use the page title. Up to ~60 characters.
      */
     title?: string | null;
     /**
-     * Up to ~155 characters.
+     * Leave empty to use the summary. Up to ~155 characters.
      */
     description?: string | null;
     /**
-     * Share image (1200×630).
+     * Leave empty to use a generated image with the title (1200×630).
      */
     image?: (number | null) | Media;
     noIndex?: boolean | null;
@@ -1824,6 +1836,9 @@ export interface QuotesSelect<T extends boolean = true> {
   sentAt?: T;
   viewedAt?: T;
   acceptedAt?: T;
+  acceptedName?: T;
+  declinedAt?: T;
+  declineReason?: T;
   booking?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1864,6 +1879,14 @@ export interface BookingsSelect<T extends boolean = true> {
       };
   notes?: T;
   reviewRequested?: T;
+  portalToken?: T;
+  emails?:
+    | T
+    | {
+        confirmationSentAt?: T;
+        balanceReminderSentAt?: T;
+        etaReminderSentAt?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2483,9 +2506,23 @@ export interface SiteSetting {
      * Two-letter code.
      */
     country?: string | null;
+    /**
+     * Open your business (or your exact spot) in Google Maps, press Share → Copy link, and paste it here. The map pin below fills in automatically when you save.
+     */
+    googleMapsUrl?: string | null;
+    /**
+     * Filled from the link. Or right-click the spot in Google Maps and click the numbers to copy them.
+     */
     lat?: number | null;
     lng?: number | null;
+    /**
+     * The map only loads when a visitor clicks it (no Google cookies before that).
+     */
+    showMap?: boolean | null;
   };
+  /**
+   * Optional. Leave empty to show "Enquire any time · we reply within …" instead of office hours.
+   */
   hours?:
     | {
         days: ('Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday')[];
@@ -2495,16 +2532,67 @@ export interface SiteSetting {
       }[]
     | null;
   /**
-   * Shown in acknowledgement emails: "usually within …"
+   * Shown on the website and in emails: "we reply within …", e.g. 24 hours.
    */
   responseTime?: string | null;
+  /**
+   * Your Google Business Profile, TripAdvisor, SafariBookings and social pages. Search engines and AI assistants use these to confirm they are all the same business.
+   */
   social?:
     | {
-        platform: 'instagram' | 'facebook' | 'tiktok' | 'youtube' | 'tripadvisor' | 'google';
+        platform:
+          | 'google'
+          | 'tripadvisor'
+          | 'safaribookings'
+          | 'instagram'
+          | 'facebook'
+          | 'tiktok'
+          | 'youtube'
+          | 'linkedin'
+          | 'x'
+          | 'other';
         url: string;
         id?: string | null;
       }[]
     | null;
+  search?: {
+    /**
+     * The name shown above your results on Google. Leave empty to use the business name.
+     */
+    siteName?: string | null;
+    /**
+     * Optional short name, e.g. "Ngina Safaris".
+     */
+    alternateName?: string | null;
+    /**
+     * Shown under your home page on Google (about 155 characters). Other pages describe themselves automatically.
+     */
+    defaultDescription?: string | null;
+    /**
+     * The small square logo next to your name in Google results and browser tabs. Square PNG, at least 512×512. Leave empty to use the elephant.
+     */
+    siteIcon?: (number | null) | Media;
+    /**
+     * Used when the home page is shared on WhatsApp or social media (1200×630). Other pages make their own.
+     */
+    shareImage?: (number | null) | Media;
+    /**
+     * Search Console → Add property → URL prefix → HTML tag. Paste only the code inside content="…", or the whole tag.
+     */
+    googleVerification?: string | null;
+    /**
+     * Bing Webmaster Tools → Add site → HTML Meta Tag. Paste the code or the whole tag.
+     */
+    bingVerification?: string | null;
+    /**
+     * Recommended: they can only recommend you if they can read your pages.
+     */
+    allowAiCrawlers?: boolean | null;
+    /**
+     * Only for testing or before launch. While ticked, Google and Bing are asked to drop every page.
+     */
+    hideFromSearch?: boolean | null;
+  };
   /**
    * Shown on the Licences & memberships page, journey pages and the footer. Expired items are hidden automatically.
    */
@@ -2733,8 +2821,10 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         region?: T;
         postalCode?: T;
         country?: T;
+        googleMapsUrl?: T;
         lat?: T;
         lng?: T;
+        showMap?: T;
       };
   hours?:
     | T
@@ -2751,6 +2841,19 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         platform?: T;
         url?: T;
         id?: T;
+      };
+  search?:
+    | T
+    | {
+        siteName?: T;
+        alternateName?: T;
+        defaultDescription?: T;
+        siteIcon?: T;
+        shareImage?: T;
+        googleVerification?: T;
+        bingVerification?: T;
+        allowAiCrawlers?: T;
+        hideFromSearch?: T;
       };
   trust?:
     | T

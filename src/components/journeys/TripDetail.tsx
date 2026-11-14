@@ -56,7 +56,7 @@ export async function TripDetail({ trip }: { trip: TripVM }) {
                 <ol className="mt-6 grid gap-0 border-t border-deep/60 sm:grid-cols-2 sm:gap-x-10">
                   {trip.highlights.map((h, i) => (
                     <li key={h} className="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-line py-4" data-reveal style={{ ['--d' as string]: `${i * 0.05}s` }}>
-                      <span className="font-mono text-sm text-orange-600">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="font-semibold tabular-nums text-sm text-orange-600">{String(i + 1).padStart(2, '0')}</span>
                       <span className="text-lg">{h}</span>
                     </li>
                   ))}
@@ -70,11 +70,11 @@ export async function TripDetail({ trip }: { trip: TripVM }) {
                 <ol className="relative mt-8 grid gap-10 border-l border-deep/30 pl-8">
                   {trip.itinerary.map((d, i) => (
                     <li key={i} className="relative" data-reveal>
-                      <span className="absolute -left-[3.05rem] top-0 grid size-9 place-items-center rounded-full bg-deep font-mono text-xs text-cream">{i + 1}</span>
+                      <span className="absolute -left-[3.05rem] top-0 grid size-9 place-items-center rounded-full bg-deep font-semibold tabular-nums text-xs text-cream">{i + 1}</span>
                       <p className="eyebrow text-teal-ink">Day {i + 1}</p>
                       <h3 className="mt-1 font-display text-2xl font-medium">{d.title}</h3>
                       {d.description && <p className="mt-2 text-lg leading-relaxed">{d.description}</p>}
-                      <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs uppercase tracking-[0.12em] text-deep/85">
+                      <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 font-semibold tabular-nums text-xs uppercase tracking-[0.06em] text-deep/85">
                         {d.overnight && <span className="inline-flex items-center gap-1.5"><Icon name="bed" size={14} />{d.overnight}</span>}
                         {d.meals?.length ? <span className="inline-flex items-center gap-1.5"><Icon name="sun" size={14} />{d.meals.map((m) => MEALS[m] ?? m).join(', ')}</span> : null}
                         {d.drive && <span className="inline-flex items-center gap-1.5"><Icon name="vehicle" size={14} />{d.drive}</span>}

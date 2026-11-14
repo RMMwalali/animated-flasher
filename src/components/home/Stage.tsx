@@ -137,7 +137,7 @@ export function Stage({ slides, seconds, film, title, children }: Props) {
               <button type="button" onClick={() => go(-1)} className="grid size-11 place-items-center rounded-full hover:bg-cream/10" aria-label="Previous scene">
                 <Icon name="chevron-left" size={18} />
               </button>
-              <span className="font-mono text-xs tracking-[0.2em]" aria-live="off">
+              <span className="font-semibold tabular-nums text-xs tracking-[0.06em]" aria-live="off">
                 <span className="text-ochre">{String(i + 1).padStart(2, '0')}</span> / {String(n).padStart(2, '0')}
               </span>
               <button type="button" onClick={() => go(1)} className="grid size-11 place-items-center rounded-full hover:bg-cream/10" aria-label="Next scene">
@@ -154,7 +154,7 @@ export function Stage({ slides, seconds, film, title, children }: Props) {
           <svg viewBox={brandPaths.acacia.box.join(' ')} className="w-16 text-ochre transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:-translate-y-1 sm:w-20" aria-hidden="true">
             <path d={brandPaths.acacia.d} fill="currentColor" fillRule="evenodd" />
           </svg>
-          <span className="relative mb-4 font-mono text-xs uppercase tracking-[0.28em] sm:text-sm">
+          <span className="relative mb-4 font-semibold tabular-nums text-xs uppercase tracking-[0.06em] sm:text-sm">
             Explore Ngina
             <Brush seed="Explore Ngina" draw={false} className="emphasis-brush absolute -bottom-2 left-0 h-2 w-full" />
           </span>

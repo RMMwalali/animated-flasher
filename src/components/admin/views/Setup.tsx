@@ -26,6 +26,7 @@ export async function SetupView(props: AdminViewServerProps) {
               { label: 'Payments (Paystack: M-Pesa + card)', status: features.payments ? ok : todo, meta: 'PAYSTACK_*' },
               { label: 'Spam check (Cloudflare Turnstile, optional)', status: features.turnstile ? ok : { label: 'Optional', tone: 'neutral' }, meta: 'TURNSTILE_*' },
               { label: 'Search engine ping (IndexNow)', status: features.indexNow ? ok : { label: 'Optional', tone: 'neutral' }, meta: 'INDEXNOW_KEY' },
+              { label: 'Daily automation (reminders, quote expiry, reviews)', status: features.dailyJob ? ok : { label: 'Not running', tone: 'ochre' }, meta: 'CRON_SECRET' },
             ]}
           />
           {missing.length === 0 && <p className="ng-empty">Everything is connected.</p>}

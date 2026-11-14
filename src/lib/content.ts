@@ -43,7 +43,7 @@ export type HomeVM = Omit<typeof S.sampleHome, 'stage' | 'welcome'> & {
   coast: typeof S.sampleHome.coast & { image?: MediaVM | null; video?: MediaVM | null }
   safari: typeof S.sampleHome.safari & { image?: MediaVM | null; video?: MediaVM | null }
 }
-export type SettingsVM = typeof S.sampleSettings & { fromSample: boolean }
+export type SettingsVM = typeof S.sampleSettings & { fromSample: boolean; search: typeof S.sampleSettings.search & { siteIcon?: MediaVM | null; shareImage?: MediaVM | null } }
 
 // ---------- payload access ----------
 let failedAt = 0
@@ -138,8 +138,13 @@ export const getSettings = cache(async (): Promise<SettingsVM> => {
   return {
     ...S.sampleSettings, ...(g as any), fromSample: false,
     address: { ...S.sampleSettings.address, ...(g.address ?? {}) },
-    hours: (g.hours?.length ? g.hours : S.sampleSettings.hours) as any,
+    hours: (g.hours ?? []) as any,
     trust: (g.trust ?? []).map((t) => ({ ...t, certificate: media(t.certificate as Media) })) as any, social: (g.social ?? []) as any,
+    search: {
+      ...S.sampleSettings.search,
+      ...Object.fromEntries(Object.entries(g.search ?? {}).filter(([, v]) => v != null && v !== '')),
+      siteIcon: media(g.search?.siteIcon as Media), shareImage: media(g.search?.shareImage as Media),
+    } as SettingsVM['search'],
   }
 })
 
@@ -257,6 +262,14 @@ export const getPage = cache(async (slug: string): Promise<PageVM | null> => {
   if (res && !(await isEmptyDb())) return null
   const s = S.samplePages.find((p) => p.slug === slug)
   return s ? { ...s, hero: { ...s.hero }, layout: s.layout as any[], sample: true } : null
+})
+
+/** Every published page (for the sitemap and pre-rendering), including ones the owner adds. */
+export const getPages = cache(async (): Promise<{ slug: string; updatedAt?: string; noIndex: boolean }[]> => {
+  const res = await q((p) => p.find({ collection: 'pages', depth: 0, limit: 500, where: PUBLISHED, select: { slug: true, updatedAt: true, seo: true } as any }))
+  if (res && res.docs.length) return (res.docs as Page[]).map((d) => ({ slug: d.slug, updatedAt: d.updatedAt, noIndex: Boolean(d.seo?.noIndex) }))
+  if (res && !(await isEmptyDb())) return []
+  return S.samplePages.map((p) => ({ slug: p.slug, noIndex: false }))
 })
 
 /** True when the database is reachable but has never been seeded. */

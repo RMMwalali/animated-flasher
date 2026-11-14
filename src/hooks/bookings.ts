@@ -1,5 +1,5 @@
 import type { CollectionAfterChangeHook, CollectionBeforeChangeHook } from 'payload'
-import { bookingReference } from '@/lib/ids'
+import { bookingReference, token } from '@/lib/ids'
 import { roundMoney, type Currency } from '@/lib/pricing'
 import { advanceLeadStatus, type LeadStatus } from '@/lib/crm/stages'
 import { scheduleReviewRequest } from '@/lib/crm/reviews'
@@ -8,6 +8,8 @@ const idOf = (v: unknown) => (v && typeof v === 'object' ? (v as { id: number })
 
 const before: CollectionBeforeChangeHook = ({ data, operation, originalDoc }) => {
   if (operation === 'create') data.reference ??= bookingReference()
+  // private link to the guest's "My trip" page
+  if (!data.portalToken && !originalDoc?.portalToken) data.portalToken = token()
   const total = data.total ?? originalDoc?.total ?? 0
   const paid = data.amountPaid ?? originalDoc?.amountPaid ?? 0
   data.balanceDue = roundMoney(Math.max(0, total - paid), (data.currency ?? 'USD') as Currency)

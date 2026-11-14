@@ -5,7 +5,7 @@ import { env, features } from '@/lib/env'
 export const postmarkAdapter: EmailAdapter = () => ({
   name: 'postmark',
   defaultFromAddress: env.POSTMARK_FROM_EMAIL ?? 'no-reply@localhost',
-  defaultFromName: 'Ngina Trails & Safaris',
+  defaultFromName: 'Ngina Trails and Safaris',
   async sendEmail(message) {
     const to = Array.isArray(message.to) ? message.to.join(',') : String(message.to)
     if (!features.email) {

@@ -69,7 +69,7 @@ export function Journeys({ trips, copy = {} }: { trips: TripVM[]; copy?: Copy })
             {copy.intro && <p className="mt-4 max-w-[46ch] text-cream/80 lg:hidden">{copy.intro}</p>}
           </div>
           <div className="flex items-center gap-4">
-            <p className="font-mono text-sm tracking-widest" aria-live="polite">
+            <p className="font-semibold tabular-nums text-sm tracking-[0.06em]" aria-live="polite">
               <span className="text-ochre">{String(i + 1).padStart(2, '0')}</span> / {String(total).padStart(2, '0')}
             </p>
             <button type="button" onClick={() => go(-1)} disabled={i === 0} className="grid size-12 place-items-center rounded-full border border-cream/50 disabled:opacity-35" aria-label="Previous journey">

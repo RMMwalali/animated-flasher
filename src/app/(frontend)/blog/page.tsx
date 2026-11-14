@@ -28,7 +28,7 @@ export default async function BlogPage() {
     <>
       <JsonLd
         data={{
-          '@context': 'https://schema.org', '@type': 'Blog', name: 'Ngina Trails & Safaris blog', url: abs('/blog'),
+          '@context': 'https://schema.org', '@type': 'Blog', name: 'Ngina Trails and Safaris blog', url: abs('/blog'),
           publisher: { '@id': abs('/#organization') },
           blogPost: posts.map((p) => ({ '@type': 'BlogPosting', headline: p.title, url: abs(`/blog/${p.slug}`), datePublished: p.publishedAt, author: { '@type': 'Person', name: p.author.name } })),
         }}

@@ -1,5 +1,5 @@
 /**
- * SAMPLE CONTENT: realistic starter content for Ngina Trails & Safaris.
+ * SAMPLE CONTENT: realistic starter content for Ngina Trails and Safaris.
  * Everything is flagged `sample: true` in the CMS. Facts about places are
  * real (park areas, altitudes, UNESCO listings); prices, itineraries and
  * contact details are placeholders for the owner to replace.
@@ -13,17 +13,15 @@ const DRY: M[] = ['jan', 'feb', 'mar', 'jun', 'jul', 'aug', 'sep', 'oct']
 const COAST_BEST: M[] = ['jan', 'feb', 'mar', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
 
 export const sampleSettings = {
-  businessName: 'Ngina Trails & Safaris',
+  businessName: 'Ngina Trails and Safaris',
   tagline: 'Safaris and coastal journeys from Diani Beach, Kenya',
-  email: '',
-  phone: '',
-  whatsapp: '',
-  address: { street: '', locality: 'Diani Beach', region: 'Kwale County', postalCode: '', country: 'KE', lat: -4.3167, lng: 39.5833 },
-  hours: [
-    { days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '08:00', closes: '18:00' },
-    { days: ['Saturday'], opens: '09:00', closes: '14:00' },
-  ],
-  responseTime: 'one working day',
+  email: 'cngina35@gmail.com',
+  phone: '+254 720 972 512',
+  whatsapp: '+254 720 972 512',
+  address: { street: '', locality: 'Diani Beach', region: 'Kwale County', postalCode: '', country: 'KE', lat: -4.3167, lng: 39.5833, googleMapsUrl: '', showMap: true },
+  // No fixed office hours: guests from every time zone can enquire any time.
+  hours: [] as { days: string[]; opens: string; closes: string }[],
+  responseTime: '24 hours',
   social: [] as { platform: string; url: string }[],
   trust: [
     {
@@ -55,7 +53,16 @@ export const sampleSettings = {
       { name: 'SafariBookings', url: '', enabled: true },
     ],
   },
-  notifications: { teamEmails: '' },
+  notifications: { teamEmails: 'cngina35@gmail.com' },
+  search: {
+    siteName: '',
+    alternateName: 'Ngina Safaris',
+    defaultDescription: 'Diani Beach tour operator: safaris to Tsavo, Amboseli and the Maasai Mara, Kisite-Mpunguti dhow days, Lamu, Mombasa and Mount Kenya treks.',
+    googleVerification: '',
+    bingVerification: '',
+    allowAiCrawlers: true,
+    hideFromSearch: false,
+  },
   defaultDepositPercent: 30,
   showSampleBanner: true,
 }
@@ -658,7 +665,7 @@ const legal = (title: string, paras: (string | { h2: string } | { ul: string[] }
 export const samplePages = [
   {
     title: 'Our story', slug: 'our-story',
-    hero: { eyebrow: 'Diani Beach, Kenya', statement: 'Born on the coast, at home in the wild.', emphasis: 'wild', intro: 'Ngina Trails & Safaris is a small team based in Diani Beach. This page is sample content: tell your own story here.', tone: 'night' },
+    hero: { eyebrow: 'Diani Beach, Kenya', statement: 'Born on the coast, at home in the wild.', emphasis: 'wild', intro: 'Ngina Trails and Safaris is a small team based in Diani Beach. This page is sample content: tell your own story here.', tone: 'night' },
     layout: [
       { blockType: 'statement', eyebrow: '01 · Where we are', text: 'We plan every journey from Diani, where the reef meets the forest.', emphasis: 'Diani', tone: 'cream' },
       { blockType: 'textMedia', eyebrow: '02 · How we travel', heading: 'Small groups, private vehicles, people we know.', body: 'We work with drivers, guides, lodges and boat crews we have travelled with ourselves. Replace this with your own story: how Ngina started and what you care about.', imageSide: 'right', tone: 'coast' },
@@ -727,7 +734,7 @@ export const samplePages = [
   },
   ...[
     legal('Privacy policy', [
-      'SAMPLE TEXT: have this reviewed by a lawyer before launch. This policy explains how Ngina Trails & Safaris ("we") handles personal data under the Kenya Data Protection Act, 2019 and, for visitors from Europe, the GDPR.',
+      'SAMPLE TEXT: have this reviewed by a lawyer before launch. This policy explains how Ngina Trails and Safaris ("we") handles personal data under the Kenya Data Protection Act, 2019 and, for visitors from Europe, the GDPR.',
       { h2: 'What we collect' },
       { ul: ['Details you give us: name, email, phone, country, travel dates and preferences, and messages.', 'Booking details for the people travelling, limited to what the trip requires.', 'Payment confirmations from our payment provider (we never see or store full card numbers).', 'Basic analytics only if you accept them in the cookie banner.'] },
       { h2: 'Why we use it' },

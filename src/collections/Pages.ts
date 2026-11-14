@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { contentAccess } from '@/access'
 import { pageBlocks } from '@/blocks'
-import { sampleField, seoField, slugField } from '@/fields'
+import { sampleField, seoFieldWith, slugField } from '@/fields'
 import { revalidateAfterChange } from '@/hooks/revalidate'
 
 export const Pages: CollectionConfig = {
@@ -35,7 +35,7 @@ export const Pages: CollectionConfig = {
     },
     { name: 'layout', type: 'blocks', blocks: pageBlocks },
     sampleField,
-    seoField,
+    seoFieldWith({ titleField: 'title', descriptionFields: ['hero.intro', 'hero.statement'], basePath: '/' }),
   ],
   hooks: { afterChange: [revalidateAfterChange((doc) => [`/${doc.slug}`])] },
 }

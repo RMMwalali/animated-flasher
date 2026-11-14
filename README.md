@@ -1,6 +1,6 @@
-# Ngina Trails & Safaris: website + back office
+# Ngina Trails and Safaris: website + back office
 
-Public marketing site and admin/CRM for **Ngina Trails & Safaris, Diani Beach, Kenya**, in one Next.js app with Payload CMS.
+Public marketing site and admin/CRM for **Ngina Trails and Safaris, Diani Beach, Kenya**, in one Next.js app with Payload CMS.
 
 - **Public site** (`/`): cinematic, mobile-first, SEO/GEO ready. Next.js App Router, Tailwind CSS v4, Headless UI, GSAP + ScrollTrigger, Lenis.
 - **Admin** (`/admin`): Payload CMS 3 with a custom text-and-icon theme and custom views: Overview, Inbox, Leads pipeline, Departures calendar, Go-live setup.

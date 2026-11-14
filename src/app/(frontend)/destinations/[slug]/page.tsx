@@ -59,7 +59,7 @@ export default async function DestinationPage({ params }: Props) {
                 <ol className="mt-6 border-t border-deep/60">
                   {d.highlights.map((h, i) => (
                     <li key={h} className="grid grid-cols-[2.5rem_1fr] gap-2 border-b border-line py-4 text-lg" data-reveal>
-                      <span className="font-mono text-sm text-orange-600">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="font-semibold tabular-nums text-sm text-orange-600">{String(i + 1).padStart(2, '0')}</span>
                       {h}
                     </li>
                   ))}

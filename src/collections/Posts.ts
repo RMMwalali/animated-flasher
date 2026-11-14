@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { contentAccess } from '@/access'
-import { faqsField, sampleField, seoField, slugField } from '@/fields'
+import { faqsField, sampleField, seoFieldWith, slugField } from '@/fields'
 import { revalidateAfterChange } from '@/hooks/revalidate'
 
 export const Posts: CollectionConfig = {
@@ -21,7 +21,7 @@ export const Posts: CollectionConfig = {
     { name: 'topics', type: 'select', hasMany: true, admin: { position: 'sidebar' }, options: ['safari', 'coast', 'wildlife', 'planning', 'culture', 'marine'] },
     { name: 'related', type: 'relationship', relationTo: ['trips', 'destinations'], hasMany: true, admin: { position: 'sidebar' } },
     sampleField,
-    seoField,
+    seoFieldWith({ titleField: 'title', descriptionFields: ['excerpt'], basePath: '/blog/' }),
   ],
   hooks: { afterChange: [revalidateAfterChange((doc) => [`/blog/${doc.slug}`, '/blog'])] },
 }

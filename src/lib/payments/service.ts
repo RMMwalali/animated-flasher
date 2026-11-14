@@ -51,6 +51,7 @@ async function sendReceipt(req: PayloadRequest, payment: any, booking: any, bala
         ['Date', new Date(payment.paidAt ?? Date.now()).toLocaleDateString('en-GB', { dateStyle: 'long' })],
         ['Balance remaining', formatMoney(balance, booking.currency)],
       ],
+      button: booking.portalToken ? { label: 'Open my trip page', href: `${env.SITE_URL}/trip/${booking.portalToken}` } : undefined,
     },
   })
 }

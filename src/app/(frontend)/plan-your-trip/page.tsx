@@ -22,7 +22,7 @@ export default async function PlanPage({ searchParams }: Props) {
         eyebrow={initial ? 'Request to book' : 'Plan your trip'}
         title={initial ? `Request to book ${initial.title}.` : 'Tell us where your journey begins.'}
         emphasis={initial ? 'book' : 'begins'}
-        intro={initial ? 'Choose your dates and tell us who is travelling. We check availability and send your confirmed price. Nothing is charged until you accept.' : 'Five short steps. We reply personally, usually within one working day, with a plan and a clear price.'}
+        intro={initial ? 'Choose your dates and tell us who is travelling. We check availability and send your confirmed price. Nothing is charged until you accept.' : 'Five short steps. We reply personally, usually within 24 hours, with a plan and a clear price.'}
         tone="cream"
         compact
         crumbs={[{ name: 'Plan your trip', path: '/plan-your-trip' }]}

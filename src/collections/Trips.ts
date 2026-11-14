@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { contentAccess } from '@/access'
-import { bestMonthsField, faqsField, keyFactsField, sampleField, seoField, slugField } from '@/fields'
+import { bestMonthsField, faqsField, keyFactsField, sampleField, seoFieldWith, slugField } from '@/fields'
 import { revalidateAfterChange } from '@/hooks/revalidate'
 
 export const TRIP_TYPES = [
@@ -97,7 +97,7 @@ export const Trips: CollectionConfig = {
           ],
         },
         { label: 'Q&A', fields: [faqsField] },
-        { label: 'SEO', fields: [seoField] },
+        { label: 'SEO', fields: [seoFieldWith({ titleField: 'title', descriptionFields: ['summary'], typePaths: { safari: '/safaris/', coastal: '/coastal-tours/', walking: '/walking-and-mountain/' } })] },
       ],
     },
     sampleField,

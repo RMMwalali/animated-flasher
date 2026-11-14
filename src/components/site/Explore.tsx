@@ -10,7 +10,7 @@ export function ExploreButton({ href = '/destinations', label = 'Explore', class
         <defs>
           <path id="explore-ring" d="M50 50 m -38 0 a 38 38 0 1 1 76 0 a 38 38 0 1 1 -76 0" />
         </defs>
-        <text className="fill-current font-mono text-[10px] uppercase">
+        <text className="fill-current font-semibold tabular-nums text-[10px] uppercase">
           <textPath href="#explore-ring" textLength="238" lengthAdjust="spacingAndGlyphs">{ring}</textPath>
         </text>
       </svg>
