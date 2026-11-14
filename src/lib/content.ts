@@ -139,6 +139,8 @@ export const getSettings = cache(async (): Promise<SettingsVM> => {
     ...S.sampleSettings, ...(g as any), fromSample: false,
     address: { ...S.sampleSettings.address, ...(g.address ?? {}) },
     hours: (g.hours ?? []) as any,
+    bankAccounts: (g.bankAccounts ?? []) as any,
+    mpesa: { paybill: g.mpesa?.paybill ?? '', till: g.mpesa?.till ?? '' },
     trust: (g.trust ?? []).map((t) => ({ ...t, certificate: media(t.certificate as Media) })) as any, social: (g.social ?? []) as any,
     search: {
       ...S.sampleSettings.search,
@@ -166,6 +168,7 @@ export const getHome = cache(async (): Promise<HomeVM> => {
     heroImage: media(h.heroImage as Media), heroVideo: media(h.heroVideo as Media),
     coast: ch(h.coast, S.sampleHome.coast) as HomeVM['coast'], safari: ch(h.safari, S.sampleHome.safari) as HomeVM['safari'],
     seasons: (h.seasons?.length ? h.seasons : S.sampleHome.seasons) as any,
+    tiktokVideos: (h.tiktokVideos ?? []).map((v) => ({ url: v.url })),
     welcome: {
       soundNote: h.welcome?.soundNote || S.sampleHome.welcome.soundNote,
       enterLabel: h.welcome?.enterLabel || S.sampleHome.welcome.enterLabel,

@@ -1,11 +1,15 @@
+import Link from 'next/link'
 import type { AdminViewServerProps } from 'payload'
-import { features, missingFeatures } from '@/lib/env'
+import { getFeatures, missingSetup } from '@/lib/config'
+import { features as envFeatures } from '@/lib/env'
 import { LoadSampleButton } from '../LoadSampleButton'
 import { ArrowList, Page, Section } from '../ui'
 import { Shell } from './Shell'
 
 export async function SetupView(props: AdminViewServerProps) {
-  const missing = missingFeatures()
+  const payload = props.initPageResult.req.payload
+  const missing = await missingSetup(payload)
+  const features = { ...envFeatures, ...(await getFeatures(payload)) }
   const settings = await props.initPageResult.req.payload.findGlobal({ slug: 'site-settings', depth: 0 })
   const { totalDocs: samples } = await props.initPageResult.req.payload.count({ collection: 'trips', where: { sample: { equals: true } } })
   const { totalDocs: tripCount } = await props.initPageResult.req.payload.count({ collection: 'trips' })
@@ -14,19 +18,20 @@ export async function SetupView(props: AdminViewServerProps) {
   const todo = { label: 'To do', tone: 'ochre' as const }
   return (
     <Shell props={props} roles={['admin']}>
-      <Page eyebrow="Admin" title="Go-live setup" intro="What is connected and what still needs doing. The full checklist is in docs/OWNER-GUIDE.md.">
+      <Page eyebrow="Admin" title="Go-live setup" intro={<>What is connected and what still needs doing. Paste keys on the <Link href="/admin/globals/integrations">Integrations</Link> page. The full checklist is in the owner guide.</>}>
         <Section n={1} title="Services">
           <ArrowList
             items={[
               { label: 'Database (Neon Postgres)', status: features.database ? ok : todo, meta: 'Vercel Storage tab' },
               { label: 'Photo storage (Vercel Blob or Cloudflare R2)', status: features.storage ? { label: features.storageProvider === 'vercel-blob' ? 'Vercel Blob' : 'Cloudflare R2', tone: 'teal' } : todo, meta: 'Vercel Storage tab' },
-              { label: 'Email sending (Postmark)', status: features.email ? ok : todo, meta: 'POSTMARK_SERVER_TOKEN' },
-              { label: 'Guest email replies (Postmark inbound)', status: features.inboundEmail ? ok : todo, meta: 'POSTMARK_INBOUND_*' },
-              { label: 'Live chat real-time (Pusher / Ably)', status: features.realtime !== 'none' ? { label: features.realtime, tone: 'teal' } : todo, meta: 'PUSHER_* or ABLY_API_KEY' },
-              { label: 'Payments (Paystack: M-Pesa + card)', status: features.payments ? ok : todo, meta: 'PAYSTACK_*' },
-              { label: 'Spam check (Cloudflare Turnstile, optional)', status: features.turnstile ? ok : { label: 'Optional', tone: 'neutral' }, meta: 'TURNSTILE_*' },
-              { label: 'Search engine ping (IndexNow)', status: features.indexNow ? ok : { label: 'Optional', tone: 'neutral' }, meta: 'INDEXNOW_KEY' },
+              { label: 'Email sending (Postmark)', status: features.email ? ok : todo, meta: 'Integrations → Email' },
+              { label: 'Guest email replies (Postmark inbound)', status: features.inboundEmail ? ok : todo, meta: 'Integrations → Email' },
+              { label: 'Live chat real-time (Pusher / Ably)', status: features.realtime !== 'none' ? { label: features.realtime, tone: 'teal' } : todo, meta: 'Integrations → Live chat' },
+              { label: 'Payments (Paystack: M-Pesa + card)', status: features.payments ? ok : todo, meta: 'Integrations → Payments' },
+              { label: 'Spam check (Cloudflare Turnstile, optional)', status: features.turnstile ? ok : { label: 'Optional', tone: 'neutral' }, meta: 'Integrations → Security' },
+              { label: 'Search engine ping (IndexNow)', status: features.indexNow ? ok : { label: 'Optional', tone: 'neutral' }, meta: 'Integrations → Security' },
               { label: 'Daily automation (reminders, quote expiry, reviews)', status: features.dailyJob ? ok : { label: 'Not running', tone: 'ochre' }, meta: 'CRON_SECRET' },
+              { label: 'Google reviews on the website (optional)', status: features.googleReviews ? ok : { label: 'Optional', tone: 'neutral' }, meta: 'Integrations → Reviews' },
             ]}
           />
           {missing.length === 0 && <p className="ng-empty">Everything is connected.</p>}

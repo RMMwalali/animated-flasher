@@ -62,7 +62,7 @@ export async function createPaymentLink(
   args: { bookingId: number; kind: 'deposit' | 'balance'; currency?: Currency; exchangeRate?: number; amount?: number },
 ) {
   const provider = paymentProvider()
-  if (!provider.configured()) throw new Error('Payments are not set up yet (PAYSTACK_SECRET_KEY missing).')
+  if (!(await provider.configured())) throw new Error('Payments are not set up yet: add your Paystack keys in Integrations.')
   const booking = await req.payload.findByID({ collection: 'bookings', id: args.bookingId, depth: 1, req, overrideAccess: true })
   const contact = booking.contact as any
   if (!contact?.email) throw new Error('This booking\'s contact has no email address.')

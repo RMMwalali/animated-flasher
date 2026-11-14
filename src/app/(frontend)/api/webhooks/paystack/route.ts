@@ -15,8 +15,8 @@ export const dynamic = 'force-dynamic'
 export async function POST(req: NextRequest) {
   const raw = await req.text()
   const provider = paymentProvider()
-  if (!provider.configured()) return json({ ok: false }, 503)
-  if (!provider.verifyWebhookSignature(raw, req.headers.get('x-paystack-signature'))) return json({ ok: false }, 401)
+  if (!(await provider.configured())) return json({ ok: false }, 503)
+  if (!(await provider.verifyWebhookSignature(raw, req.headers.get('x-paystack-signature')))) return json({ ok: false }, 401)
   let event: { event?: string; data?: { reference?: string } }
   try {
     event = JSON.parse(raw)

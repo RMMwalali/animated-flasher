@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { brandPaths } from '@/components/brand/paths'
 import { Icon } from '@/components/icons/Icon'
+import { socialOf } from './social'
 import type { SettingsVM } from '@/lib/content'
 import { formatHours } from './hours'
 import { LocationLine, MaskedSvg } from './Logo'
@@ -46,8 +47,8 @@ export function Footer({ settings }: { settings: SettingsVM }) {
             <ul className="mt-5 flex gap-3">
               {settings.social.map((s) => (
                 <li key={s.url}>
-                  <a href={s.url} rel="noopener me" className="grid size-11 place-items-center rounded-full border border-cream/30 hover:border-ochre" aria-label={s.platform}>
-                    <Icon name={(['instagram', 'facebook'].includes(s.platform) ? s.platform : 'globe') as 'instagram'} size={20} />
+                  <a href={s.url} rel="noopener me" target="_blank" className="grid size-11 place-items-center rounded-full border border-cream/30 hover:border-ochre" aria-label={`${socialOf(s.platform).label} (opens in a new tab)`} title={socialOf(s.platform).label}>
+                    <Icon name={socialOf(s.platform).icon} size={20} />
                   </a>
                 </li>
               ))}

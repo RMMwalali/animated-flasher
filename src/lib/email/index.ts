@@ -1,4 +1,4 @@
-import { env, features } from '@/lib/env'
+import { getConfig, type RuntimeConfig } from '@/lib/config'
 import { renderEmail, type EmailContent } from './template'
 
 export type OutgoingEmail = {
@@ -14,23 +14,23 @@ export type OutgoingEmail = {
 export type SendResult = { status: 'sent' | 'logged' | 'failed'; messageId?: string; error?: string }
 
 interface EmailProvider {
-  send(e: OutgoingEmail & { html: string; text: string }): Promise<SendResult>
+  send(e: OutgoingEmail & { html: string; text: string }, c: RuntimeConfig['postmark']): Promise<SendResult>
 }
 
 const postmarkProvider: EmailProvider = {
-  async send(e) {
+  async send(e, c) {
     const { ServerClient } = await import('postmark')
-    const client = new ServerClient(env.POSTMARK_SERVER_TOKEN!)
+    const client = new ServerClient(c.serverToken!)
     try {
       const res = await client.sendEmail({
-        From: env.POSTMARK_FROM_EMAIL!,
+        From: c.fromEmail!,
         To: e.to,
         Subject: e.subject,
         HtmlBody: e.html,
         TextBody: e.text,
         ReplyTo: e.replyTo,
         Tag: e.tag,
-        MessageStream: env.POSTMARK_MESSAGE_STREAM,
+        MessageStream: c.messageStream,
         Headers: e.headers ? Object.entries(e.headers).map(([Name, Value]) => ({ Name, Value })) : undefined,
         Metadata: e.metadata,
         TrackOpens: false,
@@ -52,13 +52,14 @@ const logProvider: EmailProvider = {
 
 export async function sendEmail(e: OutgoingEmail): Promise<SendResult> {
   const { html, text } = renderEmail(e.content)
-  const provider = features.email ? postmarkProvider : logProvider
-  return provider.send({ ...e, html, text })
+  const c = (await getConfig()).postmark
+  const provider = c.serverToken && c.fromEmail ? postmarkProvider : logProvider
+  return provider.send({ ...e, html, text }, c)
 }
 
 /** Reply-to address that threads guest replies back into a conversation. */
-export function threadReplyTo(threadKey: string): string | undefined {
-  const inbound = env.POSTMARK_INBOUND_ADDRESS
+export async function threadReplyTo(threadKey: string): Promise<string | undefined> {
+  const inbound = (await getConfig()).postmark.inboundAddress
   if (!inbound || !inbound.includes('@')) return undefined
   const [local, domain] = inbound.split('@')
   return `${local}+${threadKey}@${domain}`

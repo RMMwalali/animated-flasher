@@ -5,6 +5,7 @@ import * as migration_20261114_155025_licence_certificate from './20261114_15502
 import * as migration_20261114_162634_journeys_copy from './20261114_162634_journeys_copy';
 import * as migration_20261114_170259_booking_engine from './20261114_170259_booking_engine';
 import * as migration_20261114_182516_seo_controls from './20261114_182516_seo_controls';
+import * as migration_20261114_185147_integrations from './20261114_185147_integrations';
 
 export const migrations = [
   {
@@ -40,6 +41,11 @@ export const migrations = [
   {
     up: migration_20261114_182516_seo_controls.up,
     down: migration_20261114_182516_seo_controls.down,
-    name: '20261114_182516_seo_controls'
+    name: '20261114_182516_seo_controls',
+  },
+  {
+    up: migration_20261114_185147_integrations.up,
+    down: migration_20261114_185147_integrations.down,
+    name: '20261114_185147_integrations'
   },
 ];

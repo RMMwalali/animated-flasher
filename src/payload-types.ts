@@ -138,10 +138,12 @@ export interface Config {
   globals: {
     'site-settings': SiteSetting;
     home: Home;
+    integrations: Integration;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
+    integrations: IntegrationsSelect<false> | IntegrationsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -2532,6 +2534,11 @@ export interface SiteSetting {
       }[]
     | null;
   /**
+   * A small round button in the bottom-right corner, using the WhatsApp number above.
+   */
+  whatsappButton?: boolean | null;
+  whatsappMessage?: string | null;
+  /**
    * Shown on the website and in emails: "we reply within …", e.g. 24 hours.
    */
   responseTime?: string | null;
@@ -2593,6 +2600,36 @@ export interface SiteSetting {
      */
     hideFromSearch?: boolean | null;
   };
+  bankAccounts?:
+    | {
+        /**
+         * e.g. "US$ account" or "KES account"
+         */
+        label: string;
+        currency: 'USD' | 'KES' | 'EUR' | 'GBP';
+        bankName: string;
+        branch?: string | null;
+        accountName: string;
+        accountNumber: string;
+        /**
+         * For transfers from abroad.
+         */
+        swift?: string | null;
+        bankCode?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional: your own Paybill or Till, for guests in Kenya. Online M-Pesa through Paystack works without this.
+   */
+  mpesa?: {
+    paybill?: string | null;
+    till?: string | null;
+  };
+  /**
+   * Optional, e.g. "Please send us the transfer receipt by email or WhatsApp. International transfer fees are paid by the sender."
+   */
+  paymentNote?: string | null;
   /**
    * Shown on the Licences & memberships page, journey pages and the footer. Expired items are hidden automatically.
    */
@@ -2786,6 +2823,13 @@ export interface Home {
    * One or two sentences under the title.
    */
   journeysIntro?: string | null;
+  tiktokTitle?: string | null;
+  tiktokVideos?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   whenStatement?: string | null;
   seasons?:
     | {
@@ -2800,6 +2844,124 @@ export interface Home {
   ctaEmphasis?: string | null;
   ctaBody?: string | null;
   _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Connect outside services by pasting their keys here. A key set in Vercel (Environment Variables) always takes priority. Save, then press "Test connection".
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "integrations".
+ */
+export interface Integration {
+  id: number;
+  /**
+   * Paystack dashboard → Settings → API Keys & Webhooks. Use test keys first (sk_test_…), then live keys (sk_live_…). Webhook URL: https://yourdomain/api/webhooks/paystack
+   */
+  paystack?: {
+    /**
+     * Stored encrypted; only the last 4 characters are shown.
+     */
+    secretKey?: string | null;
+    publicKey?: string | null;
+  };
+  /**
+   * Postmark → your server → API Tokens. The "from" address must be on a domain you verified in Postmark (a Gmail address cannot be used).
+   */
+  postmark?: {
+    /**
+     * Stored encrypted; only the last 4 characters are shown.
+     */
+    serverToken?: string | null;
+    /**
+     * e.g. Ngina Trails and Safaris <hello@nginatrails.com>
+     */
+    fromEmail?: string | null;
+    /**
+     * Usually "outbound".
+     */
+    messageStream?: string | null;
+    /**
+     * Postmark → Inbound stream → the …@inbound.postmarkapp.com address. Guest replies arrive here.
+     */
+    inboundAddress?: string | null;
+    inboundUser?: string | null;
+    /**
+     * Stored encrypted; only the last 4 characters are shown.
+     */
+    inboundPassword?: string | null;
+  };
+  /**
+   * Optional. Without it, chat still works but refreshes every few seconds.
+   */
+  realtime?: {
+    provider?: ('none' | 'pusher' | 'ably') | null;
+    pusherAppId?: string | null;
+    pusherKey?: string | null;
+    /**
+     * e.g. eu
+     */
+    pusherCluster?: string | null;
+    /**
+     * Stored encrypted; only the last 4 characters are shown.
+     */
+    pusherSecret?: string | null;
+    /**
+     * Stored encrypted; only the last 4 characters are shown.
+     */
+    ablyApiKey?: string | null;
+  };
+  analytics?: {
+    /**
+     * Also switch it on in Vercel → your project → Analytics.
+     */
+    vercel?: boolean | null;
+    /**
+     * Starts with G-
+     */
+    ga4Id?: string | null;
+    /**
+     * Free heatmaps and recordings.
+     */
+    clarityId?: string | null;
+    /**
+     * For ads.
+     */
+    metaPixelId?: string | null;
+    /**
+     * For TikTok ads.
+     */
+    tiktokPixelId?: string | null;
+  };
+  /**
+   * Shows your real Google rating and latest reviews (with Google's attribution). Needs a Google Cloud API key with "Places API (New)" enabled; Google bills usage beyond a free monthly allowance. Your review links (Google, TripAdvisor, SafariBookings) are in Business settings → Reviews.
+   */
+  google?: {
+    /**
+     * Stored encrypted; only the last 4 characters are shown.
+     */
+    placesApiKey?: string | null;
+    /**
+     * Find it with Google's "Place ID finder" (search your business name).
+     */
+    placeId?: string | null;
+  };
+  /**
+   * Cloudflare → Turnstile → Add site. Without it, forms are still protected by hidden traps, timing and rate limits.
+   */
+  turnstile?: {
+    siteKey?: string | null;
+    /**
+     * Stored encrypted; only the last 4 characters are shown.
+     */
+    secretKey?: string | null;
+  };
+  indexNow?: {
+    /**
+     * Any 32 letters and numbers. The website publishes it at /indexnow-key.txt automatically.
+     */
+    key?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2834,6 +2996,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         closes?: T;
         id?: T;
       };
+  whatsappButton?: T;
+  whatsappMessage?: T;
   responseTime?: T;
   social?:
     | T
@@ -2855,6 +3019,26 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         allowAiCrawlers?: T;
         hideFromSearch?: T;
       };
+  bankAccounts?:
+    | T
+    | {
+        label?: T;
+        currency?: T;
+        bankName?: T;
+        branch?: T;
+        accountName?: T;
+        accountNumber?: T;
+        swift?: T;
+        bankCode?: T;
+        id?: T;
+      };
+  mpesa?:
+    | T
+    | {
+        paybill?: T;
+        till?: T;
+      };
+  paymentNote?: T;
   trust?:
     | T
     | {
@@ -2971,6 +3155,13 @@ export interface HomeSelect<T extends boolean = true> {
   journeysStatement?: T;
   journeysEmphasis?: T;
   journeysIntro?: T;
+  tiktokTitle?: T;
+  tiktokVideos?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
   whenStatement?: T;
   seasons?:
     | T
@@ -2985,6 +3176,67 @@ export interface HomeSelect<T extends boolean = true> {
   ctaEmphasis?: T;
   ctaBody?: T;
   _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "integrations_select".
+ */
+export interface IntegrationsSelect<T extends boolean = true> {
+  paystack?:
+    | T
+    | {
+        secretKey?: T;
+        publicKey?: T;
+      };
+  postmark?:
+    | T
+    | {
+        serverToken?: T;
+        fromEmail?: T;
+        messageStream?: T;
+        inboundAddress?: T;
+        inboundUser?: T;
+        inboundPassword?: T;
+      };
+  realtime?:
+    | T
+    | {
+        provider?: T;
+        pusherAppId?: T;
+        pusherKey?: T;
+        pusherCluster?: T;
+        pusherSecret?: T;
+        ablyApiKey?: T;
+      };
+  analytics?:
+    | T
+    | {
+        vercel?: T;
+        ga4Id?: T;
+        clarityId?: T;
+        metaPixelId?: T;
+        tiktokPixelId?: T;
+      };
+  google?:
+    | T
+    | {
+        placesApiKey?: T;
+        placeId?: T;
+      };
+  turnstile?:
+    | T
+    | {
+        siteKey?: T;
+        secretKey?: T;
+      };
+  indexNow?:
+    | T
+    | {
+        key?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

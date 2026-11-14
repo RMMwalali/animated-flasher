@@ -11,6 +11,8 @@ import { notifyTeam } from '@/lib/crm/notify'
 import { createPaymentLink } from '@/lib/payments/service'
 import { paymentProvider } from '@/lib/payments/provider'
 import { processReviewRequests } from '@/lib/crm/reviews'
+import { getSettings } from '@/lib/crm/settings'
+import { otherWaysToPayLines } from '@/components/booking/OtherWaysToPay'
 import { dueActions, nextPayment, quoteState } from './rules'
 
 const idOf = (v: unknown) => (v && typeof v === 'object' ? (v as { id: number }).id : (v as number))
@@ -170,6 +172,7 @@ export async function sendBookingConfirmation(req: PayloadRequest, bookingId: nu
           ? `Thank you for booking ${booking.title}. Your dates are held for you: pay the deposit from your trip page to confirm them.`
           : `Thank you for booking ${booking.title}. Your trip is confirmed.`,
         'Your trip page has your plan, payments, balance and a checklist for before you fly (including the Kenya eTA). Keep this email: the link is private to you.',
+        ...otherWaysToPayLines(await getSettings(req), String(booking.reference)),
       ],
       facts: [
         ['Booking', String(booking.reference)],
@@ -220,6 +223,7 @@ export async function requestPayment(req: PayloadRequest, bookingId: number | st
           ? `To confirm ${booking.title}, please pay the deposit of ${amountText}.`
           : `The balance of ${amountText} for ${booking.title} is now due${booking.balanceDueDate ? ` (by ${longDate(booking.balanceDueDate)})` : ''}.`,
         opts.currency === 'KES' ? 'You can pay by M-Pesa or card.' : 'You can pay securely by card.',
+        ...otherWaysToPayLines(await getSettings(req), String(booking.reference)),
       ],
       button: { label: `Pay ${amountText}`, href },
       signature: signatureOf(req.user),
@@ -237,7 +241,7 @@ export async function startGuestPayment(payload: Payload, token: string, kind: '
   const allowed = nextPayment({ status: booking.status, depositDue: booking.depositDue, amountPaid: booking.amountPaid, total: booking.total })
   if (!allowed) throw new GuestError('There is nothing to pay on this booking.', 409)
   if (kind === 'deposit' && allowed !== 'deposit') throw new GuestError('The deposit has already been paid.', 409)
-  if (!paymentProvider().configured()) throw new GuestError('Online payment is not switched on yet. Please reply to your booking email and we will send you payment details.', 503)
+  if (!(await paymentProvider().configured())) throw new GuestError('Online payment is not switched on yet. Please reply to your booking email and we will send you payment details.', 503)
   // a balance payment may be made instead of a deposit (paying in full)
   const req = await localReq(payload)
   // reuse a link made in the last 6 hours for the same payment

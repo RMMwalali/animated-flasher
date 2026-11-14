@@ -1,7 +1,7 @@
 import type { AdminViewServerProps } from 'payload'
 import Link from 'next/link'
 import { hasRole } from '@/access'
-import { missingFeatures } from '@/lib/env'
+import { missingSetup } from '@/lib/config'
 import { stageLabel } from '@/lib/crm/stages'
 import { formatMoney, type Currency } from '@/lib/pricing'
 import { ArrowList, ButtonLink, Notice, Page, Section, Stat } from '../ui'
@@ -42,7 +42,7 @@ export async function OverviewView(props: AdminViewServerProps) {
   const revenue = new Map<string, number>()
   for (const p of payments?.docs ?? []) revenue.set(p.currency, (revenue.get(p.currency) ?? 0) + p.amount)
   const pipelineValue = (open?.docs ?? []).reduce((a, l) => a + (l.estimatedValue ?? 0), 0)
-  const missing = isAdmin ? missingFeatures() : []
+  const missing = isAdmin ? await missingSetup(props.initPageResult.req.payload) : []
 
   return (
     <>
