@@ -17,7 +17,7 @@ export function Footer({ settings }: { settings: SettingsVM }) {
       </svg>
       <div className="gutter grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1.2fr] lg:py-24">
         <div className="grid content-start gap-6">
-          <MaskedSvg src="/brand/logo-stacked-cream.svg" ratio={1934 / 1633} className="w-44 text-cream" label="Ngina Trails & Safaris, Diani Beach, Kenya" />
+          <MaskedSvg src="/brand/logo-stacked-cream.svg" ratio={1934 / 1633} className="w-44 text-cream" label="Ngina Trails and Safaris, Diani Beach, Kenya" />
           <p className="max-w-xs text-cream/80">{settings.tagline}</p>
         </div>
         <nav aria-label="Journeys">
@@ -40,7 +40,7 @@ export function Footer({ settings }: { settings: SettingsVM }) {
             <span>{[a.street, a.locality, a.region].filter(Boolean).join(', ')}, Kenya</span>
             {settings.email && <a className="link-u inline-flex w-fit items-center gap-2" href={`mailto:${settings.email}`}><Icon name="mail" size={18} />{settings.email}</a>}
             {settings.phone && <a className="link-u inline-flex w-fit items-center gap-2" href={`tel:${settings.phone.replace(/\s+/g, '')}`}><Icon name="phone" size={18} />{settings.phone}</a>}
-            {settings.hours.length > 0 && <span className="text-sm text-cream/75">{formatHours(settings.hours).join(' · ')} (EAT)</span>}
+            <span className="text-sm text-cream/75">{settings.hours.length > 0 ? `${formatHours(settings.hours).join(' · ')} (EAT)` : `Enquire any time · we reply within ${settings.responseTime || '24 hours'}`}</span>
           </address>
           {settings.social.length > 0 && (
             <ul className="mt-5 flex gap-3">

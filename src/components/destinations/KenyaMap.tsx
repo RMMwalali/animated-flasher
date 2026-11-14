@@ -55,13 +55,13 @@ export function KenyaMap({ destinations, className = '' }: { destinations: Desti
                 {d.slug === 'wasini-kisite' ? 'Wasini & Kisite' : d.name}
               </text>
               {isHome && (
-                <text x={p.x + 18} y={p.y + 30} className="fill-orange-600 font-mono text-[15px] uppercase tracking-[0.14em]">Our home</text>
+                <text x={p.x + 18} y={p.y + 30} className="fill-orange-600 font-semibold tabular-nums text-[15px] uppercase tracking-[0.06em]">Our home</text>
               )}
             </a>
           )
         })}
       </svg>
-      <figcaption className="mt-3 font-mono text-xs uppercase tracking-[0.12em] opacity-75">Map: Natural Earth. Positions are approximate.</figcaption>
+      <figcaption className="mt-3 font-semibold tabular-nums text-xs uppercase tracking-[0.06em] opacity-75">Map: Natural Earth. Positions are approximate.</figcaption>
     </figure>
   )
 }

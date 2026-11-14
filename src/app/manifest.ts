@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Ngina Trails & Safaris',
+    name: 'Ngina Trails and Safaris',
     short_name: 'Ngina',
     description: 'Safaris and coastal journeys from Diani Beach, Kenya',
     start_url: '/',

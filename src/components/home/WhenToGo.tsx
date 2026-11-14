@@ -27,8 +27,8 @@ export function WhenToGo({ home, n = 5 }: { home: HomeVM; n?: number }) {
             <caption className="sr-only">Kenya seasons by month</caption>
             <thead>
               <tr>
-                <th scope="col" className="w-[30%] pb-3 font-mono text-xs uppercase tracking-widest text-teal-ink">Season</th>
-                {M.map((m) => <th key={m} scope="col" className="pb-3 text-center font-mono text-xs uppercase tracking-widest">{m}</th>)}
+                <th scope="col" className="w-[30%] pb-3 font-semibold tabular-nums text-xs uppercase tracking-[0.06em] text-teal-ink">Season</th>
+                {M.map((m) => <th key={m} scope="col" className="pb-3 text-center font-semibold tabular-nums text-xs uppercase tracking-[0.06em]">{m}</th>)}
               </tr>
             </thead>
             <tbody>

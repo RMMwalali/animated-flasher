@@ -186,7 +186,7 @@ export function WelcomeGate({ soundNote, enterLabel, quietLabel, audioUrl }: Pro
             aria-label={ready ? `${enterLabel}: enter with sound` : 'Loading'}
           >
             <BrushCircle progress={progress} className="absolute inset-0 size-full text-orange transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:rotate-12 group-hover:scale-105" strokeWidth={2.6} />
-            <span className="font-mono text-sm uppercase tracking-[0.28em]" aria-hidden="true">
+            <span className="font-semibold tabular-nums text-sm uppercase tracking-[0.06em]" aria-hidden="true">
               {ready ? enterLabel : 'Loading'}
             </span>
           </button>

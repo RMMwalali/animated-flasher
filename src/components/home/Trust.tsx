@@ -21,10 +21,10 @@ export function Trust({ settings, n = 6 }: { settings: SettingsVM; n?: number })
               <Icon name="shield" />
               <span>
                 <span className="block font-semibold">{t.issuer ? `${t.issuer}: ` : ''}{t.name}</span>
-                <span className="font-mono text-sm text-deep/80">{t.number ? `No. ${t.number}` : 'Number to be added'}</span>
+                <span className="font-semibold tabular-nums text-sm text-deep/80">{t.number ? `No. ${t.number}` : 'Number to be added'}</span>
               </span>
               <span className="flex items-center gap-3">
-                {t.sample && <span className="rounded-full border border-ochre-ink px-2 py-0.5 font-mono text-[11px] uppercase text-ochre-ink">Sample</span>}
+                {t.sample && <span className="rounded-full border border-ochre-ink px-2 py-0.5 font-semibold tabular-nums text-[11px] uppercase text-ochre-ink">Sample</span>}
                 {t.url && <a href={t.url} rel="noopener" className="grid size-11 place-items-center rounded-full border border-line" aria-label={`Verify: ${t.name}`}><Icon name="external-link" size={18} /></a>}
               </span>
             </li>

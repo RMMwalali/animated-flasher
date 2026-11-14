@@ -21,8 +21,9 @@ export function travelAgency(s: SettingsVM) {
     telephone: s.phone || undefined,
     address: { '@type': 'PostalAddress', streetAddress: a.street || undefined, addressLocality: a.locality, addressRegion: a.region, postalCode: a.postalCode || undefined, addressCountry: a.country },
     geo: a.lat != null && a.lng != null ? { '@type': 'GeoCoordinates', latitude: a.lat, longitude: a.lng } : undefined,
-    openingHoursSpecification: s.hours.map((h) => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: h.days.map((d) => `https://schema.org/${d}`), opens: h.opens, closes: h.closes })),
-    openingHours: s.hours.map((h) => `${h.days.map((d) => DAY[d]).join(',')} ${h.opens}-${h.closes}`),
+    // only stated when the owner sets office hours (enquiries are accepted any time)
+    openingHoursSpecification: !s.hours.length ? undefined : s.hours.map((h) => ({ '@type': 'OpeningHoursSpecification', dayOfWeek: h.days.map((d) => `https://schema.org/${d}`), opens: h.opens, closes: h.closes })),
+    openingHours: !s.hours.length ? undefined : s.hours.map((h) => `${h.days.map((d) => DAY[d]).join(',')} ${h.opens}-${h.closes}`),
     areaServed: { '@type': 'Country', name: 'Kenya' },
     sameAs: s.social.map((x) => x.url),
   }

@@ -10,7 +10,7 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
   return (
     <>
       <nav aria-label="Breadcrumb">
-        <ol className="flex flex-wrap items-center gap-1.5 font-mono text-xs uppercase tracking-[0.14em] opacity-85">
+        <ol className="flex flex-wrap items-center gap-1.5 font-semibold tabular-nums text-xs uppercase tracking-[0.06em] opacity-85">
           {all.map((c, i) => (
             <li key={c.path} className="flex items-center gap-1.5">
               {i > 0 && <Icon name="chevron-right" size={12} />}

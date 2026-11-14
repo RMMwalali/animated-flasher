@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const p = RESERVED.has(slug) ? null : await getPage(slug)
   if (!p) return {}
-  return pageMeta({ title: p.title, description: p.hero.intro || `${p.title}: Ngina Trails & Safaris, Diani Beach, Kenya.`, path: `/${p.slug}`, seo: p.seo, ogTitle: p.hero.statement || p.title })
+  return pageMeta({ title: p.title, description: p.hero.intro || `${p.title}: Ngina Trails and Safaris, Diani Beach, Kenya.`, path: `/${p.slug}`, seo: p.seo, ogTitle: p.hero.statement || p.title })
 }
 
 export default async function CmsPage({ params }: Props) {
@@ -34,7 +34,7 @@ export default async function CmsPage({ params }: Props) {
       <PageHero eyebrow={p.hero.eyebrow} title={p.hero.statement || p.title} emphasis={p.hero.emphasis} intro={p.hero.intro} image={p.hero.image} tone={legal ? 'cream' : tone} compact={legal} crumbs={[{ name: p.title, path: `/${p.slug}` }]} />
       <Blocks blocks={p.layout} />
       {legal && p.updatedAt && (
-        <p data-tone="cream" className="gutter pb-16 font-mono text-xs uppercase tracking-[0.12em] text-deep/75">
+        <p data-tone="cream" className="gutter pb-16 font-semibold tabular-nums text-xs uppercase tracking-[0.06em] text-deep/75">
           Last updated {new Date(p.updatedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
         </p>
       )}

@@ -28,8 +28,8 @@ export class GuestError extends Error {
 export const localReq = (payload: Payload) => createLocalReq({}, payload)
 
 function signatureOf(user: any): string {
-  if (!user) return 'The Ngina Trails & Safaris team\nDiani Beach, Kenya'
-  return user.signature || [user.name, user.title, 'Ngina Trails & Safaris · Diani Beach, Kenya'].filter(Boolean).join('\n')
+  if (!user) return 'The Ngina Trails and Safaris team\nDiani Beach, Kenya'
+  return user.signature || [user.name, user.title, 'Ngina Trails and Safaris · Diani Beach, Kenya'].filter(Boolean).join('\n')
 }
 
 // ---------------------------------------------------------------- quotes

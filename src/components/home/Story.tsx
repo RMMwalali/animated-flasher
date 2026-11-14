@@ -31,7 +31,7 @@ export function Story({ home }: { home: HomeVM }) {
               ['On foot', 'Shimba Hills, Kaya forests, Mount Kenya'],
             ].map(([t, d], i) => (
               <li key={t} className="grid grid-cols-[3rem_1fr] items-baseline gap-2 border-b border-line py-4">
-                <span className="font-mono text-sm text-orange-600">{String(i + 1).padStart(2, '0')}</span>
+                <span className="font-semibold tabular-nums text-sm text-orange-600">{String(i + 1).padStart(2, '0')}</span>
                 <span>
                   <span className="block font-display text-2xl font-medium">{t}</span>
                   <span className="text-deep/80">{d}</span>

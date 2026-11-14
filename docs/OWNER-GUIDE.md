@@ -1,4 +1,4 @@
-# Owner guide: Ngina Trails & Safaris website and back office
+# Owner guide: Ngina Trails and Safaris website and back office
 
 This guide is for running the business, not for developers. You will not need to type any commands.
 
@@ -146,7 +146,7 @@ Once the back office is on:
 ### C. Email: Postmark
 
 7. Create a Postmark account and server. Add and verify your domain (Postmark shows the DNS records to add: DKIM and Return-Path).
-8. Set `POSTMARK_SERVER_TOKEN` (Server → API tokens) and `POSTMARK_FROM_EMAIL` (e.g. `Ngina Trails & Safaris <hello@nginatrails.com>`).
+8. Set `POSTMARK_SERVER_TOKEN` (Server → API tokens) and `POSTMARK_FROM_EMAIL` (e.g. `Ngina Trails and Safaris <hello@nginatrails.com>`).
 9. Guest replies: in Postmark, open the server's **Inbound** stream and copy the inbound address into `POSTMARK_INBOUND_ADDRESS`. Choose a username and long password for `POSTMARK_INBOUND_WEBHOOK_USER` and `POSTMARK_INBOUND_WEBHOOK_PASSWORD`, and set the inbound webhook URL to `https://USER:PASSWORD@yourdomain/api/webhooks/postmark-inbound` *(next update)*.
 
 ### D. Live chat: Pusher or Ably
@@ -167,7 +167,7 @@ Once the back office is on:
 
 15. **Google Search Console**: add your domain as a property (DNS verification), then submit `https://yourdomain/sitemap.xml` *(sitemap: next update)*.
 16. **Bing Webmaster Tools**: import from Google Search Console. Optionally set `INDEXNOW_KEY` so Bing is told about every page you publish *(key file: next update)*.
-17. **Google Business Profile**: create or claim "Ngina Trails & Safaris" at your Diani Beach address, with the same name, phone and hours as Business settings. Copy its **Ask for reviews** link into Business settings → Reviews.
+17. **Google Business Profile**: create or claim "Ngina Trails and Safaris" at your Diani Beach address, with the same name, phone and hours as Business settings. Copy its **Ask for reviews** link into Business settings → Reviews.
 
 ### H. Review sites
 

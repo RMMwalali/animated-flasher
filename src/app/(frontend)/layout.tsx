@@ -16,9 +16,9 @@ import './globals.css'
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.SITE_URL),
-  title: { default: 'Ngina Trails & Safaris · Safaris and coastal tours from Diani Beach, Kenya', template: '%s · Ngina Trails & Safaris' },
+  title: { default: 'Ngina Trails and Safaris · Safaris and coastal tours from Diani Beach, Kenya', template: '%s · Ngina Trails and Safaris' },
   description: 'Diani Beach based tour company: Tsavo, Amboseli and Maasai Mara safaris, Kisite-Mpunguti dhow days, Lamu, Mombasa and Mount Kenya treks.',
-  applicationName: 'Ngina Trails & Safaris',
+  applicationName: 'Ngina Trails and Safaris',
   manifest: '/manifest.webmanifest',
   formatDetection: { telephone: true, email: true },
 }

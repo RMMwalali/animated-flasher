@@ -75,7 +75,7 @@ async function sendReviewEmail(req: PayloadRequest, r: any, reminder: boolean): 
     content: {
       heading: reminder ? `Just a reminder, ${contact.firstName}` : `Asante sana, ${contact.firstName}`,
       paragraphs: [
-        'Thank you for travelling with Ngina Trails & Safaris. We would really value an honest review of your trip, good or bad: it helps other travellers and helps us improve.',
+        'Thank you for travelling with Ngina Trails and Safaris. We would really value an honest review of your trip, good or bad: it helps other travellers and helps us improve.',
         'It takes about two minutes. Choose where you would like to post it:',
       ],
       button: { label: 'Write a review', href: link },

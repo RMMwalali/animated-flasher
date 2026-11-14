@@ -15,7 +15,7 @@ export default async function ContactPage() {
   const a = s.address
   return (
     <>
-      <PageHero eyebrow="Contact" title="Karibu. Let us talk." emphasis="talk" intro={`We are a small team in Diani Beach. We usually reply within ${s.responseTime || 'one working day'}.`} tone="cream" compact crumbs={[{ name: 'Contact', path: '/contact' }]} />
+      <PageHero eyebrow="Contact" title="Karibu. Let us talk." emphasis="talk" intro={`We are a small team in Diani Beach. We usually reply within ${s.responseTime || '24 hours'}.`} tone="cream" compact crumbs={[{ name: 'Contact', path: '/contact' }]} />
       <section data-tone="cream" className="pb-24">
         <div className="gutter mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1fr_1.4fr]">
           <div className="grid content-start gap-8">
@@ -28,10 +28,15 @@ export default async function ContactPage() {
                 {s.whatsapp && <a className="inline-flex items-center gap-3 underline-offset-4 hover:underline" href={`https://wa.me/${s.whatsapp.replace(/\D/g, '')}`} rel="noopener"><Icon name="whatsapp" size={20} />WhatsApp</a>}
               </address>
             </div>
-            {s.hours.length > 0 && (
+            {s.hours.length > 0 ? (
               <div>
                 <p className="eyebrow text-teal-ink">Office hours (East Africa Time)</p>
                 <ul className="mt-3 grid gap-1 text-lg">{formatHours(s.hours).map((h) => <li key={h}>{h}</li>)}</ul>
+              </div>
+            ) : (
+              <div>
+                <p className="eyebrow text-teal-ink">When to reach us</p>
+                <p className="mt-3 text-lg">Any time, from any time zone. Send a message or WhatsApp and we reply within {s.responseTime || '24 hours'}.</p>
               </div>
             )}
             <LocationLine className="h-3 w-56 text-deep" />

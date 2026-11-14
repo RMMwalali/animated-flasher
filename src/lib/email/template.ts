@@ -20,7 +20,7 @@ export function renderEmail(c: EmailContent): { html: string; text: string } {
   const paras = c.paragraphs.map((p) => `<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:${colors.deep}">${esc(p).replace(/\n/g, '<br>')}</p>`).join('')
   const facts = c.facts?.length
     ? `<table role="presentation" width="100%" style="border-collapse:collapse;margin:8px 0 24px">${c.facts
-        .map(([k, v]) => `<tr><td style="padding:8px 0;border-top:1px solid ${colors.line};font:12px monospace;letter-spacing:.08em;text-transform:uppercase;color:${colors.tealInk}">${esc(k)}</td><td style="padding:8px 0;border-top:1px solid ${colors.line};font-size:15px;color:${colors.deep};text-align:right">${esc(v)}</td></tr>`)
+        .map(([k, v]) => `<tr><td style="padding:8px 0;border-top:1px solid ${colors.line};font:600 12px Helvetica,Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:${colors.tealInk}">${esc(k)}</td><td style="padding:8px 0;border-top:1px solid ${colors.line};font-size:15px;color:${colors.deep};text-align:right">${esc(v)}</td></tr>`)
         .join('')}</table>`
     : ''
   const button = c.button
@@ -32,11 +32,11 @@ export function renderEmail(c: EmailContent): { html: string; text: string } {
 ${c.preheader ? `<div style="display:none;max-height:0;overflow:hidden">${esc(c.preheader)}</div>` : ''}
 <table role="presentation" width="100%" style="background:${colors.cream}"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="100%" style="max-width:560px;background:${colors.paper};border-radius:16px;padding:32px">
-<tr><td><img src="${logo}" width="56" height="56" alt="Ngina Trails &amp; Safaris" style="display:block;margin-bottom:24px;border-radius:12px">
+<tr><td><img src="${logo}" width="56" height="56" alt="Ngina Trails and Safaris" style="display:block;margin-bottom:24px;border-radius:12px">
 <h1 style="margin:0 0 16px;font-size:26px;line-height:1.2;color:${colors.deep}">${esc(c.heading)}</h1>
 ${paras}${facts}${button}${sig}
 </td></tr></table>
-<p style="max-width:560px;margin:16px auto 0;font:12px/1.5 monospace;letter-spacing:.08em;text-transform:uppercase;color:${colors.tealInk}">Ngina Trails &amp; Safaris · Diani Beach, Kenya</p>
+<p style="max-width:560px;margin:16px auto 0;font:600 12px/1.5 Helvetica,Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:${colors.tealInk}">Ngina Trails and Safaris · Diani Beach, Kenya</p>
 ${c.footerNote ? `<p style="max-width:560px;margin:8px auto 0;font-size:12px;line-height:1.5;color:${colors.deep}">${esc(c.footerNote)}</p>` : ''}
 </td></tr></table></body></html>`
   const text = [
@@ -47,7 +47,7 @@ ${c.footerNote ? `<p style="max-width:560px;margin:8px auto 0;font-size:12px;lin
     ...(c.button ? ['', `${c.button.label}: ${c.button.href}`] : []),
     ...(c.signature ? ['', c.signature] : []),
     '',
-    'Ngina Trails & Safaris · Diani Beach, Kenya',
+    'Ngina Trails and Safaris · Diani Beach, Kenya',
     ...(c.footerNote ? [c.footerNote] : []),
   ].join('\n')
   return { html, text }

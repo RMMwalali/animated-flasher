@@ -57,15 +57,15 @@ const textLayers = (fill) => [1, 2, 3].map((i) => path_(d[`text-${i}`], fill)).j
 const files = {}
 const markBox = pad(parts.mark, 16)
 const stackBox = pad(union(parts.mark, ...parts.text), 60)
-const NAME = 'Ngina Trails &amp; Safaris, Diani Beach, Kenya'
+const NAME = 'Ngina Trails and Safaris, Diani Beach, Kenya'
 
 files['logo-stacked.svg'] = svg(vb(stackBox), markLayers() + textLayers(P.deep), { title: NAME })
 files['logo-stacked-cream.svg'] = svg(vb(stackBox), path_(d['mono-mark'], P.cream) + textLayers(P.cream), { title: NAME })
 files['logo-stacked-deep.svg'] = svg(vb(stackBox), path_(d['mono-mark'], P.deep) + textLayers(P.deep), { title: NAME })
-files['mark.svg'] = svg(vb(markBox), markLayers(), { title: 'Ngina Trails &amp; Safaris' })
-files['mark-deep.svg'] = svg(vb(markBox), path_(d['mono-mark'], P.deep), { title: 'Ngina Trails &amp; Safaris' })
-files['mark-cream.svg'] = svg(vb(markBox), path_(d['mono-mark'], P.cream), { title: 'Ngina Trails &amp; Safaris' })
-files['mark-mono.svg'] = svg(vb(markBox), path_(d['mono-mark'], 'currentColor'), { title: 'Ngina Trails &amp; Safaris' })
+files['mark.svg'] = svg(vb(markBox), markLayers(), { title: 'Ngina Trails and Safaris' })
+files['mark-deep.svg'] = svg(vb(markBox), path_(d['mono-mark'], P.deep), { title: 'Ngina Trails and Safaris' })
+files['mark-cream.svg'] = svg(vb(markBox), path_(d['mono-mark'], P.cream), { title: 'Ngina Trails and Safaris' })
+files['mark-mono.svg'] = svg(vb(markBox), path_(d['mono-mark'], 'currentColor'), { title: 'Ngina Trails and Safaris' })
 
 // Horizontal lockup: mark left, three text lines right, scaled to the mark.
 {
@@ -118,7 +118,7 @@ files['horizon.svg'] = svg(vb(pad(parts.horizon, 2)), path_(d.horizon, 'currentC
     `${ox.toFixed(0)} ${oy.toFixed(0)} ${size.toFixed(0)} ${size.toFixed(0)}`,
     `<rect x="${ox.toFixed(0)}" y="${oy.toFixed(0)}" width="${size.toFixed(0)}" height="${size.toFixed(0)}" rx="${(size * 0.18).toFixed(0)}" fill="${P.cream}"/>` +
       markLayers({ underlay: false }),
-    { title: 'Ngina Trails &amp; Safaris' },
+    { title: 'Ngina Trails and Safaris' },
   )
 }
 

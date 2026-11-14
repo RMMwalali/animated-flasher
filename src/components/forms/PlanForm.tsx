@@ -114,7 +114,7 @@ export function PlanForm({ trips, initialTrip }: { trips: Trip[]; initialTrip?: 
         <p className="font-display text-4xl">Asante, {name.split(' ')[0]}.</p>
         <p className="max-w-xl text-lg">
           {booking
-            ? `We have your booking request for ${trip!.title}. We will check availability and send your confirmed price, usually within one working day. Nothing is charged until you accept.`
+            ? `We have your booking request for ${trip!.title}. We will check availability and send your confirmed price, usually within 24 hours. Nothing is charged until you accept.`
             : 'We have your trip plan. A member of our Diani team will reply personally with ideas and a clear price.'}
         </p>
         <p className="max-w-xl text-deep/85">A confirmation is on its way to {email}. Travelling from abroad? Read our <Link href="/kenya-eta" className="underline underline-offset-4">Kenya eTA guide</Link>.</p>
@@ -132,7 +132,7 @@ export function PlanForm({ trips, initialTrip }: { trips: Trip[]; initialTrip?: 
           <li key={s}>
             <button type="button" onClick={() => i < step && go(i)} disabled={i > step} className="grid w-full gap-2 text-left disabled:cursor-default" aria-current={i === step ? 'step' : undefined}>
               <span className={`h-1 rounded-full ${i <= step ? 'bg-orange-600' : 'bg-deep/15'}`} />
-              <span className={`font-mono text-[11px] uppercase tracking-[0.14em] ${i === step ? 'text-deep' : 'text-deep/80'}`}>{String(i + 1).padStart(2, '0')} {s}</span>
+              <span className={`font-semibold tabular-nums text-[11px] uppercase tracking-[0.06em] ${i === step ? 'text-deep' : 'text-deep/80'}`}>{String(i + 1).padStart(2, '0')} {s}</span>
             </button>
           </li>
         ))}

@@ -15,7 +15,7 @@ export const revalidate = 3600
 export async function generateMetadata(): Promise<Metadata> {
   const home = await getHome()
   return pageMeta({
-    title: 'Ngina Trails & Safaris · Safaris and coastal tours from Diani Beach, Kenya',
+    title: 'Ngina Trails and Safaris · Safaris and coastal tours from Diani Beach, Kenya',
     description: home.heroIntro || 'Safaris and coastal journeys from Diani Beach, Kenya.',
     path: '/',
     ogTitle: home.heroStatement,

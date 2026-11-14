@@ -12,7 +12,7 @@ import { KIND_LABEL, visibleTrust } from '@/lib/trust'
 export const revalidate = 3600
 export const metadata: Metadata = pageMeta({
   title: 'Licences & memberships',
-  description: 'Ngina Trails & Safaris is a licensed Kenyan tour operator based in Diani Beach. Our licences, memberships and certifications, with links to verify them.',
+  description: 'Ngina Trails and Safaris is a licensed Kenyan tour operator based in Diani Beach. Our licences, memberships and certifications, with links to verify them.',
   path: '/licences',
 })
 
@@ -42,14 +42,14 @@ export default async function LicencesPage() {
                   <div>
                     <p className="eyebrow text-teal-ink">{KIND_LABEL[t.kind ?? 'licence']}{t.issuer ? ` · ${t.issuer}` : ''}</p>
                     <h2 className="mt-2 font-display text-3xl font-medium">{t.name}</h2>
-                    <p className="mt-2 font-mono text-sm">
+                    <p className="mt-2 font-semibold tabular-nums text-sm">
                       {t.number ? <>No. {t.number}</> : <span className="text-ochre-ink">Number to be added</span>}
                       {t.validUntil && <> · valid until {new Date(t.validUntil).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</>}
                     </p>
                     {t.description && <p className="mt-3 max-w-2xl text-lg leading-relaxed">{t.description}</p>}
                   </div>
                   <div className="flex items-center gap-3 sm:justify-end">
-                    {t.sample && <span className="rounded-full border border-ochre-ink px-2 py-0.5 font-mono text-[11px] uppercase text-ochre-ink">Sample</span>}
+                    {t.sample && <span className="rounded-full border border-ochre-ink px-2 py-0.5 font-semibold tabular-nums text-[11px] uppercase text-ochre-ink">Sample</span>}
                     {t.certificate?.url && (
                       <a href={t.certificate.url} target="_blank" rel="noopener" className="btn btn-ghost !min-h-11 !py-2 text-sm">
                         <span>View certificate</span> <Icon name={t.certificate.mimeType === 'application/pdf' ? 'download' : 'image'} size={16} />

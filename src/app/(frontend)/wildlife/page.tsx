@@ -31,7 +31,7 @@ export default async function WildlifePage() {
     <>
       <PageHero eyebrow="Wildlife guide" title="Who you might meet." emphasis="meet" intro="From the elephants of Tsavo to the dolphins of Kisite: what lives where, and the best time to see it. Wild animals keep their own schedules, so sightings are never guaranteed." image={hero} tone="safari" crumbs={[{ name: 'Wildlife', path: '/wildlife' }]} />
       <nav aria-label="Wildlife groups" data-tone="cream" className="sticky top-0 z-30 border-b border-line bg-cream/95 backdrop-blur">
-        <ul className="gutter flex gap-6 overflow-x-auto py-3 font-mono text-xs uppercase tracking-[0.14em]">
+        <ul className="gutter flex gap-6 overflow-x-auto py-3 font-semibold tabular-nums text-xs uppercase tracking-[0.06em]">
           {GROUPS.filter((g) => all.some((w) => w.group === g.key)).map((g) => (
             <li key={g.key}><a href={`#${g.key}`} className="link-u whitespace-nowrap">{g.title}</a></li>
           ))}
@@ -51,7 +51,7 @@ export default async function WildlifePage() {
                       <Media media={w.image} fallback={g.key === 'marine' ? 'coast' : 'safari'} sizes="(min-width:1024px) 30vw, 90vw" />
                     </div>
                     <h3 className="mt-5 font-display text-2xl font-medium">{w.name}</h3>
-                    <p className="mt-1 font-mono text-xs uppercase tracking-[0.12em] opacity-80">
+                    <p className="mt-1 font-semibold tabular-nums text-xs uppercase tracking-[0.06em] opacity-80">
                       {[w.swahiliName && `Swahili: ${w.swahiliName}`, w.scientificName].filter(Boolean).join(' · ')}
                     </p>
                     <p className="mt-3 opacity-90">{w.description}</p>

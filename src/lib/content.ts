@@ -138,7 +138,7 @@ export const getSettings = cache(async (): Promise<SettingsVM> => {
   return {
     ...S.sampleSettings, ...(g as any), fromSample: false,
     address: { ...S.sampleSettings.address, ...(g.address ?? {}) },
-    hours: (g.hours?.length ? g.hours : S.sampleSettings.hours) as any,
+    hours: (g.hours ?? []) as any,
     trust: (g.trust ?? []).map((t) => ({ ...t, certificate: media(t.certificate as Media) })) as any, social: (g.social ?? []) as any,
   }
 })

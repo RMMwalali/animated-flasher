@@ -49,8 +49,8 @@ html[data-theme='light'] {
   --style-radius-s: 4px;
   --style-radius-m: 8px;
   --style-radius-l: 12px;
-  --font-body: var(--font-body-face, 'DM Sans'), system-ui, sans-serif;
-  --font-mono: var(--font-mono-face, 'DM Mono'), ui-monospace, monospace;
+  --font-body: var(--font-body-face, 'Hanken Grotesk'), system-ui, sans-serif;
+  --font-mono: var(--font-body);
 }
 
 html[data-theme='dark'] {
@@ -69,7 +69,7 @@ body {
 .nav-group__toggle {
   font-family: var(--font-mono);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   font-size: 11px;
   color: var(--ng-teal);
 }
@@ -130,7 +130,7 @@ body {
 .ng-eyebrow {
   font-family: var(--font-mono);
   font-size: 11px;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ng-teal);
   display: flex;
@@ -139,7 +139,7 @@ body {
   margin: 0;
 }
 .ng-title {
-  font-family: var(--font-display-face, 'Fredoka'), var(--font-body);
+  font-family: var(--font-serif-face, 'Newsreader'), Georgia, serif;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.01em;
@@ -155,7 +155,7 @@ body {
   margin: 0;
 }
 .ng-h2 {
-  font-family: var(--font-display-face, 'Fredoka'), var(--font-body);
+  font-family: var(--font-serif-face, 'Newsreader'), Georgia, serif;
   font-weight: 600;
   text-transform: uppercase;
   font-size: clamp(20px, 2.4vw, 28px);
@@ -193,7 +193,7 @@ body {
     font-family: var(--font-mono);
     font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     color: var(--ng-deep);
   }
   @media (max-width: 900px) {
@@ -258,7 +258,7 @@ body {
   font-family: var(--font-mono);
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   margin-top: 32px;
 }
 
@@ -344,7 +344,7 @@ body {
     }
   }
   &__value {
-    font-family: var(--font-display-face, 'Fredoka'), var(--font-body);
+    font-family: var(--font-serif-face, 'Newsreader'), Georgia, serif;
     font-weight: 600;
     overflow-wrap: anywhere;
     font-size: clamp(24px, 3.2vw, 44px);
@@ -366,7 +366,7 @@ body {
   border-radius: 999px;
   font-family: var(--font-mono);
   font-size: 12px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   text-decoration: none;
   border: 1px solid var(--ng-deep);
@@ -393,7 +393,7 @@ body {
   font-family: var(--font-mono);
   font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   color: var(--ng-deep);
 }
 
@@ -414,7 +414,7 @@ body {
   font-family: var(--font-mono);
   font-size: 12px;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   padding: 8px 14px;
   border: 1px solid var(--ng-line);
   background: transparent;
@@ -527,7 +527,7 @@ body {
     font-family: var(--font-mono);
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     text-align: left;
     color: var(--ng-teal);
     padding: 10px 8px;
@@ -552,7 +552,7 @@ body {
     font-family: var(--font-mono);
     text-transform: uppercase;
     font-size: 12px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
   }
 }
 .ng-cal {
@@ -565,7 +565,7 @@ body {
     font-family: var(--font-mono);
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     padding: 8px;
     border-right: 1px solid var(--ng-line);
     border-bottom: 1px solid var(--ng-deep);

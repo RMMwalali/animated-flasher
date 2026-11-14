@@ -43,7 +43,7 @@ export function ExperienceCard({ e }: { e: ExperienceVM }) {
       </div>
       <h3 className="mt-5 font-display text-2xl font-medium">{e.title}</h3>
       <p className="mt-2 flex-1 opacity-85">{e.summary}</p>
-      <p className="mt-4 flex flex-wrap gap-x-5 gap-y-1 font-mono text-xs uppercase tracking-[0.12em] opacity-85">
+      <p className="mt-4 flex flex-wrap gap-x-5 gap-y-1 font-semibold tabular-nums text-xs uppercase tracking-[0.06em] opacity-85">
         {e.duration && <span className="inline-flex items-center gap-1.5"><Icon name="clock" size={14} />{e.duration}</span>}
         {e.location && <Link href={`/destinations/${e.location.slug}`} className="link-u inline-flex items-center gap-1.5"><Icon name="map-pin" size={14} />{e.location.name}</Link>}
         {e.priceFrom ? <span>From {usd(e.priceFrom)}</span> : null}

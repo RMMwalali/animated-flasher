@@ -14,7 +14,7 @@ export const SiteSettings: GlobalConfig = {
         {
           label: 'Business',
           fields: [
-            { name: 'businessName', type: 'text', required: true, defaultValue: 'Ngina Trails & Safaris' },
+            { name: 'businessName', type: 'text', required: true, defaultValue: 'Ngina Trails and Safaris' },
             { name: 'tagline', type: 'text', defaultValue: 'Safaris and coastal journeys from Diani Beach, Kenya' },
             { type: 'row', fields: [
               { name: 'email', type: 'email' },
@@ -37,14 +37,14 @@ export const SiteSettings: GlobalConfig = {
               ],
             },
             {
-              name: 'hours', type: 'array', label: 'Opening hours',
+              name: 'hours', type: 'array', label: 'Opening hours', admin: { description: 'Optional. Leave empty to show "Enquire any time · we reply within …" instead of office hours.' },
               fields: [{ type: 'row', fields: [
                 { name: 'days', type: 'select', hasMany: true, required: true, options: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] },
                 { name: 'opens', type: 'text', required: true, defaultValue: '08:00' },
                 { name: 'closes', type: 'text', required: true, defaultValue: '18:00' },
               ] }],
             },
-            { name: 'responseTime', type: 'text', defaultValue: 'one working day', admin: { description: 'Shown in acknowledgement emails: "usually within …"' } },
+            { name: 'responseTime', type: 'text', defaultValue: 'one working day', admin: { description: 'Shown on the website and in emails: "we reply within …", e.g. 24 hours.' } },
             { name: 'social', type: 'array', fields: [{ type: 'row', fields: [
               { name: 'platform', type: 'select', required: true, options: ['instagram', 'facebook', 'tiktok', 'youtube', 'tripadvisor', 'google'] },
               { name: 'url', type: 'text', required: true },

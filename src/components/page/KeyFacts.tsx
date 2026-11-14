@@ -9,7 +9,7 @@ export function KeyFacts({ facts, heading = 'Key facts', className = '' }: { fac
       <dl className="mt-4 border-t border-current/40">
         {facts.map((f) => (
           <div key={f.label} className="grid gap-1 border-b border-current/20 py-3.5 sm:grid-cols-[minmax(10rem,1fr)_2fr] sm:gap-6">
-            <dt className="font-mono text-xs uppercase tracking-[0.12em] opacity-80">{f.label}</dt>
+            <dt className="font-semibold tabular-nums text-xs uppercase tracking-[0.06em] opacity-80">{f.label}</dt>
             <dd className="text-[1.05rem]">{f.value}</dd>
           </div>
         ))}

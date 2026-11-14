@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { env } from '@/lib/env'
 import type { SEO } from '@/lib/content'
 
-export const SITE_NAME = 'Ngina Trails & Safaris'
+export const SITE_NAME = 'Ngina Trails and Safaris'
 
 /** Per-page metadata with canonical URL and OG image (CMS override > generated). */
 export function pageMeta(opts: { title: string; description: string; path: string; seo?: SEO; type?: 'website' | 'article'; ogTitle?: string }): Metadata {

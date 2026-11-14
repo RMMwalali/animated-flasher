@@ -64,7 +64,7 @@ async function seedUser(email: string, envVar: string, data: Record<string, unkn
 }
 const adminEmail = process.env.SEED_ADMIN_EMAIL ?? 'admin@ngina.local'
 const admin = await seedUser(adminEmail, 'SEED_ADMIN_PASSWORD', { name: 'Ngina Admin', roles: ['admin'], takesNewLeads: true })
-const agent = await seedUser('sales@ngina.local', 'SEED_SALES_PASSWORD', { name: 'Amani (sample agent)', roles: ['sales'], title: 'Safari planner', signature: 'Amani\nNgina Trails & Safaris · Diani Beach, Kenya' })
+const agent = await seedUser('sales@ngina.local', 'SEED_SALES_PASSWORD', { name: 'Amani (sample agent)', roles: ['sales'], title: 'Safari planner', signature: 'Amani\nNgina Trails and Safaris · Diani Beach, Kenya' })
 await seedUser('editor@ngina.local', 'SEED_EDITOR_PASSWORD', { name: 'Content editor (sample)', roles: ['editor'], takesNewLeads: false })
 log(`team ready (admin: ${adminEmail})`)
 if (created.length) log(`new logins (shown once, store them safely):\n  ${created.join('\n  ')}`)
