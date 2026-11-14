@@ -1,4 +1,4 @@
-import { env, features } from '@/lib/env'
+import { getConfig } from '@/lib/config'
 
 export const MIN_FILL_MS = 2500
 
@@ -14,9 +14,10 @@ export function spamSignals(input: { website?: string | null; startedAt?: number
 
 /** Cloudflare Turnstile check; passes automatically when not configured. */
 export async function verifyTurnstile(token: string | undefined, ip?: string): Promise<boolean> {
-  if (!features.turnstile) return true
+  const t = (await getConfig()).turnstile
+  if (!t.siteKey || !t.secretKey) return true
   if (!token) return false
-  const body = new URLSearchParams({ secret: env.TURNSTILE_SECRET_KEY!, response: token })
+  const body = new URLSearchParams({ secret: t.secretKey, response: token })
   if (ip && ip !== 'unknown') body.set('remoteip', ip)
   try {
     const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body, signal: AbortSignal.timeout(5000) })

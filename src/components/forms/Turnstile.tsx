@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useRef } from 'react'
+import { usePublicConfig } from '@/components/site/PublicConfig'
 
 declare global {
   interface Window {
@@ -9,7 +10,7 @@ declare global {
 
 /** Optional Cloudflare Turnstile. Renders nothing without a site key. */
 export function Turnstile({ onToken }: { onToken: (t: string) => void }) {
-  const key = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
+  const key = usePublicConfig().turnstileSiteKey
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (!key || !ref.current) return

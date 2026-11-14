@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { OtherWaysToPay } from '@/components/booking/OtherWaysToPay'
 import { PayButton } from '@/components/booking/PayButton'
 import { PrintButton } from '@/components/booking/PrintButton'
 import { Icon } from '@/components/icons/Icon'
@@ -8,7 +9,7 @@ import { Media } from '@/components/site/Media'
 import { findBookingByToken } from '@/lib/booking/flows'
 import { daysUntil, nextPayment } from '@/lib/booking/rules'
 import { getPayloadSafe, getSettings, media } from '@/lib/content'
-import { features } from '@/lib/env'
+import { getFeatures } from '@/lib/config'
 import { formatMoney, type Currency } from '@/lib/pricing'
 
 export const dynamic = 'force-dynamic'
@@ -33,6 +34,7 @@ export default async function TripPage({ params }: Props) {
   const b = await findBookingByToken(payload, token)
   if (!b) notFound()
   const settings = await getSettings()
+  const features = await getFeatures(payload)
   const { docs: payments } = await payload.find({ collection: 'payments', where: { and: [{ booking: { equals: b.id } }, { status: { equals: 'success' } }] }, sort: 'paidAt', limit: 100, depth: 0, overrideAccess: true })
   const currency = b.currency as Currency
   const contact = b.contact as any
@@ -62,7 +64,7 @@ export default async function TripPage({ params }: Props) {
         </div>
       </section>
 
-      <section data-tone="cream" className="py-12 sm:py-16">
+      <section data-tone="cream" className="py-12 sm:py-16" data-booking-ref={b.reference}>
         <div className="gutter mx-auto max-w-6xl">
           <p className="text-lg">Jambo {contact?.firstName ?? ''}! Everything about your trip is on this page. Keep the link private: anyone with it can see your booking.</p>
           {cancelled ? (
@@ -130,7 +132,7 @@ export default async function TripPage({ params }: Props) {
                 {next && !cancelled && (
                   <div className="mt-6 grid gap-3" data-no-print>
                     {!features.payments ? (
-                      <p className="rounded-xl bg-cream px-4 py-3 text-sm">Online payment is not switched on yet. We will email you payment details (M-Pesa, card or bank transfer).</p>
+                      <p className="rounded-xl bg-cream px-4 py-3 text-sm">{settings.bankAccounts.length || settings.mpesa.paybill || settings.mpesa.till ? 'Online card payment is not switched on yet. Please use one of the other ways to pay below.' : 'Online payment is not switched on yet. We will email you payment details (M-Pesa, card or bank transfer).'}</p>
                     ) : next === 'deposit' ? (
                       <>
                         <PayButton token={token} kind="deposit" label={`Pay deposit ${formatMoney(depositLeft, currency)}`} />
@@ -153,6 +155,7 @@ export default async function TripPage({ params }: Props) {
                   </ul>
                 )}
               </div>
+              {next && !cancelled && <OtherWaysToPay settings={settings} reference={String(b.reference)} />}
               <div className="rounded-3xl bg-paper p-6">
                 <h2 className="font-display text-2xl">Questions?</h2>
                 <ul className="mt-3 grid gap-2 text-[0.97rem]">

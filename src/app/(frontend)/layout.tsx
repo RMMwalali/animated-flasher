@@ -8,6 +8,10 @@ import { welcomeScript } from '@/components/site/WelcomeGate'
 import { LionWalker } from '@/components/site/LionWalker'
 import { Motion } from '@/components/site/Motion'
 import { SampleBanner } from '@/components/site/SampleBanner'
+import { Analytics } from '@/components/site/Analytics'
+import { PublicConfigProvider } from '@/components/site/PublicConfig'
+import { WhatsAppButton } from '@/components/site/WhatsAppButton'
+import { getConfig } from '@/lib/config'
 import { getSettings } from '@/lib/content'
 import { env } from '@/lib/env'
 import { fontVars } from '@/lib/fonts'
@@ -45,7 +49,7 @@ export const viewport: Viewport = {
 }
 
 export default async function SiteLayout({ children }: { children: ReactNode }) {
-  const settings = await getSettings()
+  const [settings, config] = await Promise.all([getSettings(), getConfig()])
   const contact = { email: settings.email, phone: settings.phone, whatsapp: settings.whatsapp, hours: settings.hours, social: settings.social }
   return (
     <html lang="en" className={fontVars} suppressHydrationWarning>
@@ -60,13 +64,17 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         <a href="#main" className="sr-only z-[100] rounded-full bg-deep px-4 py-2 text-cream focus:not-sr-only focus:fixed focus:left-3 focus:top-3">
           Skip to content
         </a>
-        <Header contact={contact} banner={settings.showSampleBanner ? <SampleBanner /> : undefined} />
-        <main id="main">{children}</main>
-        <Footer settings={settings} />
+        <PublicConfigProvider value={{ turnstileSiteKey: config.turnstile.siteKey, whatsapp: settings.whatsapp || undefined, businessName: settings.businessName }}>
+          <Header contact={contact} banner={settings.showSampleBanner ? <SampleBanner /> : undefined} />
+          <main id="main">{children}</main>
+          <Footer settings={settings} />
+        </PublicConfigProvider>
         <LionWalker />
+        {settings.whatsappButton !== false && settings.whatsapp && <WhatsAppButton number={settings.whatsapp} message={settings.whatsappMessage || 'Jambo!'} />}
         <ConsentBanner />
         <Motion />
         <AttributionCapture />
+        <Analytics ids={config.analytics} />
       </body>
     </html>
   )

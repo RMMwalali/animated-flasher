@@ -261,6 +261,20 @@ export const icons = {
   ),
   facebook: <path d="M14.5 21v-7.5h2.5l.5-3h-3V8.75c0-.9.4-1.75 1.75-1.75H17.5V4.4a17 17 0 00-2.4-.2c-2.5 0-4.1 1.5-4.1 4.2v2.1H8.5v3h2.5V21" />,
   whatsapp: <path d="M4 20l1.2-4A8.5 8.5 0 1112 20.5a8.4 8.4 0 01-4-1zM9 8.5c0 3.5 3 6.5 6.5 6.5l1-1.5-2-1-1 1a4 4 0 01-2.5-2.5l1-1-1-2z" />,
+  tiktok: <path d="M14 3.5v11.25a3.75 3.75 0 11-3.75-3.75M14 3.5c.4 2.6 2.2 4.4 4.75 4.75" />,
+  youtube: (
+    <>
+      <rect x="2.75" y="5.75" width="18.5" height="12.5" rx="3.5" />
+      <path d="M10.25 9.25v5.5L15 12z" />
+    </>
+  ),
+  linkedin: (
+    <>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="3" />
+      <path d="M8 10.5V16M8 7.75v.01M11.5 16v-5.5M11.5 13c0-1.5 1-2.5 2.25-2.5S16 11.25 16 13v3" />
+    </>
+  ),
+  'x-social': <path d="M4.5 4.5l15 15M19.5 4.5l-6.25 6.25M10.75 13.25L4.5 19.5" />,
 } satisfies Record<string, ReactElement>
 
 export type IconName = keyof typeof icons

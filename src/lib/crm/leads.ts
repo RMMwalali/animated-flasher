@@ -99,7 +99,7 @@ export async function captureEnquiry(payload: Payload, input: EnquiryInput) {
   const ack = await sendEmail({
     to: contact.email!,
     subject: 'We have your enquiry · Ngina Trails and Safaris',
-    replyTo: threadReplyTo(threadKey),
+    replyTo: await threadReplyTo(threadKey),
     tag: 'enquiry-ack',
     content: {
       preheader: 'Thank you. A member of our Diani team will reply personally.',

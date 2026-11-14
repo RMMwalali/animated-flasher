@@ -62,6 +62,10 @@ export const SiteSettings: GlobalConfig = {
                 { name: 'closes', type: 'text', required: true, defaultValue: '18:00' },
               ] }],
             },
+            { type: 'row', fields: [
+              { name: 'whatsappButton', type: 'checkbox', defaultValue: true, label: 'Show a WhatsApp button on every page', admin: { description: 'A small round button in the bottom-right corner, using the WhatsApp number above.' } },
+              { name: 'whatsappMessage', type: 'text', defaultValue: 'Jambo! I would like to ask about a trip.', label: 'Message it starts with', admin: { condition: (_, s) => s?.whatsappButton !== false } },
+            ] },
             { name: 'responseTime', type: 'text', defaultValue: 'one working day', admin: { description: 'Shown on the website and in emails: "we reply within …", e.g. 24 hours.' } },
             { name: 'social', type: 'array', label: 'Profiles on other sites', admin: { description: 'Your Google Business Profile, TripAdvisor, SafariBookings and social pages. Search engines and AI assistants use these to confirm they are all the same business.' }, fields: [{ type: 'row', fields: [
               { name: 'platform', type: 'select', required: true, options: ['google', 'tripadvisor', 'safaribookings', 'instagram', 'facebook', 'tiktok', 'youtube', 'linkedin', 'x', 'other'] },
@@ -93,6 +97,34 @@ export const SiteSettings: GlobalConfig = {
                 { name: 'hideFromSearch', type: 'checkbox', defaultValue: false, label: 'Hide the whole website from search engines', admin: { description: 'Only for testing or before launch. While ticked, Google and Bing are asked to drop every page.' } },
               ],
             },
+          ],
+        },
+        {
+          label: 'Payments',
+          description: 'Other ways to pay, shown on each guest\'s trip page and in payment emails, next to online payment. Guests are asked to use their booking reference.',
+          fields: [
+            {
+              name: 'bankAccounts', type: 'array', label: 'Bank accounts',
+              labels: { singular: 'Bank account', plural: 'Bank accounts' },
+              fields: [
+                { type: 'row', fields: [
+                  { name: 'label', type: 'text', required: true, admin: { description: 'e.g. "US$ account" or "KES account"' } },
+                  { name: 'currency', type: 'select', required: true, defaultValue: 'USD', options: ['USD', 'KES', 'EUR', 'GBP'] },
+                ] },
+                { type: 'row', fields: [{ name: 'bankName', type: 'text', required: true }, { name: 'branch', type: 'text' }] },
+                { type: 'row', fields: [{ name: 'accountName', type: 'text', required: true }, { name: 'accountNumber', type: 'text', required: true }] },
+                { type: 'row', fields: [{ name: 'swift', type: 'text', label: 'SWIFT / BIC', admin: { description: 'For transfers from abroad.' } }, { name: 'bankCode', type: 'text', label: 'Bank / branch code' }] },
+              ],
+            },
+            {
+              name: 'mpesa', type: 'group', label: 'M-Pesa (pay directly)',
+              admin: { description: 'Optional: your own Paybill or Till, for guests in Kenya. Online M-Pesa through Paystack works without this.' },
+              fields: [{ type: 'row', fields: [
+                { name: 'paybill', type: 'text', label: 'Paybill number' },
+                { name: 'till', type: 'text', label: 'Till number (Buy Goods)' },
+              ] }],
+            },
+            { name: 'paymentNote', type: 'textarea', label: 'Note to guests', admin: { description: 'Optional, e.g. "Please send us the transfer receipt by email or WhatsApp. International transfer fees are paid by the sender."' } },
           ],
         },
         {
