@@ -3,6 +3,7 @@ import type { SettingsVM } from '@/lib/content'
 export type TrustItem = {
   name: string; kind?: 'licence' | 'membership' | 'certification' | null; issuer?: string | null; number?: string | null
   validUntil?: string | null; description?: string | null; url?: string | null; sample?: boolean | null
+  certificate?: { url: string; alt: string; mimeType?: string } | null
 }
 
 /**

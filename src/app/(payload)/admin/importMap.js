@@ -35,6 +35,7 @@ import { PipelineView as PipelineView_f2e5b1d8bc8fb094f9098b958109dc6d } from '.
 import { CalendarView as CalendarView_22d1d6a0af0ab3050bd89f15ef3974a2 } from '../../../components/admin/views/Calendar'
 import { SetupView as SetupView_638bf12e88b648a6f677cfaf29da7444 } from '../../../components/admin/views/Setup'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
+import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 
 /** @type import('payload').ImportMap */
@@ -76,5 +77,6 @@ export const importMap = {
   "/components/admin/views/Calendar#CalendarView": CalendarView_22d1d6a0af0ab3050bd89f15ef3974a2,
   "/components/admin/views/Setup#SetupView": SetupView_638bf12e88b648a6f677cfaf29da7444,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
+  "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24
 }

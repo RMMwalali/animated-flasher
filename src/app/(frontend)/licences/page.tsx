@@ -50,6 +50,11 @@ export default async function LicencesPage() {
                   </div>
                   <div className="flex items-center gap-3 sm:justify-end">
                     {t.sample && <span className="rounded-full border border-ochre-ink px-2 py-0.5 font-mono text-[11px] uppercase text-ochre-ink">Sample</span>}
+                    {t.certificate?.url && (
+                      <a href={t.certificate.url} target="_blank" rel="noopener" className="btn btn-ghost !min-h-11 !py-2 text-sm">
+                        <span>View certificate</span> <Icon name={t.certificate.mimeType === 'application/pdf' ? 'download' : 'image'} size={16} />
+                      </a>
+                    )}
                     {t.url && (
                       <a href={t.url} rel="noopener" className="btn btn-ghost !min-h-11 !py-2 text-sm">
                         <span>Verify</span> <Icon name="external-link" size={16} />

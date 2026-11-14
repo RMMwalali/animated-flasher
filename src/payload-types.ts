@@ -2532,6 +2532,10 @@ export interface SiteSetting {
          */
         description?: string | null;
         /**
+         * Optional: a photo or PDF of the certificate. Shown as "View certificate" on the Licences page.
+         */
+        certificate?: (number | null) | Media;
+        /**
          * Link to verify, if the body publishes one.
          */
         url?: string | null;
@@ -2741,6 +2745,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         number?: T;
         validUntil?: T;
         description?: T;
+        certificate?: T;
         url?: T;
         sample?: T;
         id?: T;

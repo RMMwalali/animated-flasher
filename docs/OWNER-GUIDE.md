@@ -5,7 +5,7 @@ This guide is for running the business, not for developers. You will not need to
 - **Your website** is at your domain (for example `https://nginatrails.com`).
 - **Your back office** is at the same address followed by `/admin` (for example `https://nginatrails.com/admin`). Log in with your email and password.
 
-> **Status.** Areas marked *(next update)* are designed and planned but arrive in the next delivery. Everything else works today.
+> **Status.** Areas marked *(next update)* are designed and planned but arrive in the next delivery. Everything else works today, once the database is connected (section 4A).
 
 ---
 
@@ -100,17 +100,33 @@ We never offer anything in return for a review and never choose who to ask. This
 
 Work through these in order. Each service gives you one or more **keys**: send them to your developer, or add them yourself in Vercel → your project → **Settings → Environment Variables**. The name of each variable is shown in `code`. Nothing breaks if a service is missing: the **Go-live setup** page in the back office shows what is still to do.
 
-### A. Hosting and database
+### A. Turn on the back office: database and photo storage (about 5 minutes, no typing)
 
-1. **Vercel** (website hosting, Pro plan). Create a team, then **Add New → Project** and import the GitHub repository. Set `SITE_URL` to your final address, e.g. `https://nginatrails.com`.
-2. **Neon** (database). Create a project in the EU or closest region, then copy the **pooled** connection string into `DATABASE_URL`.
-3. Create two long random passwords and set them as `PAYLOAD_SECRET` and `CRON_SECRET`. Your developer can generate these.
-4. Deploy. Open `/admin` and create your admin account (the first account is always an Admin), or ask your developer to run the setup script once to load the sample content.
+The website already runs on Vercel. The back office (`/admin`) and the enquiry form need a **database**, and uploaded photos need **storage**. Both come from Vercel's Storage tab:
 
-### B. Photos: Cloudflare R2
+1. In Vercel, open your project **animated-flasher**, then the **Storage** tab.
+2. **Create Database → Neon (Serverless Postgres)**. Pick the region closest to your guests (e.g. Europe), accept, and **Connect** it to the project (all environments). This adds the database settings automatically.
+3. Still in Storage, **Create → Blob**, name it e.g. `ngina-photos`, and **Connect** it to the project. This adds the photo-storage setting automatically.
+4. Go to **Deployments**, open the latest one, and choose **Redeploy**. The redeploy creates the database tables.
+5. Open `https://animated-flasher.vercel.app/admin` and **create your account**. The first account is always an Admin.
+6. Go to **Go-live setup → Sample content → Load sample content** to fill the site with the sample journeys, destinations and photos. Then edit or replace them; it never overwrites your own changes.
 
-5. In Cloudflare, go to **R2 → Create bucket** (e.g. `ngina-media`). Turn on public access or connect a custom domain such as `media.nginatrails.com`.
-6. **R2 → Manage API tokens → Create token** with read & write on that bucket. Set `S3_BUCKET`, `S3_ENDPOINT` (shown on the bucket page), `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, and `S3_PUBLIC_URL` (the public bucket address or your custom domain).
+Optional but recommended: in **Settings → Environment Variables** add `PAYLOAD_SECRET` (any long random text, e.g. from a password manager) and `CRON_SECRET` the same way, then redeploy. Without `PAYLOAD_SECRET` the site derives one from the database connection, which works but logs everyone out if the database password ever changes.
+
+When you move to your own domain (e.g. `nginatrails.com`), add `SITE_URL` with that address.
+
+### B. Photos: Cloudflare R2 (alternative to Vercel Blob)
+
+Only if you prefer Cloudflare to Vercel Blob for photos:
+
+1. In Cloudflare, **R2 → Create bucket** (e.g. `ngina-media`), with public access or a custom domain such as `media.nginatrails.com`.
+2. **R2 → Manage API tokens → Create token** with read & write on that bucket, then set `S3_BUCKET`, `S3_ENDPOINT`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` and `S3_PUBLIC_URL`. When R2 is set, it is used instead of Blob.
+
+### Your licences, certificates and photos
+
+Once the back office is on:
+- **Licences & memberships:** Business settings → Trust. For each one, fill in the number, the expiry date (expired ones hide automatically), and optionally upload a photo or PDF of the certificate. It appears as "View certificate". Untick **Sample** to show it on the live site.
+- **Photos:** upload in **Photos & videos**, then pick them on the Home page (Welcome & stage slides), Journeys, Destinations and the Wildlife guide. Always add a short description.
 
 ### C. Email: Postmark
 
