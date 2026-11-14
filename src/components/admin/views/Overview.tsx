@@ -139,7 +139,7 @@ export async function OverviewView(props: AdminViewServerProps) {
                 { href: '/admin/globals/home', label: 'Home page' },
                 { href: '/admin/collections/trips', label: 'Journeys' },
                 { href: '/admin/collections/destinations', label: 'Destinations' },
-                { href: '/admin/collections/posts', label: 'Journal' },
+                { href: '/admin/collections/posts', label: 'Blog' },
                 { href: '/admin/collections/pages', label: 'Pages' },
                 { href: '/admin/collections/media', label: 'Photos & videos' },
               ]}

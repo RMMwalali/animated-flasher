@@ -5,7 +5,7 @@ import { revalidateAfterChange } from '@/hooks/revalidate'
 
 export const Posts: CollectionConfig = {
   slug: 'posts',
-  labels: { singular: 'Journal article', plural: 'Journal' },
+  labels: { singular: 'Blog article', plural: 'Blog' },
   admin: { useAsTitle: 'title', group: '04 Website', defaultColumns: ['title', 'author', 'publishedAt', '_status'] },
   access: contentAccess,
   versions: { drafts: { autosave: { interval: 2000 } }, maxPerDoc: 30 },
@@ -23,5 +23,5 @@ export const Posts: CollectionConfig = {
     sampleField,
     seoField,
   ],
-  hooks: { afterChange: [revalidateAfterChange((doc) => [`/journal/${doc.slug}`, '/journal'])] },
+  hooks: { afterChange: [revalidateAfterChange((doc) => [`/blog/${doc.slug}`, '/blog'])] },
 }

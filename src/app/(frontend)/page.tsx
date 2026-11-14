@@ -34,7 +34,7 @@ export default async function HomePage() {
       <Story home={home} />
       <Chapter chapter={home.coast} tone="coast" n={2} />
       <Chapter chapter={home.safari} tone="safari" n={3} flip />
-      {trips.length > 0 && <Journeys trips={trips} />}
+      {trips.length > 0 && <Journeys trips={trips} copy={{ eyebrow: home.journeysEyebrow, statement: home.journeysStatement, emphasis: home.journeysEmphasis, intro: home.journeysIntro }} />}
       <WhenToGo home={home} />
       <Trust settings={settings} />
       <Closing home={home} />

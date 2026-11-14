@@ -116,8 +116,11 @@ export async function seedContent(payload: Payload, opts: SeedOptions): Promise<
     await ensurePhoto('wildlife', wdoc, 'image', photo)
   }
   for (const e of S.sampleExperiences) await upsert('experiences', { slug: { equals: e.slug } }, { ...e, sample: true, location: dest[e.location] })
-  for (const p of S.samplePosts) {
-    await upsert('posts', { slug: { equals: p.slug } }, { ...p, sample: true, author: author.id, topics: [...p.topics], faqs: [...p.faqs], publishedAt: new Date().toISOString() }, { draft: false })
+  for (const [i, { photo, ...p }] of S.samplePosts.entries()) {
+    // spread the sample dates out (older first) so the blog order is stable
+    const publishedAt = new Date(Date.now() - (S.samplePosts.length - i) * 7 * 864e5).toISOString()
+    const doc = await upsert('posts', { slug: { equals: p.slug } }, { ...p, sample: true, author: author.id, heroImage: photoId(photo), topics: [...p.topics], faqs: [...p.faqs], publishedAt }, { draft: false })
+    await ensurePhoto('posts', doc, 'heroImage', photo)
   }
   for (const pg of S.samplePages) await upsert('pages', { slug: { equals: pg.slug } }, { ...pg, sample: true }, { draft: false })
   for (const r of S.sampleCannedReplies) await upsert('canned-replies', { title: { equals: r.title } }, r)

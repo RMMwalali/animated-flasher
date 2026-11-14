@@ -403,8 +403,13 @@ html:not(.js) .stage-line:first-of-type .stage-brush path {
   font-size: 1.125rem;
   line-height: 1.75;
 }
-.prose-ngina > * + * {
+.prose-ngina > * + *,
+.prose-ngina > .payload-richtext > * + *,
+.prose-ngina :is(p, ul, ol, h2, h3, h4, blockquote, figure, hr, table) + * {
   margin-top: 1.1em;
+}
+.prose-ngina :is(h2, h3) + * {
+  margin-top: 0.6em;
 }
 .prose-ngina h2 {
   font-family: var(--font-display);

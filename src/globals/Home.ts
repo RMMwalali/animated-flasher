@@ -87,6 +87,16 @@ export const Home: GlobalConfig = {
         { label: 'Coast chapter', fields: [chapter('coast', 'Coast')] },
         { label: 'Safari chapter', fields: [chapter('safari', 'Safari')] },
         {
+          label: 'Featured journeys',
+          description: 'The sideways-scrolling row of journeys. Tick "Featured" on a journey to show it here.',
+          fields: [
+            { name: 'journeysEyebrow', type: 'text', admin: { description: 'Small line above the title, e.g. "Featured journeys".' } },
+            { name: 'journeysStatement', type: 'text', admin: { description: 'Section title.' } },
+            { name: 'journeysEmphasis', type: 'text', admin: { description: 'Word in the title to underline.' } },
+            { name: 'journeysIntro', type: 'textarea', admin: { description: 'One or two sentences under the title.' } },
+          ],
+        },
+        {
           label: 'When to go',
           fields: [
             { name: 'whenStatement', type: 'text' },

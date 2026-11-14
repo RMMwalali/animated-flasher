@@ -9,8 +9,8 @@ test.beforeEach(async ({ page }) => {
 
 const PAGES = [
   '/safaris', '/safaris/tsavo-east-taita-hills', '/coastal-tours', '/coastal-tours/wasini-kisite-dhow', '/walking-and-mountain',
-  '/destinations', '/destinations/amboseli', '/wildlife', '/experiences', '/when-to-go', '/our-story', '/journal',
-  '/journal/tsavo-east-from-diani', '/plan-your-trip', '/contact', '/licences', '/kenya-eta', '/privacy',
+  '/destinations', '/destinations/amboseli', '/wildlife', '/experiences', '/when-to-go', '/our-story', '/blog',
+  '/blog/tsavo-east-from-diani', '/plan-your-trip', '/contact', '/licences', '/kenya-eta', '/privacy',
 ]
 
 for (const path of PAGES) {

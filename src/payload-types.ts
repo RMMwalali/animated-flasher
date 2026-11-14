@@ -1345,7 +1345,7 @@ export interface Post {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * People who write journal articles and guides. Bios build trust with readers and search engines.
+ * People who write blog articles and guides. Bios build trust with readers and search engines.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "authors".
@@ -2682,6 +2682,22 @@ export interface Home {
     linkLabel?: string | null;
     linkHref?: string | null;
   };
+  /**
+   * Small line above the title, e.g. "Featured journeys".
+   */
+  journeysEyebrow?: string | null;
+  /**
+   * Section title.
+   */
+  journeysStatement?: string | null;
+  /**
+   * Word in the title to underline.
+   */
+  journeysEmphasis?: string | null;
+  /**
+   * One or two sentences under the title.
+   */
+  journeysIntro?: string | null;
   whenStatement?: string | null;
   seasons?:
     | {
@@ -2848,6 +2864,10 @@ export interface HomeSelect<T extends boolean = true> {
         linkLabel?: T;
         linkHref?: T;
       };
+  journeysEyebrow?: T;
+  journeysStatement?: T;
+  journeysEmphasis?: T;
+  journeysIntro?: T;
   whenStatement?: T;
   seasons?:
     | T

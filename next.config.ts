@@ -22,6 +22,13 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
     ],
   },
+  async redirects() {
+    // the blog used to be called "Journal": keep old links and search results working
+    return [
+      { source: '/journal', destination: '/blog', permanent: true },
+      { source: '/journal/:path*', destination: '/blog/:path*', permanent: true },
+    ]
+  },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }]
   },

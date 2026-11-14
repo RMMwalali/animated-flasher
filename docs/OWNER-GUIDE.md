@@ -55,10 +55,11 @@ The left-hand menu is grouped and numbered. At the top is **Workspace**: the vie
 
 | Area | What it is for |
 | --- | --- |
-| **Home page** | The big statements, chapter texts, photos and the when-to-go strip. |
+| **Home page** | The big statements, chapter texts, photos and the when-to-go strip. The **Featured journeys** tab sets the title and short intro above the sideways row of journeys. |
 | **Journeys** | Safaris, coastal tours and walking trips: price from, days, best months, day-by-day plan, inclusions, Q&A and search settings. Tick **Featured** to show one on the home page. |
 | **Destinations** | One page per place, with key facts (distance from Diani, altitude, area) and Q&A. Keep these accurate: Google and AI assistants quote them. |
-| **Experiences, Wildlife guide, Journal, Guides & authors, Pages** | The rest of the site. Pages covers Our story, When to go, Privacy, Terms and Cookies. |
+| **Blog** | Articles at `/blog`. Give each one a photo, one or more topics (they become the filter buttons on the blog page) and clear headings: every heading appears in the article's "In this article" list. Related articles are picked automatically from shared topics. Old `/journal` links forward to the blog. |
+| **Experiences, Wildlife guide, Guides & authors, Pages** | The rest of the site. Pages covers Our story, When to go, Privacy, Terms and Cookies. |
 | **Photos & videos** | Upload your own pictures. Always fill in the description (alt text). Use the focal point to choose which part of the photo stays visible on phones. |
 
 **Sample content.** Everything the setup created has a **Sample** tick box. Replace the text, photos and prices with your own and untick it. When you are done, turn off the "sample content" banner in **Business settings → Notifications**.
