@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto'
-import { env } from '@/lib/env'
+import { getConfig } from '@/lib/config'
 import type { Currency } from '@/lib/pricing'
 import { fromSubunit, toSubunit } from './math'
 
@@ -25,13 +25,19 @@ export type VerifyResult = {
 /** Payment provider interface: Paystack today, M-Pesa Daraja can be added later. */
 export interface PaymentProvider {
   name: 'paystack' | 'mpesa'
-  configured(): boolean
+  configured(): Promise<boolean>
   initialize(a: InitArgs): Promise<{ url: string; providerRef: string }>
   verify(reference: string): Promise<VerifyResult>
-  verifyWebhookSignature(rawBody: string, signature: string | null): boolean
+  verifyWebhookSignature(rawBody: string, signature: string | null): Promise<boolean>
 }
 
 const API = 'https://api.paystack.co'
+
+async function secretKey(): Promise<string> {
+  const k = (await getConfig()).paystack.secretKey
+  if (!k) throw new Error('Payments are not set up yet (Paystack secret key missing).')
+  return k
+}
 
 export function paystackSignatureValid(rawBody: string, signature: string | null, secret: string | undefined): boolean {
   if (!signature || !secret) return false
@@ -46,11 +52,11 @@ const mapChannel = (c?: string): VerifyResult['method'] =>
 
 export const paystack: PaymentProvider = {
   name: 'paystack',
-  configured: () => Boolean(env.PAYSTACK_SECRET_KEY),
+  configured: async () => Boolean((await getConfig()).paystack.secretKey),
   async initialize(a) {
     const res = await fetch(`${API}/transaction/initialize`, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${await secretKey()}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         email: a.email,
         amount: toSubunit(a.amount, a.currency),
@@ -69,7 +75,7 @@ export const paystack: PaymentProvider = {
   },
   async verify(reference) {
     const res = await fetch(`${API}/transaction/verify/${encodeURIComponent(reference)}`, {
-      headers: { Authorization: `Bearer ${env.PAYSTACK_SECRET_KEY}` },
+      headers: { Authorization: `Bearer ${await secretKey()}` },
       signal: AbortSignal.timeout(10000),
     })
     const json = (await res.json()) as {
@@ -84,7 +90,7 @@ export const paystack: PaymentProvider = {
       paidAt: d.paid_at, fees: d.fees != null ? fromSubunit(d.fees, d.currency) : undefined, providerRef: d.id ? String(d.id) : undefined, raw: d,
     }
   },
-  verifyWebhookSignature: (raw, sig) => paystackSignatureValid(raw, sig, env.PAYSTACK_SECRET_KEY),
+  verifyWebhookSignature: async (raw, sig) => paystackSignatureValid(raw, sig, (await getConfig()).paystack.secretKey),
 }
 
 export const paymentProvider = (): PaymentProvider => paystack

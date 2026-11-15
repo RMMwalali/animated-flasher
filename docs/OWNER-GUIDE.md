@@ -79,6 +79,7 @@ Only fill in "Search title" or "Search description" to change what Google shows.
 | Area | What it is for |
 | --- | --- |
 | **Team** | Who can log in. **Admin**: everything. **Sales agent**: leads, inbox, quotes, bookings, payments. **Content editor**: website content only. Untick **Active** to block someone without deleting their history. |
+| **Integrations** | Paste the keys for outside services here: Paystack, Postmark email, live chat, analytics and ad pixels, Google reviews, the spam check and IndexNow. Keys are stored encrypted and only the last 4 characters are ever shown again. After saving, press **Test connection** under each service. A key set in Vercel always takes priority. Admins only. |
 | **Audit log** | Who changed what and when (admins only, cannot be edited). |
 | **Business settings** | Your contact details, address and **map pin**, opening hours (optional: leave empty to show "Enquire any time"), profiles on other sites, licences & memberships, review links and notification emails. The **Search & Google** tab controls how the whole site appears on Google, Bing and AI assistants (see section 4G). |
 
@@ -150,6 +151,34 @@ Only if you prefer Cloudflare to Vercel Blob for photos:
 Once the back office is on:
 - **Licences & memberships:** Business settings → Trust. For each one, fill in the number, the expiry date (expired ones hide automatically), and optionally upload a photo or PDF of the certificate. It appears as "View certificate". Untick **Sample** to show it on the live site.
 - **Photos:** upload in **Photos & videos**, then pick them on the Home page (Welcome & stage slides), Journeys, Destinations and the Wildlife guide. Always add a short description.
+
+### Where to put keys
+
+You can paste every service key below on the back office's **Integrations** page instead of in Vercel, then press **Test connection**. Only four settings must stay in Vercel, because the site needs them before the back office can open:
+- the database
+- photo storage
+- `PAYLOAD_SECRET`, which also encrypts your keys: never change it once set, or saved keys must be entered again
+- `CRON_SECRET`
+
+### Payment details, WhatsApp, TikTok, reviews and analytics
+
+- **Bank and M-Pesa details:** Business settings → Payments.
+  - Add your bank accounts (US$ and KES), and your Paybill or Till if you have one.
+  - Guests see them on their trip page under "Other ways to pay", and in payment emails, with their booking reference.
+  - Record these payments yourself in **Payments** as "manual".
+- **WhatsApp button:** Business settings → Business. It's on every page by default, and you can change the opening message. On a guest's trip page the booking reference is added automatically.
+- **TikTok row:** Home page → TikTok videos.
+  - Paste up to 12 video links. The row appears on the home page and stays hidden while the list is empty.
+  - Videos only load when a visitor taps one.
+  - Add your TikTok profile under Business settings → Profiles on other sites to show a "Follow us" button.
+- **Reviews on the website:** only real ones.
+  - Add your Google, TripAdvisor and SafariBookings listing links under Business settings → Profiles on other sites, and the home page shows "Read our reviews on…" buttons.
+  - To show your Google rating and latest reviews, add a Google API key and Place ID on Integrations → Reviews. Google bills beyond a free monthly allowance.
+  - Reviews are shown exactly as Google returns them. Never edit or pick them.
+- **Analytics and ads:** Integrations → Analytics & ads.
+  - **Vercel Web Analytics** uses no cookies: tick it here, and also switch on Analytics in Vercel.
+  - **Google Analytics, Microsoft Clarity, the Meta Pixel and the TikTok Pixel** load only after a visitor agrees in the cookie banner, which offers "Visit statistics" and "Advertising" separately.
+  - Mention any tool you switch on in your Cookies page.
 
 ### C. Email: Postmark
 

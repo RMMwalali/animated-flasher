@@ -22,6 +22,11 @@ export const sampleSettings = {
   // No fixed office hours: guests from every time zone can enquire any time.
   hours: [] as { days: string[]; opens: string; closes: string }[],
   responseTime: '24 hours',
+  whatsappButton: true,
+  whatsappMessage: 'Jambo! I would like to ask about a trip.',
+  bankAccounts: [] as { label: string; currency: string; bankName: string; branch?: string | null; accountName: string; accountNumber: string; swift?: string | null; bankCode?: string | null }[],
+  mpesa: { paybill: '', till: '' },
+  paymentNote: '',
   social: [] as { platform: string; url: string }[],
   trust: [
     {
@@ -119,6 +124,8 @@ export const sampleHome = {
   journeysStatement: 'Our favourite journeys from Diani.',
   journeysEmphasis: 'favourite',
   journeysIntro: 'The safaris and coastal days we plan most often. Every one starts at your hotel on the south coast.',
+  tiktokTitle: 'Fresh from the field',
+  tiktokVideos: [] as { url: string }[],
   whenStatement: 'Kenya is a year-round country. Here is how the seasons fall.',
   seasons: [
     { label: 'Dry season', kind: 'dry', months: ['jan', 'feb', 'mar'], note: 'Hot, clear, excellent game viewing' },

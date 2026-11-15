@@ -35,7 +35,7 @@ test('article: contents links to anchors, share and related posts', async ({ pag
   await expect(page.locator('h2#amboseli-elephants-beneath-kilimanjaro')).toHaveCount(1)
   await link.click()
   await expect(page).toHaveURL(/#amboseli-elephants-beneath-kilimanjaro$/)
-  await expect(page.getByRole('link', { name: 'WhatsApp' })).toHaveAttribute('href', /^https:\/\/wa\.me\/\?text=/)
+  await expect(page.getByRole('link', { name: 'WhatsApp', exact: true })).toHaveAttribute('href', /^https:\/\/wa\.me\/\?text=/)
   await expect(page.getByRole('heading', { name: 'Keep reading' })).toBeVisible()
   await expect(page.locator('[data-reading-progress]')).toBeAttached()
   const ld = (await page.locator('script[type="application/ld+json"]').allTextContents()).join('\n')

@@ -19,7 +19,7 @@ export default async function PayComplete({ searchParams }: Props) {
   let status: 'success' | 'pending' | 'failed' | 'unknown' = 'unknown'
   let amount = ''
   let trip: string | null = null
-  if (payload && reference && paymentProvider().configured()) {
+  if (payload && reference && (await paymentProvider().configured())) {
     try {
       const res = await verifyAndRecord(await localReq(payload), reference)
       status = !res ? 'unknown' : res.status === 'success' ? 'success' : res.status === 'pending' ? 'pending' : 'failed'

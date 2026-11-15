@@ -11,6 +11,7 @@ import { HeaderLogo, LocationLine } from './Logo'
 import { MENU } from './nav'
 import type { ContactInfo } from './types'
 import { formatHours } from './hours'
+import { socialOf } from './social'
 
 /** Full-screen overlay menu: numbered large links + contact panel. */
 export function Menu({ open, onClose, contact }: { open: boolean; onClose: () => void; contact: ContactInfo }) {
@@ -79,6 +80,17 @@ export function Menu({ open, onClose, contact }: { open: boolean; onClose: () =>
                 <li><Link className="link-u inline-flex items-center gap-3" href="/contact" onClick={onClose}><Icon name="chat" size={20} />Send us a message</Link></li>
               </ul>
             </div>
+            {contact.social.length > 0 && (
+              <ul className="flex flex-wrap gap-3" aria-label="Follow us">
+                {contact.social.map((x) => (
+                  <li key={x.url}>
+                    <a href={x.url} target="_blank" rel="noopener me" className="grid size-11 place-items-center rounded-full border border-cream/30 hover:border-ochre" aria-label={`${socialOf(x.platform).label} (opens in a new tab)`} title={socialOf(x.platform).label}>
+                      <Icon name={socialOf(x.platform).icon} size={20} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
             {contact.hours.length > 0 ? (
               <div>
                 <p className="eyebrow text-teal-300">Office hours (EAT)</p>

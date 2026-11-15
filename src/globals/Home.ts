@@ -97,6 +97,16 @@ export const Home: GlobalConfig = {
           ],
         },
         {
+          label: 'TikTok videos',
+          description: 'A row of your TikTok videos on the home page. Paste video links (open the video in TikTok → Share → Copy link). Videos only load when a visitor taps one. The row stays hidden while the list is empty.',
+          fields: [
+            { name: 'tiktokTitle', type: 'text', label: 'Row title', defaultValue: 'Fresh from the field' },
+            { name: 'tiktokVideos', type: 'array', label: 'Videos', maxRows: 12, labels: { singular: 'Video', plural: 'Videos' }, fields: [
+              { name: 'url', type: 'text', required: true, label: 'TikTok video link', validate: (v: unknown) => (typeof v === 'string' && /^https:\/\/(www\.|vm\.|vt\.)?tiktok\.com\//.test(v) ? true : 'Paste a link that starts with https://www.tiktok.com/ or https://vm.tiktok.com/') },
+            ] },
+          ],
+        },
+        {
           label: 'When to go',
           fields: [
             { name: 'whenStatement', type: 'text' },

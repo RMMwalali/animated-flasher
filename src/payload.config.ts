@@ -19,6 +19,7 @@ import { Wildlife } from './collections/Wildlife'
 import { Activities, CannedReplies, Companies, Contacts, Conversations, Leads, Messages, Tasks } from './collections/crm'
 import { AuditLogs, Bookings, Departures, Payments, Quotes, RateLimits, ReviewRequests, Suppliers, Travellers } from './collections/ops'
 import { Home } from './globals/Home'
+import { Integrations } from './globals/Integrations'
 import { SiteSettings } from './globals/SiteSettings'
 import { withAudit } from './hooks/audit'
 import { postmarkAdapter } from './lib/email/payloadAdapter'
@@ -66,7 +67,7 @@ export default buildConfig({
     },
   },
   collections,
-  globals: [SiteSettings, Home],
+  globals: [SiteSettings, Home, Integrations],
   editor: lexicalEditor(),
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({

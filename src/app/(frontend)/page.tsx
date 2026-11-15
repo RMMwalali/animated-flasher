@@ -6,6 +6,8 @@ import { Journeys } from '@/components/home/Journeys'
 import { Story } from '@/components/home/Story'
 import { Trust } from '@/components/home/Trust'
 import { WhenToGo } from '@/components/home/WhenToGo'
+import { Reviews } from '@/components/social/Reviews'
+import { TikTokSection } from '@/components/social/TikTokSection'
 import { WelcomeGate } from '@/components/site/WelcomeGate'
 import { getHome, getSettings, getTrips } from '@/lib/content'
 import { pageMeta } from '@/lib/seo/meta'
@@ -36,6 +38,8 @@ export default async function HomePage() {
       <Chapter chapter={home.safari} tone="safari" n={3} flip />
       {trips.length > 0 && <Journeys trips={trips} copy={{ eyebrow: home.journeysEyebrow, statement: home.journeysStatement, emphasis: home.journeysEmphasis, intro: home.journeysIntro }} />}
       <WhenToGo home={home} />
+      <TikTokSection title={home.tiktokTitle} urls={home.tiktokVideos.map((v) => v.url)} profileUrl={settings.social.find((x) => x.platform === 'tiktok')?.url} />
+      <Reviews settings={settings} />
       <Trust settings={settings} />
       <Closing home={home} />
     </>
