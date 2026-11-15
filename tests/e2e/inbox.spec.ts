@@ -63,7 +63,7 @@ test.describe('inbox', () => {
     const contact = (await (await request.get('/api/contacts?limit=1&depth=0&sort=createdAt', { headers })).json()).docs[0]
     await page.getByRole('button', { name: 'Log WhatsApp / call' }).click()
     await page.getByLabel('Search guests').fill(contact.fullName.slice(0, 6))
-    await page.getByRole('button', { name: new RegExp(contact.fullName) }).first().click()
+    await page.locator('.ng-inbox__results').getByRole('button', { name: new RegExp(contact.fullName) }).first().click()
     await page.locator('.ng-inbox__panel').getByRole('textbox', { name: 'Message' }).fill('Guest asked about child prices on WhatsApp')
     await page.getByRole('button', { name: 'Save to the Inbox' }).click()
     await expect(page.locator('.ng-msg').filter({ hasText: 'Guest asked about child prices on WhatsApp' })).toBeVisible()
