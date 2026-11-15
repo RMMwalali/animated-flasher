@@ -36,7 +36,7 @@ test.describe('inbox', () => {
     expect(r.status).toBe('logged')
     const c = (await (await request.get(`/api/contacts?where[email][equals]=${stranger}`, { headers })).json()).docs[0]
     expect(c.firstName).toBe('New')
-    expect((await request.post('/api/webhooks/postmark-inbound', { headers: { Authorization: 'Basic d3Jvbmc6d3Jvbmc=' }, data: msg })).status()).toBe(401)
+    expect((await request.post('/api/webhooks/postmark-inbound', { headers: { Authorization: `Basic ${Buffer.from(`${user}:not-the-password`).toString('base64')}` }, data: msg })).status()).toBe(401)
     await request.post('/api/globals/integrations', { headers, data: { postmark: { inboundUser: '', inboundPassword: '' } } })
   })
 
