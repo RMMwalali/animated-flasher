@@ -20,6 +20,8 @@ export function WhatsAppButton({ number, message }: { number: string; message: s
         // on a guest's trip page the booking reference is added for the team
         const ref = document.querySelector('[data-booking-ref]')?.getAttribute('data-booking-ref')
         if (ref) e.currentTarget.href = href(`${message} (Booking ${ref})`)
+        const token = path.startsWith('/trip/') ? path.split('/')[2] : null
+        if (token) navigator.sendBeacon?.('/api/trip/whatsapp', new Blob([JSON.stringify({ token })], { type: 'application/json' }))
         trackEvent('whatsapp_click', { page: path })
       }}
       className="fixed bottom-5 right-5 z-40 grid size-14 place-items-center rounded-full bg-[#1f7a4d] text-white shadow-[0_10px_30px_-10px_rgb(14_43_39/0.6)] transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange"

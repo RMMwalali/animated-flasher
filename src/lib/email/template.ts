@@ -33,15 +33,14 @@ ${c.preheader ? `<div style="display:none;max-height:0;overflow:hidden">${esc(c.
 <table role="presentation" width="100%" style="background:${colors.cream}"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="100%" style="max-width:560px;background:${colors.paper};border-radius:16px;padding:32px">
 <tr><td><img src="${logo}" width="56" height="56" alt="Ngina Trails and Safaris" style="display:block;margin-bottom:24px;border-radius:12px">
-<h1 style="margin:0 0 16px;font-size:26px;line-height:1.2;color:${colors.deep}">${esc(c.heading)}</h1>
+${c.heading ? `<h1 style="margin:0 0 16px;font-size:26px;line-height:1.2;color:${colors.deep}">${esc(c.heading)}</h1>` : ''}
 ${paras}${facts}${button}${sig}
 </td></tr></table>
 <p style="max-width:560px;margin:16px auto 0;font:600 12px/1.5 Helvetica,Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:${colors.tealInk}">Ngina Trails and Safaris · Diani Beach, Kenya</p>
 ${c.footerNote ? `<p style="max-width:560px;margin:8px auto 0;font-size:12px;line-height:1.5;color:${colors.deep}">${esc(c.footerNote)}</p>` : ''}
 </td></tr></table></body></html>`
   const text = [
-    c.heading,
-    '',
+    ...(c.heading ? [c.heading, ''] : []),
     ...c.paragraphs,
     ...(c.facts?.length ? ['', ...c.facts.map(([k, v]) => `${k}: ${v}`)] : []),
     ...(c.button ? ['', `${c.button.label}: ${c.button.href}`] : []),

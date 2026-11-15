@@ -1,6 +1,6 @@
 import type { PayloadRequest } from 'payload'
+import { sendToGuest } from '@/lib/inbox'
 import { env } from '@/lib/env'
-import { sendEmail } from '@/lib/email'
 import { formatMoney, type Currency } from '@/lib/pricing'
 import { paymentReference } from '@/lib/ids'
 import { bookingMoneyState, creditedAmount, nextAmountDue } from './math'
@@ -36,8 +36,8 @@ async function sendReceipt(req: PayloadRequest, payment: any, booking: any, bala
   if (!payment.receiptNumber) {
     await req.payload.update({ collection: 'payments', id: payment.id, data: { receiptNumber }, req, overrideAccess: true, context: { skipPaymentHooks: true } })
   }
-  await sendEmail({
-    to: contact.email,
+  await sendToGuest(req, {
+    contactId: contact.id, leadId: idOf(booking.lead),
     subject: `Receipt ${receiptNumber}: ${booking.title}`,
     tag: 'receipt',
     content: {

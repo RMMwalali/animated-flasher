@@ -1,6 +1,6 @@
 import type { PayloadRequest } from 'payload'
+import { sendToGuest } from '@/lib/inbox'
 import { env } from '@/lib/env'
-import { sendEmail } from '@/lib/email'
 import { token } from '@/lib/ids'
 import { advanceLeadStatus, type LeadStatus } from './stages'
 import { getSettings } from './settings'
@@ -68,8 +68,8 @@ async function sendReviewEmail(req: PayloadRequest, r: any, reminder: boolean): 
     return false
   }
   const link = `${env.SITE_URL}/review/${r.token}`
-  const res = await sendEmail({
-    to: contact.email,
+  const res = await sendToGuest(req, {
+    contactId: contact.id, leadId: idOf(r.booking?.lead),
     subject: reminder ? 'A gentle reminder: how was your trip?' : 'How was your trip with Ngina?',
     tag: 'review-request',
     content: {

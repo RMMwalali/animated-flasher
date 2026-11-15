@@ -321,6 +321,7 @@ export interface User {
   signature?: string | null;
   notify?: {
     newLeads?: boolean | null;
+    newMessages?: boolean | null;
     chat?: boolean | null;
   };
   takesNewLeads?: boolean | null;
@@ -660,7 +661,7 @@ export interface Conversation {
   subject: string;
   contact?: (number | null) | Contact;
   lead?: (number | null) | Lead;
-  channel: 'email' | 'chat';
+  channel: 'email' | 'chat' | 'whatsapp' | 'phone';
   status: 'open' | 'pending' | 'closed';
   assignedTo?: (number | null) | User;
   unread?: number | null;
@@ -695,7 +696,11 @@ export interface Message {
   id: number;
   conversation: number | Conversation;
   direction: 'in' | 'out' | 'note';
-  channel: 'email' | 'chat';
+  channel: 'email' | 'chat' | 'whatsapp' | 'phone';
+  /**
+   * Sent automatically by the website (quote, receipt, reminder…).
+   */
+  automated?: boolean | null;
   body: string;
   preview?: string | null;
   author?: (number | null) | User;
@@ -718,6 +723,7 @@ export interface Activity {
     | 'email_in'
     | 'email_out'
     | 'chat'
+    | 'whatsapp'
     | 'status'
     | 'lead'
     | 'quote'
@@ -1723,6 +1729,7 @@ export interface MessagesSelect<T extends boolean = true> {
   conversation?: T;
   direction?: T;
   channel?: T;
+  automated?: T;
   body?: T;
   preview?: T;
   author?: T;
@@ -2393,6 +2400,7 @@ export interface UsersSelect<T extends boolean = true> {
     | T
     | {
         newLeads?: T;
+        newMessages?: T;
         chat?: T;
       };
   takesNewLeads?: T;
