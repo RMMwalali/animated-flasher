@@ -114,7 +114,7 @@ export const Activities: CollectionConfig = {
   access: { read: salesTeam, create: salesTeam, update: admins, delete: admins },
   fields: [
     { name: 'type', type: 'select', required: true, options: [
-      'note', 'email_in', 'email_out', 'chat', 'status', 'lead', 'quote', 'booking', 'payment', 'review', 'task',
+      'note', 'email_in', 'email_out', 'chat', 'whatsapp', 'status', 'lead', 'quote', 'booking', 'payment', 'review', 'task',
     ].map((v) => ({ label: v.replace('_', ' '), value: v })) },
     { name: 'summary', type: 'text', required: true },
     { name: 'body', type: 'textarea' },
@@ -157,7 +157,7 @@ export const Conversations: CollectionConfig = {
     { name: 'subject', type: 'text', required: true },
     { name: 'contact', type: 'relationship', relationTo: 'contacts', index: true },
     { name: 'lead', type: 'relationship', relationTo: 'leads' },
-    { name: 'channel', type: 'select', required: true, defaultValue: 'email', options: [{ label: 'Email', value: 'email' }, { label: 'Live chat', value: 'chat' }] },
+    { name: 'channel', type: 'select', required: true, defaultValue: 'email', options: [{ label: 'Email', value: 'email' }, { label: 'Live chat', value: 'chat' }, { label: 'WhatsApp', value: 'whatsapp' }, { label: 'Phone', value: 'phone' }] },
     { name: 'status', type: 'select', required: true, defaultValue: 'open', index: true, options: [
       { label: 'Open', value: 'open' }, { label: 'Waiting on guest', value: 'pending' }, { label: 'Closed', value: 'closed' },
     ] },
@@ -184,7 +184,8 @@ export const Messages: CollectionConfig = {
     { name: 'direction', type: 'select', required: true, options: [
       { label: 'From guest', value: 'in' }, { label: 'To guest', value: 'out' }, { label: 'Internal note', value: 'note' },
     ] },
-    { name: 'channel', type: 'select', required: true, options: ['email', 'chat'] },
+    { name: 'channel', type: 'select', required: true, options: [{ label: 'Email', value: 'email' }, { label: 'Live chat', value: 'chat' }, { label: 'WhatsApp (logged by hand)', value: 'whatsapp' }, { label: 'Phone (logged by hand)', value: 'phone' }] },
+    { name: 'automated', type: 'checkbox', defaultValue: false, admin: { description: 'Sent automatically by the website (quote, receipt, reminder…).' } },
     { name: 'body', type: 'textarea', required: true },
     { name: 'preview', type: 'text' },
     { name: 'author', type: 'relationship', relationTo: 'users' },

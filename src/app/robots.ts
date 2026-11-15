@@ -13,7 +13,7 @@ const AI = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-User
  */
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const s = await getSettings()
-  const disallow = ['/admin', '/api/', '/pay/', '/trip/', '/quote/']
+  const disallow = ['/admin', '/api/', '/pay/', '/trip/', '/quote/', '/review/']
   if (s.search.hideFromSearch) return { rules: [{ userAgent: '*', disallow: '/' }] }
   const aiRule = s.search.allowAiCrawlers ? { allow: '/', disallow } : { disallow: '/' }
   return {

@@ -1,6 +1,7 @@
 import type { Payload } from 'payload'
+import { sendToGuest } from '@/lib/inbox'
 import { env } from '@/lib/env'
-import { sendEmail, threadReplyTo } from '@/lib/email'
+
 import type { EnquiryInput } from '@/lib/forms/schemas'
 import { token } from '@/lib/ids'
 import { normalizeSource, pickAgent, splitName } from './source'
@@ -96,10 +97,9 @@ export async function captureEnquiry(payload: Payload, input: EnquiryInput) {
   })
 
   const settings = await getSettings({ payload })
-  const ack = await sendEmail({
-    to: contact.email!,
+  const ack = await sendToGuest({ payload }, {
+    contactId: contact.id, conversationId: conversation.id, leadId: lead.id,
     subject: 'We have your enquiry · Ngina Trails and Safaris',
-    replyTo: await threadReplyTo(threadKey),
     tag: 'enquiry-ack',
     content: {
       preheader: 'Thank you. A member of our Diani team will reply personally.',

@@ -7,7 +7,8 @@ export const onMessageCreated: CollectionAfterChangeHook = async ({ doc, operati
   const convId = typeof doc.conversation === 'object' ? doc.conversation.id : doc.conversation
   const conv = await req.payload.findByID({ collection: 'conversations', id: convId, depth: 0, req, overrideAccess: true })
   const data: Record<string, unknown> = {}
-  if (doc.direction !== 'note') {
+  // automatic emails (acknowledgements, receipts, reminders) never replace what the guest last wrote
+  if (doc.direction !== 'note' && !doc.automated) {
     data.lastMessageAt = doc.createdAt
     data.lastMessagePreview = doc.preview
     data.lastDirection = doc.direction
@@ -15,7 +16,8 @@ export const onMessageCreated: CollectionAfterChangeHook = async ({ doc, operati
   if (doc.direction === 'in') {
     data.unread = (conv.unread ?? 0) + 1
     data.status = 'open'
-  } else if (doc.direction === 'out') {
+  } else if (doc.direction === 'out' && !doc.automated) {
+    // an automatic email (receipt, reminder) never counts as the team replying
     data.unread = 0
     data.status = conv.status === 'closed' ? 'closed' : 'pending'
   }

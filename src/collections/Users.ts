@@ -50,6 +50,7 @@ export const Users: CollectionConfig = {
       label: 'Notifications',
       fields: [
         { name: 'newLeads', type: 'checkbox', defaultValue: true, label: 'Email me when a lead is assigned to me' },
+        { name: 'newMessages', type: 'checkbox', defaultValue: true, label: 'Email me when a guest replies to one of my conversations' },
         { name: 'chat', type: 'checkbox', defaultValue: true, label: 'Email me about new chats when I am offline' },
       ],
     },

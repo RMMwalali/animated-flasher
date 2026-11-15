@@ -5,7 +5,7 @@ This guide is for running the business, not for developers. You will not need to
 - **Your website** is at your domain (for example `https://nginatrails.com`).
 - **Your back office** is at the same address followed by `/admin` (for example `https://nginatrails.com/admin`). Log in with your email and password.
 
-> **Status.** Areas marked *(next update)* are designed and planned but arrive in the next delivery. Everything else works today, once the database is connected (section 4A).
+> **Status.** Everything described here works once the database is connected (section 4A). Live chat on the website is the next delivery; until then guests use the enquiry form, email and WhatsApp, and you can log WhatsApp chats and calls in the Inbox.
 
 ---
 
@@ -18,7 +18,7 @@ The left-hand menu is grouped and numbered. At the top is **Workspace**: the vie
 | Area | What it is for |
 | --- | --- |
 | **Overview** | Your day at a glance: tasks due, new leads, guests waiting for a reply, departures in the next 30 days and money received this month. Everything links to the record. |
-| **Inbox** *(next update)* | Every email and live-chat conversation with guests, one thread per person. Assign to a colleague, mark as waiting / closed, write internal notes the guest never sees, and insert saved replies. Unread counts update live. |
+| **Inbox** | Every conversation with guests, one thread per person: website enquiries, every email the website sends (quotes, confirmations, payment requests, reminders, receipts, review requests), guests' email replies, and emails forwarded from your Gmail. Reply by email, write internal notes the guest never sees, insert saved replies, assign to a colleague, and mark as **Needs reply / Waiting on guest / Closed**. **Log WhatsApp / call** saves a WhatsApp chat or phone call on the guest's record. Refreshes every few seconds. |
 | **Leads pipeline** | Every enquiry as a card, in columns: New → Contacted → Quoted → Deposit paid → Confirmed → Travelled → Review requested (and Lost). Use the arrows to move a lead along. Each card shows where it came from: the channel (form, plan-your-trip, chat), the button that was clicked and any campaign tag. Switch to **List** to see it as a table. |
 | **Departures** | A month calendar of bookings (teal) and scheduled departures (ochre). |
 | **Go-live setup** | Shows which services are connected and which content still needs your attention (admins only). |
@@ -184,21 +184,29 @@ You can paste every service key below on the back office's **Integrations** page
 
 7. Create a Postmark account and server. Add and verify your domain (Postmark shows the DNS records to add: DKIM and Return-Path).
 8. Set `POSTMARK_SERVER_TOKEN` (Server → API tokens) and `POSTMARK_FROM_EMAIL` (e.g. `Ngina Trails and Safaris <hello@nginatrails.com>`).
-9. Guest replies: in Postmark, open the server's **Inbound** stream and copy the inbound address into `POSTMARK_INBOUND_ADDRESS`. Choose a username and long password for `POSTMARK_INBOUND_WEBHOOK_USER` and `POSTMARK_INBOUND_WEBHOOK_PASSWORD`, and set the inbound webhook URL to `https://USER:PASSWORD@yourdomain/api/webhooks/postmark-inbound` *(next update)*.
+9. **Guest replies into the Inbox.**
+   - In Postmark, open the server's **Inbound** stream and copy the inbound address (…@inbound.postmarkapp.com) into **Integrations → Email → Inbound address**.
+   - Choose a username and a long password for the inbound webhook, save them on the same page, and set Postmark's inbound webhook URL to `https://USERNAME:PASSWORD@yourdomain/api/webhooks/postmark-inbound`.
+   - From then on, when a guest replies to any email from the website, the reply lands in the same conversation in the Inbox, and the assigned agent gets an email alert. Each agent can switch this off in their profile.
+10. **Copy your Gmail into the Inbox (about 2 minutes).**
+    - In Gmail (cngina35@gmail.com), go to **Settings → See all settings → Forwarding and POP/IMAP → Add a forwarding address** and enter the Postmark inbound address.
+    - Gmail sends a confirmation email to that address: it appears in the back office Inbox. Open it and click the confirmation link.
+    - Then either choose **Forward a copy of incoming mail** (keep Gmail's copy), or create a Gmail filter that forwards only guest emails.
+    - Emails from a new address create a new contact and conversation automatically. Nothing is ever sent back automatically.
 
 ### D. Live chat: Pusher or Ably
 
-10. Choose one. **Pusher Channels**: create an app (cluster `eu`), then set `PUSHER_APP_ID`, `PUSHER_KEY`, `PUSHER_SECRET` and `PUSHER_CLUSTER`. **Ably**: create an app and set `ABLY_API_KEY`. Without either, chat still works but refreshes every few seconds.
+11. Choose one. **Pusher Channels**: create an app (cluster `eu`), then set `PUSHER_APP_ID`, `PUSHER_KEY`, `PUSHER_SECRET` and `PUSHER_CLUSTER`. **Ably**: create an app and set `ABLY_API_KEY`. Without either, chat still works but refreshes every few seconds.
 
 ### E. Payments: Paystack (M-Pesa + card)
 
-11. Open a Paystack Kenya business account and complete verification (business registration and KRA PIN). Enable **M-Pesa** and **Cards**; ask Paystack to enable USD if you want to charge cards in dollars.
-12. Settings → API Keys & Webhooks: set `PAYSTACK_SECRET_KEY` and `PAYSTACK_PUBLIC_KEY`. Set the webhook URL to `https://yourdomain/api/webhooks/paystack`. Test with test keys first: send yourself a quote, accept it, and pay the deposit with Paystack's test card.
+12. Open a Paystack Kenya business account and complete verification (business registration and KRA PIN). Enable **M-Pesa** and **Cards**; ask Paystack to enable USD if you want to charge cards in dollars.
+13. Settings → API Keys & Webhooks: set `PAYSTACK_SECRET_KEY` and `PAYSTACK_PUBLIC_KEY`. Set the webhook URL to `https://yourdomain/api/webhooks/paystack`. Test with test keys first: send yourself a quote, accept it, and pay the deposit with Paystack's test card.
 
 ### F. Your domain (DNS)
 
-13. In your domain provider (or Cloudflare DNS), add the records Vercel shows under **Project → Settings → Domains** (usually an `A` record for the root and a `CNAME` for `www`).
-14. Add Postmark's DKIM and Return-Path records (step 7) and, if you use Cloudflare for R2, the media subdomain.
+14. In your domain provider (or Cloudflare DNS), add the records Vercel shows under **Project → Settings → Domains** (usually an `A` record for the root and a `CNAME` for `www`).
+15. Add Postmark's DKIM and Return-Path records (from step 7) and, if you use Cloudflare for R2, the media subdomain.
 
 ### G. Search and maps
 
@@ -216,22 +224,22 @@ Everything here is in the back office: **Business settings**.
 - **The links under your result on Google ("sitelinks").** Google picks these itself; no website can set them. They come from a clear menu, breadcrumbs and distinct titles and descriptions on every page, which the website already has, plus time and traffic.
 
 
-15. **Google Search Console**: add your domain as a property (DNS verification), then submit `https://yourdomain/sitemap.xml` *(sitemap: next update)*.
-16. **Bing Webmaster Tools**: import from Google Search Console. Optionally set `INDEXNOW_KEY` so Bing is told about every page you publish *(key file: next update)*.
-17. **Google Business Profile**: create or claim "Ngina Trails and Safaris" at your Diani Beach address, with the same name, phone and hours as Business settings. Copy its **Ask for reviews** link into Business settings → Reviews.
+16. **Google Search Console**: add your domain as a property (DNS verification), then submit `https://yourdomain/sitemap.xml`.
+17. **Bing Webmaster Tools**: import from Google Search Console. Optionally add an IndexNow key (Integrations → Security & search) so Bing is told about every page you publish.
+18. **Google Business Profile**: create or claim "Ngina Trails and Safaris" at your Diani Beach address, with the same name, phone and hours as Business settings. Copy its **Ask for reviews** link into Business settings → Reviews.
 
 ### H. Review sites
 
-18. **TripAdvisor**: claim your listing (Management Center), then copy your "write a review" link into Business settings → Reviews.
-19. **SafariBookings**: list as an operator, then copy your review link from the operator dashboard into Business settings → Reviews.
+19. **TripAdvisor**: claim your listing (Management Center), then copy your "write a review" link into Business settings → Reviews.
+20. **SafariBookings**: list as an operator, then copy your review link from the operator dashboard into Business settings → Reviews.
 
 ### I. Before you announce the site
 
-20. Fill in **Business settings**: email, phone, WhatsApp, address, hours and real licence numbers (only the ones you hold).
-21. Replace sample journeys, destinations text, photos and prices. Untick **Sample** on each.
-22. Have the Privacy, Terms and Cookies pages reviewed by a lawyer (they are starter text under Kenya's Data Protection Act 2019).
-23. Turn off the sample banner (Business settings → Notifications).
-24. Send yourself a test enquiry from your phone and check it appears in the Overview and your email.
+21. Fill in **Business settings**: email, phone, WhatsApp, address, hours and real licence numbers (only the ones you hold).
+22. Replace sample journeys, destinations text, photos and prices. Untick **Sample** on each.
+23. Have the Privacy, Terms and Cookies pages reviewed by a lawyer (they are starter text under Kenya's Data Protection Act 2019).
+24. Turn off the sample banner (Business settings → Notifications).
+25. Send yourself a test enquiry from your phone and check it appears in the Overview and your email.
 
 ---
 

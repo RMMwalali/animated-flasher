@@ -4,7 +4,7 @@
  * API routes, admin buttons or the daily job; nothing trusts the browser.
  */
 import { createLocalReq, type Payload, type PayloadRequest } from 'payload'
-import { sendEmail } from '@/lib/email'
+import { sendToGuest } from '@/lib/inbox'
 import { env } from '@/lib/env'
 import { formatMoney, type Currency } from '@/lib/pricing'
 import { notifyTeam } from '@/lib/crm/notify'
@@ -53,11 +53,10 @@ export async function sendQuoteToGuest(req: PayloadRequest, quoteId: number | st
   const updated = await req.payload.update({ collection: 'quotes', id: quote.id, data, req, overrideAccess: true })
   const currency = quote.currency as Currency
   const url = quoteUrl(updated.acceptToken!)
-  const res = await sendEmail({
-    to: contact.email,
+  const res = await sendToGuest(req, {
+    contactId: contact.id, authorId: (req.user as any)?.id, leadId: idOf(quote.lead),
     subject: `Your trip plan: ${quote.title} (${quote.number})`,
     tag: 'quote',
-    replyTo: (req.user as any)?.email,
     content: {
       preheader: `Your plan and price for ${quote.title}, ready to review.`,
       heading: `Jambo ${contact.firstName},`,
@@ -160,8 +159,8 @@ export async function sendBookingConfirmation(req: PayloadRequest, bookingId: nu
   const { booking, contact } = await bookingWithContact(req, bookingId)
   const currency = booking.currency as Currency
   const depositLeft = Math.max(0, (booking.depositDue ?? 0) - (booking.amountPaid ?? 0))
-  const res = await sendEmail({
-    to: contact.email,
+  const res = await sendToGuest(req, {
+    contactId: contact.id, authorId: (req.user as any)?.id, leadId: idOf(booking.lead),
     subject: `Booking ${booking.reference}: ${booking.title}`,
     tag: 'booking-confirmation',
     content: {
@@ -211,11 +210,10 @@ export async function requestPayment(req: PayloadRequest, bookingId: number | st
     if (due <= 0) throw new GuestError(`Nothing left to pay for the ${opts.kind}.`)
     amountText = formatMoney(due, bookingCurrency)
   }
-  const res = await sendEmail({
-    to: contact.email,
+  const res = await sendToGuest(req, {
+    contactId: contact.id, authorId: (req.user as any)?.id, leadId: idOf(booking.lead),
     subject: `${opts.kind === 'deposit' ? 'Deposit' : 'Balance'} for booking ${booking.reference}`,
     tag: `payment-request-${opts.kind}`,
-    replyTo: (req.user as any)?.email,
     content: {
       heading: `Jambo ${contact.firstName},`,
       paragraphs: [
@@ -307,8 +305,8 @@ async function sendBalanceReminder(req: PayloadRequest, b: any) {
   const token = b.portalToken
   if (!token || !contact?.email) return
   const currency = b.currency as Currency
-  const res = await sendEmail({
-    to: contact.email,
+  const res = await sendToGuest(req, {
+    contactId: contact.id, leadId: idOf(b.lead),
     subject: `Balance due for ${b.title} (${b.reference})`,
     tag: 'balance-reminder',
     content: {
@@ -329,8 +327,8 @@ async function sendEtaReminder(req: PayloadRequest, b: any) {
   const contact = b.contact as any
   const token = b.portalToken
   if (!token || !contact?.email) return
-  const res = await sendEmail({
-    to: contact.email,
+  const res = await sendToGuest(req, {
+    contactId: contact.id, leadId: idOf(b.lead),
     subject: `Before you fly: your Kenya eTA (${b.reference})`,
     tag: 'eta-reminder',
     content: {
