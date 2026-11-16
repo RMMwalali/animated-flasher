@@ -44,25 +44,3 @@ test('WhatsApp button, cookie choices, and empty widgets stay hidden', async ({ 
   await expect(page.locator('#tiktok-title')).toHaveCount(0)
   await expect(page.locator('#reviews-title')).toHaveCount(0)
 })
-
-test('saving the Integrations page again never destroys a stored key', async ({ request, isMobile }) => {
-  test.skip(isMobile || !password, 'desktop, needs the seeded admin password')
-  const { token } = (await (await request.post('/api/users/login', { data: { email, password } })).json()) as { token: string }
-  const headers = { Authorization: `JWT ${token}` }
-  const user = `keep-${randomBytes(3).toString('hex')}`
-  const pass = randomBytes(10).toString('hex')
-  const webhook = () => request.post('/api/webhooks/postmark-inbound', {
-    headers: { Authorization: `Basic ${Buffer.from(`${user}:${pass}`).toString('base64')}` },
-    data: { From: `keep-${randomBytes(3).toString('hex')}@example.com`, TextBody: 'key check', MessageID: `<${randomBytes(6).toString('hex')}@e2e>` },
-  })
-  await request.post('/api/globals/integrations', { headers, data: { postmark: { inboundUser: user, inboundPassword: pass } } })
-  // an unrelated change, then a full save of what the admin screen shows (masked keys)
-  await request.post('/api/globals/integrations', { headers, data: { indexNow: { key: '' } } })
-  const shown = await (await request.get('/api/globals/integrations', { headers })).json()
-  expect(shown.postmark.inboundPassword).toMatch(/^•+/)
-  await request.post('/api/globals/integrations', { headers, data: shown })
-  // the stored password still works
-  await expect.poll(async () => (await webhook()).status(), { timeout: 40_000, intervals: [2000] }).toBe(200)
-  await request.post('/api/globals/integrations', { headers, data: { postmark: { inboundUser: '', inboundPassword: '' } } })
-})
-

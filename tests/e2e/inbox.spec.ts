@@ -40,6 +40,27 @@ test.describe('inbox', () => {
     await request.post('/api/globals/integrations', { headers, data: { postmark: { inboundUser: '', inboundPassword: '' } } })
   })
 
+  // in this file so it runs one after the other with the inbound-email test (both change the same setting)
+  test('saving the Integrations page again never destroys a stored key', async ({ request }) => {
+    const { token } = (await (await request.post('/api/users/login', { data: { email, password } })).json()) as { token: string }
+    const headers = { Authorization: `JWT ${token}` }
+    const user = `keep-${randomBytes(3).toString('hex')}`
+    const pass = randomBytes(10).toString('hex')
+    const webhook = () => request.post('/api/webhooks/postmark-inbound', {
+      headers: { Authorization: `Basic ${Buffer.from(`${user}:${pass}`).toString('base64')}` },
+      data: { From: `keep-${randomBytes(3).toString('hex')}@example.com`, TextBody: 'key check', MessageID: `<${randomBytes(6).toString('hex')}@e2e>` },
+    })
+    await request.post('/api/globals/integrations', { headers, data: { postmark: { inboundUser: user, inboundPassword: pass } } })
+    // an unrelated change, then a full save of what the admin screen shows (masked keys)
+    await request.post('/api/globals/integrations', { headers, data: { indexNow: { key: '' } } })
+    const shown = await (await request.get('/api/globals/integrations', { headers })).json()
+    expect(shown.postmark.inboundPassword).toMatch(/^•+/)
+    await request.post('/api/globals/integrations', { headers, data: shown })
+    // the stored password still works
+    await expect.poll(async () => (await webhook()).status(), { timeout: 40_000, intervals: [2000] }).toBe(200)
+    await request.post('/api/globals/integrations', { headers, data: { postmark: { inboundUser: '', inboundPassword: '' } } })
+  })
+
   test('agent replies, notes and logs a WhatsApp chat from the Inbox', async ({ page, request }) => {
     // a throwaway agent of its own: parallel tests signing in as the shared admin can retire each other's sessions
     const admin = await login(request)

@@ -11,7 +11,9 @@ concurrency:
 
 jobs:
   checks:
-    runs-on: ubuntu-latest
+    # pinned: on the ubuntu-latest (26.04) image a preinstalled Microsoft apt source has no
+    # Release file, so "playwright install --with-deps" (apt-get update) fails before tests run
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:16
