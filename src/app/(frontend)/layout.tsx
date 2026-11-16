@@ -11,6 +11,7 @@ import { SampleBanner } from '@/components/site/SampleBanner'
 import { Analytics } from '@/components/site/Analytics'
 import { PublicConfigProvider } from '@/components/site/PublicConfig'
 import { WhatsAppButton } from '@/components/site/WhatsAppButton'
+import { CardReveal } from '@/components/site/CardReveal'
 import { getConfig } from '@/lib/config'
 import { getSettings } from '@/lib/content'
 import { env } from '@/lib/env'
@@ -73,6 +74,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         {settings.whatsappButton !== false && settings.whatsapp && <WhatsAppButton number={settings.whatsapp} message={settings.whatsappMessage || 'Jambo!'} />}
         <ConsentBanner />
         <Motion />
+        <CardReveal />
         <AttributionCapture />
         <Analytics ids={config.analytics} />
       </body>

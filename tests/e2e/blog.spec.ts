@@ -15,7 +15,7 @@ test('old journal links forward to the blog', async ({ page }) => {
 
 test('blog index: featured article, topic filter kept in the address', async ({ page }) => {
   await page.goto('/blog')
-  await expect(page.getByText('Latest', { exact: true })).toBeVisible()
+  await expect(page.getByText(/^Latest ·/).first()).toBeVisible()
   const ld = (await page.locator('script[type="application/ld+json"]').allTextContents()).join('\n')
   expect(ld).toContain('"Blog"')
   await page.getByRole('radio', { name: 'Marine' }).click()
