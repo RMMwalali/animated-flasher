@@ -46,6 +46,7 @@ export function BookingActions() {
       >
         Copy trip page link
       </button>
+      <a className="ng-btn ng-btn--ghost" href={`/api/documents/invoice?id=${id}`} target="_blank" rel="noopener">Invoice PDF</a>
     </ToolBar>
   )
 }
