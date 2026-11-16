@@ -10,6 +10,7 @@ import * as migration_20261115_041057_inbox from './20261115_041057_inbox';
 import * as migration_20261116_060921_remove_welcome_sound from './20261116_060921_remove_welcome_sound';
 import * as migration_20261116_061208_home_title from './20261116_061208_home_title';
 import * as migration_20261116_082858_traveller_details from './20261116_082858_traveller_details';
+import * as migration_20261116_084744_live_chat from './20261116_084744_live_chat';
 
 export const migrations = [
   {
@@ -70,6 +71,11 @@ export const migrations = [
   {
     up: migration_20261116_082858_traveller_details.up,
     down: migration_20261116_082858_traveller_details.down,
-    name: '20261116_082858_traveller_details'
+    name: '20261116_082858_traveller_details',
+  },
+  {
+    up: migration_20261116_084744_live_chat.up,
+    down: migration_20261116_084744_live_chat.down,
+    name: '20261116_084744_live_chat'
   },
 ];

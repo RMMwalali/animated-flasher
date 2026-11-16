@@ -65,6 +65,8 @@ export const SiteSettings: GlobalConfig = {
             { type: 'row', fields: [
               { name: 'whatsappButton', type: 'checkbox', defaultValue: true, label: 'Show a WhatsApp button on every page', admin: { description: 'A small round button in the bottom-right corner, using the WhatsApp number above.' } },
               { name: 'whatsappMessage', type: 'text', defaultValue: 'Jambo! I would like to ask about a trip.', label: 'Message it starts with', admin: { condition: (_, s) => s?.whatsappButton !== false } },
+              { name: 'liveChat', type: 'checkbox', defaultValue: true, label: 'Show live chat on every page', admin: { description: 'Visitors\' messages arrive in the Inbox. While someone on the team has the Inbox open, the chat shows "online"; otherwise it asks for an email address and replies go out by email too.' } },
+              { name: 'chatGreeting', type: 'text', defaultValue: 'Jambo! Ask us anything about safaris, the coast or your dates.', label: 'Chat greeting', admin: { condition: (_, s) => s?.liveChat !== false } },
             ] },
             { name: 'responseTime', type: 'text', defaultValue: 'one working day', admin: { description: 'Shown on the website and in emails: "we reply within …", e.g. 24 hours.' } },
             { name: 'social', type: 'array', label: 'Profiles on other sites', admin: { description: 'Your Google Business Profile, TripAdvisor, SafariBookings and social pages. Search engines and AI assistants use these to confirm they are all the same business.' }, fields: [{ type: 'row', fields: [

@@ -24,6 +24,8 @@ export const sampleSettings = {
   responseTime: '24 hours',
   whatsappButton: true,
   whatsappMessage: 'Jambo! I would like to ask about a trip.',
+  liveChat: true,
+  chatGreeting: 'Jambo! Ask us anything about safaris, the coast or your dates.',
   bankAccounts: [] as { label: string; currency: string; bankName: string; branch?: string | null; accountName: string; accountNumber: string; swift?: string | null; bankCode?: string | null }[],
   mpesa: { paybill: '', till: '' },
   paymentNote: '',
