@@ -115,7 +115,10 @@ export async function seedContent(payload: Payload, opts: SeedOptions): Promise<
     const wdoc = await upsert('wildlife', { slug: { equals: w.slug } }, { ...ww, sample: true, image: photoId(photo), whereToSee: w.whereToSee.map((s) => dest[s]).filter(Boolean), bestMonths: 'bestMonths' in w ? [...w.bestMonths] : [] })
     await ensurePhoto('wildlife', wdoc, 'image', photo)
   }
-  for (const e of S.sampleExperiences) await upsert('experiences', { slug: { equals: e.slug } }, { ...e, sample: true, location: dest[e.location] })
+  for (const { photo, ...e } of S.sampleExperiences) {
+    const edoc = await upsert('experiences', { slug: { equals: e.slug } }, { ...e, sample: true, location: dest[e.location], image: photoId(photo) })
+    await ensurePhoto('experiences', edoc, 'image', photo)
+  }
   for (const [i, { photo, ...p }] of S.samplePosts.entries()) {
     // spread the sample dates out (older first) so the blog order is stable
     const publishedAt = new Date(Date.now() - (S.samplePosts.length - i) * 7 * 864e5).toISOString()
