@@ -1,20 +1,16 @@
 import { randomBytes } from 'node:crypto'
-import { expect, test, type APIRequestContext } from '@playwright/test'
+import { expect, test } from '@playwright/test'
+import { adminHeaders } from './admin'
 
-const email = process.env.E2E_ADMIN_EMAIL ?? 'admin@ngina.local'
 const password = process.env.E2E_ADMIN_PASSWORD ?? process.env.SEED_ADMIN_PASSWORD
 
-async function login(request: APIRequestContext) {
-  const { token } = (await (await request.post('/api/users/login', { data: { email, password } })).json()) as { token: string }
-  return { Authorization: `JWT ${token}` }
-}
 
 test.describe('inbox', () => {
   test.skip(!password, 'needs the seeded admin password')
   test.skip(({ isMobile }) => isMobile, 'desktop covers the API flows')
 
   test('incoming email threads into the right conversation, once', async ({ request }) => {
-    const headers = await login(request)
+    const headers = adminHeaders()
     // throwaway inbound webhook credentials for this run
     const user = `e2e-${randomBytes(4).toString('hex')}`
     const pass = randomBytes(12).toString('hex')
@@ -42,8 +38,7 @@ test.describe('inbox', () => {
 
   // in this file so it runs one after the other with the inbound-email test (both change the same setting)
   test('saving the Integrations page again never destroys a stored key', async ({ request }) => {
-    const { token } = (await (await request.post('/api/users/login', { data: { email, password } })).json()) as { token: string }
-    const headers = { Authorization: `JWT ${token}` }
+    const headers = adminHeaders()
     const user = `keep-${randomBytes(3).toString('hex')}`
     const pass = randomBytes(10).toString('hex')
     const webhook = () => request.post('/api/webhooks/postmark-inbound', {
@@ -63,7 +58,7 @@ test.describe('inbox', () => {
 
   test('agent replies, notes and logs a WhatsApp chat from the Inbox', async ({ page, request }) => {
     // a throwaway agent of its own: parallel tests signing in as the shared admin can retire each other's sessions
-    const admin = await login(request)
+    const admin = adminHeaders()
     const agentEmail = `agent-${randomBytes(4).toString('hex')}@example.com`
     const agentPass = randomBytes(12).toString('base64url') // random for each run
     const created = await request.post('/api/users', { headers: admin, data: { email: agentEmail, password: agentPass, name: 'E2E Agent', roles: ['sales'] } })
@@ -102,6 +97,6 @@ test.describe('inbox', () => {
     await page.locator('.ng-inbox__panel').getByRole('textbox', { name: 'Message' }).fill(said)
     await page.getByRole('button', { name: 'Save to the Inbox' }).click()
     await expect(page.locator('.ng-msg').filter({ hasText: said })).toBeVisible()
-    await request.patch(`/api/users/${agentId}`, { headers: await login(request), data: { active: false } })
+    await request.patch(`/api/users/${agentId}`, { headers: adminHeaders(), data: { active: false } })
   })
 })

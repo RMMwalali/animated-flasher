@@ -14,7 +14,7 @@ import { processReviewRequests } from '@/lib/crm/reviews'
 import { getSettings } from '@/lib/crm/settings'
 import { otherWaysToPayLines } from '@/components/booking/OtherWaysToPay'
 import { asAttachment, invoiceDocument, quoteDocument, type PdfFile } from '@/lib/pdf'
-import { dueActions, nextPayment, quoteState } from './rules'
+import { dueActions, nextPayment, quoteState, travellerGaps } from './rules'
 
 const idOf = (v: unknown) => (v && typeof v === 'object' ? (v as { id: number }).id : (v as number))
 const longDate = (d?: string | null) => (d ? new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Africa/Nairobi' }) : '-')
@@ -270,11 +270,11 @@ export async function startGuestPayment(payload: Payload, token: string, kind: '
 
 // ---------------------------------------------------------------- daily job
 
-export type DailyResult = { quotesExpired: number; balanceReminders: number; etaReminders: number; travelling: number; completed: number; reviews: { sent: number; reminded: number } }
+export type DailyResult = { quotesExpired: number; balanceReminders: number; etaReminders: number; detailsReminders: number; travelling: number; completed: number; reviews: { sent: number; reminded: number } }
 
 export async function runDaily(payload: Payload, now = new Date()): Promise<DailyResult> {
   const req = await localReq(payload)
-  const out: DailyResult = { quotesExpired: 0, balanceReminders: 0, etaReminders: 0, travelling: 0, completed: 0, reviews: { sent: 0, reminded: 0 } }
+  const out: DailyResult = { quotesExpired: 0, balanceReminders: 0, etaReminders: 0, detailsReminders: 0, travelling: 0, completed: 0, reviews: { sent: 0, reminded: 0 } }
 
   const open = await payload.find({ collection: 'quotes', where: { status: { in: ['sent', 'viewed'] } }, limit: 500, depth: 0, overrideAccess: true })
   for (const q of open.docs) {
@@ -286,7 +286,8 @@ export async function runDaily(payload: Payload, now = new Date()): Promise<Dail
 
   const active = await payload.find({ collection: 'bookings', where: { status: { in: ['deposit_paid', 'paid', 'travelling'] } }, limit: 1000, depth: 1, overrideAccess: true })
   for (const b of active.docs) {
-    const due = dueActions(b as any, now)
+    const gaps = travellerGaps(b as any, ((b.travellers ?? []) as any[]).filter((t) => t && typeof t === 'object'))
+    const due = dueActions({ ...(b as any), detailsMissing: gaps.missing.length }, now)
     try {
       if (due.balanceReminder) {
         await sendBalanceReminder(req, b)
@@ -295,6 +296,10 @@ export async function runDaily(payload: Payload, now = new Date()): Promise<Dail
       if (due.etaReminder) {
         await sendEtaReminder(req, b)
         out.etaReminders++
+      }
+      if (due.detailsReminder) {
+        await sendDetailsReminder(req, b, gaps.missing)
+        out.detailsReminders++
       }
       if (due.nextStatus) {
         await payload.update({ collection: 'bookings', id: b.id, data: { status: due.nextStatus }, req, overrideAccess: true })
@@ -310,7 +315,7 @@ export async function runDaily(payload: Payload, now = new Date()): Promise<Dail
 }
 
 /** Record an email as sent on the in-memory booking too, so later updates in the same run keep it. */
-function markSent(b: any, key: 'balanceReminderSentAt' | 'etaReminderSentAt') {
+function markSent(b: any, key: 'balanceReminderSentAt' | 'etaReminderSentAt' | 'detailsReminderSentAt') {
   b.emails = { ...(b.emails ?? {}), [key]: new Date().toISOString() }
   return b.emails
 }
@@ -361,4 +366,27 @@ async function sendEtaReminder(req: PayloadRequest, b: any) {
   })
   if (res.status === 'failed') throw new Error(res.error)
   await req.payload.update({ collection: 'bookings', id: b.id, req, overrideAccess: true, data: { emails: markSent(b, 'etaReminderSentAt') } })
+}
+
+async function sendDetailsReminder(req: PayloadRequest, b: any, missing: string[]) {
+  const contact = b.contact as any
+  const token = b.portalToken
+  if (!token || !contact?.email) return
+  const res = await sendToGuest(req, {
+    contactId: contact.id, leadId: idOf(b.lead),
+    subject: `A few details for your trip (${b.reference})`,
+    tag: 'details-reminder',
+    content: {
+      heading: `Jambo ${contact.firstName},`,
+      paragraphs: [
+        `${b.title} starts on ${longDate(b.startDate)}. To prepare everything (park permits, rooms, your airport pick-up), we still need:`,
+        ...missing.map((m) => `• ${m}`),
+        'It takes about two minutes on your trip page. If anything has changed, just reply to this email.',
+      ],
+      button: { label: 'Add traveller details', href: `${tripUrl(token)}#travellers` },
+      signature: signatureOf(null),
+    },
+  })
+  if (res.status === 'failed') throw new Error(res.error)
+  await req.payload.update({ collection: 'bookings', id: b.id, req, overrideAccess: true, data: { emails: markSent(b, 'detailsReminderSentAt') } })
 }

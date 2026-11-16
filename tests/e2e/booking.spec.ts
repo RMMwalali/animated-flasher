@@ -1,6 +1,6 @@
 import { expect, test, type APIRequestContext } from '@playwright/test'
+import { adminHeaders } from './admin'
 
-const email = process.env.E2E_ADMIN_EMAIL ?? 'admin@ngina.local'
 const password = process.env.E2E_ADMIN_PASSWORD ?? process.env.SEED_ADMIN_PASSWORD
 
 test.beforeEach(async ({ page }) => {
@@ -11,10 +11,7 @@ test.beforeEach(async ({ page }) => {
 })
 
 async function staff(request: APIRequestContext) {
-  const login = await request.post('/api/users/login', { data: { email, password } })
-  expect(login.ok()).toBeTruthy()
-  const { token } = (await login.json()) as { token: string }
-  const headers = { Authorization: `JWT ${token}` }
+  const headers = adminHeaders()
   const get = async (path: string) => (await (await request.get(path, { headers })).json()) as any
   const action = async (data: Record<string, unknown>) => {
     const res = await request.post('/api/admin/booking', { headers, data })
@@ -30,7 +27,7 @@ async function sentQuote(request: APIRequestContext) {
   const trip = (await s.get('/api/trips?where[slug][equals]=tsavo-east-taita-hills&depth=0')).docs[0]
   const start = new Date(Date.now() + 60 * 864e5).toISOString()
   const created = await request.post('/api/quotes', { headers: s.headers, data: { title: 'E2E Tsavo plan', contact: contact.id, trip: trip.id, startDate: start, adults: 2, children: 0 } })
-  expect(created.ok()).toBeTruthy()
+  expect(created.ok(), await created.text()).toBeTruthy()
   const quote = (await created.json()).doc
   expect(quote.total).toBeGreaterThan(0)
   expect(quote.days.length).toBeGreaterThan(0)
@@ -76,6 +73,52 @@ test.describe('booking journey', () => {
     await expect(page.getByText(/Accepted on/)).toBeVisible()
     const again = await request.post('/api/quote/accept', { data: { token: path.split('/').pop(), name: 'X Y', agree: true } })
     expect((await again.json()).already).toBe(true)
+  })
+
+  test('guest adds traveller details and flights on their trip page', async ({ page, request }) => {
+    const { s, quote, path } = await sentQuote(request)
+    const accepted = await request.post('/api/quote/accept', { data: { token: path.split('/').pop(), name: 'Details Guest', agree: true } })
+    const tripPath = new URL(((await accepted.json()) as { tripUrl: string }).tripUrl).pathname
+    await page.goto(`${tripPath}#travellers`)
+    const section = page.locator('#travellers')
+    await expect(section.getByText(/Still needed: 2 travellers not added yet/)).toBeVisible()
+    const t1 = section.locator('fieldset').nth(0)
+    await t1.getByLabel('Full name, as on passport').fill('Amina Otieno')
+    await t1.getByLabel('Nationality').fill('Kenyan')
+    await t1.getByLabel('Date of birth').fill('1988-03-14')
+    await t1.getByLabel('Emergency contact name').fill('Juma Otieno')
+    await t1.getByLabel('Emergency contact phone').fill('+254 700 000 001')
+    await t1.getByLabel(/Health or mobility notes/).fill('Private note: asthma inhaler')
+    const t2 = section.locator('fieldset').nth(1)
+    await t2.getByLabel('Full name, as on passport').fill('Leo Otieno')
+    await t2.getByLabel('Nationality').fill('Kenyan')
+    await t2.getByLabel('Date of birth').fill('2014-07-01')
+    await section.getByLabel('Arrival flight').fill('KQ 604')
+    await section.getByLabel('Arrives (Kenya time)').fill('2027-01-10T09:30')
+    await section.getByLabel('Anything else we should know?').fill('Leo’s birthday on day 2')
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0)
+    await section.getByRole('button', { name: 'Save traveller details' }).click()
+    await expect(section.getByText(/Your details are saved/)).toBeVisible()
+    await page.waitForLoadState('load')
+    await expect(section.getByText('All details are in.', { exact: false })).toBeVisible({ timeout: 10_000 })
+    await expect(section.getByLabel('Full name, as on passport').first()).toHaveValue('Amina Otieno')
+    await expect(section.getByLabel('Arrives (Kenya time)')).toHaveValue('2027-01-10T09:30')
+    // health notes are kept for the team but never shown on the guest page
+    expect(await page.content()).not.toContain('asthma inhaler')
+    await expect(section.getByLabel(/Health or mobility notes \(saved/)).toBeVisible()
+
+    const b = (await s.get(`/api/quotes/${quote.id}?depth=2`)).booking
+    expect(b.arrivalFlight).toBe('KQ 604')
+    expect(new Date(b.arrivalAt).toISOString()).toBe('2027-01-10T06:30:00.000Z')
+    expect(b.detailsSubmittedAt).toBeTruthy()
+    const travellers = (await s.get(`/api/travellers?where[id][in]=${b.travellers.map((t: any) => t.id ?? t).join(',')}&depth=0`)).docs
+    expect(travellers.map((t: any) => t.name).sort()).toEqual(['Amina Otieno', 'Leo Otieno'])
+    expect(travellers.find((t: any) => t.name === 'Leo Otieno').isChild).toBe(true)
+    expect(travellers.find((t: any) => t.name === 'Amina Otieno').medicalNotes).toBe('Private note: asthma inhaler')
+    // logged in the Inbox like any message from the guest
+    const logged = await s.get(`/api/messages?where[body][contains]=${encodeURIComponent(`[Trip page · ${b.reference}]`)}&depth=0`)
+    expect(logged.totalDocs).toBe(1)
+    expect(logged.docs[0].body).not.toContain('asthma')
   })
 
   test('PDF quote, invoice and receipt: attached to the emails and downloadable', async ({ request, isMobile }) => {

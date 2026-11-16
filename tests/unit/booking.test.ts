@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { daysUntil, dueActions, endOfDayEAT, nextPayment, quoteState } from '@/lib/booking/rules'
+import { ageOn, daysUntil, dueActions, endOfDayEAT, nextPayment, quoteState, travellerGaps } from '@/lib/booking/rules'
 
 const at = (iso: string) => new Date(iso)
 
@@ -59,7 +59,7 @@ describe('dueActions', () => {
     expect(dueActions({ ...base, status: 'travelling', startDate: '2026-11-10', endDate: '2026-11-13T00:00:00Z' }, now).nextStatus).toBe('completed')
   })
   it('never acts on cancelled or completed bookings', () => {
-    expect(dueActions({ ...base, status: 'cancelled', startDate: '2026-11-14' }, now)).toEqual({ balanceReminder: false, etaReminder: false })
+    expect(dueActions({ ...base, status: 'cancelled', startDate: '2026-11-14' }, now)).toEqual({ balanceReminder: false, etaReminder: false, detailsReminder: false })
   })
 })
 
@@ -70,5 +70,32 @@ describe('nextPayment', () => {
     expect(nextPayment({ status: 'paid', depositDue: 300, amountPaid: 1000, total: 1000 })).toBeNull()
     expect(nextPayment({ status: 'cancelled', depositDue: 300, amountPaid: 0, total: 1000 })).toBeNull()
     expect(nextPayment({ status: 'pending_deposit', depositDue: 0, amountPaid: 0, total: 1000 })).toBe('balance')
+  })
+})
+
+describe('traveller details', () => {
+  const full = { name: 'Amina Otieno', nationality: 'Kenyan', dateOfBirth: '1990-04-02', emergencyName: 'Juma', emergencyPhone: '+254700000000' }
+  it('lists what is missing in plain words', () => {
+    const g = travellerGaps({ pax: 3, arrivalFlight: '' }, [{ ...full }, { name: 'Leo', nationality: '' }])
+    expect(g.added).toBe(2)
+    expect(g.missing).toEqual(['1 traveller not added yet', 'Leo: nationality and date of birth', 'arrival flight or pick-up place'])
+  })
+  it('is complete with every traveller, one emergency contact and the arrival', () => {
+    expect(travellerGaps({ pax: 2, pickup: 'Ukunda airstrip' }, [full, { ...full, name: 'Baraka', emergencyName: '', emergencyPhone: '' }]).missing).toEqual([])
+  })
+  it('asks for an emergency contact when nobody gave one', () => {
+    expect(travellerGaps({ pax: 1, arrivalFlight: 'KQ 604' }, [{ ...full, emergencyPhone: '' }]).missing).toEqual(['an emergency contact'])
+  })
+  it('works out age on the first day of the trip', () => {
+    expect(ageOn('2010-12-20', '2026-12-19')).toBe(15)
+    expect(ageOn('2010-12-20', '2026-12-20')).toBe(16)
+  })
+  it('sends the details reminder once, from 30 days before, for confirmed bookings only', () => {
+    const b = { status: 'deposit_paid', startDate: '2026-12-10', detailsMissing: 2 }
+    expect(dueActions(b, new Date('2026-11-05')).detailsReminder).toBe(false) // 35 days out
+    expect(dueActions(b, new Date('2026-11-12')).detailsReminder).toBe(true)
+    expect(dueActions({ ...b, emails: { detailsReminderSentAt: '2026-11-12' } }, new Date('2026-11-13')).detailsReminder).toBe(false)
+    expect(dueActions({ ...b, detailsMissing: 0 }, new Date('2026-11-12')).detailsReminder).toBe(false)
+    expect(dueActions({ ...b, status: 'pending_deposit' }, new Date('2026-11-12')).detailsReminder).toBe(false)
   })
 })
