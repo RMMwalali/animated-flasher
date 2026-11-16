@@ -513,3 +513,118 @@ html:not(.js) .stage-line:first-of-type {
 .photo-card--quiet.is-active .photo-card__shade {
   opacity: 1;
 }
+
+/* ── Home page journeys: one large photo with its name, smaller photos around it ── */
+.journey-rail {
+  --g: max(1rem, 4vw); /* matches .gutter */
+  --s: 30vw; /* small photo width */
+  --hs: calc(var(--s) * 1.3);
+  --a: 74vw; /* selected photo width */
+  --ha: calc(var(--a) * 1.22);
+  --gap: 0.75rem;
+  --before: 0; /* how many smaller photos show before the selected one */
+  --r: clamp(2.5rem, 7vw, 6.5rem); /* the one rounded corner, top right */
+  --ease: var(--ease-out-expo);
+}
+@media (min-width: 640px) {
+  .journey-rail {
+    --s: 17vw;
+    --a: 40vw;
+    --ha: calc(var(--a) * 1.12);
+    --gap: 1rem;
+    --before: 1;
+  }
+}
+@media (min-width: 1024px) {
+  .journey-rail {
+    --s: clamp(9rem, 11.5vw, 13.5rem);
+    --hs: calc(var(--s) * 1.35);
+    --a: clamp(19rem, 27vw, 31rem);
+    --ha: min(calc(var(--a) * 1.15), 74svh);
+    --before: 3;
+  }
+}
+.journey-track {
+  padding-left: var(--g);
+  transform: translateX(calc((min(var(--i), var(--before)) - var(--i)) * (var(--s) + var(--gap))));
+  transition: transform 0.9s var(--ease);
+}
+.journey-item {
+  width: var(--s);
+  height: var(--hs);
+  margin-right: var(--gap);
+  transition:
+    width 0.9s var(--ease),
+    height 0.9s var(--ease);
+}
+.journey-item.is-active {
+  width: var(--a);
+  height: var(--ha);
+}
+.journey-photo {
+  border-radius: 0 var(--r) 0 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.journey-img {
+  transition: transform 1.2s var(--ease);
+}
+.journey-item:not(.is-active) .journey-img {
+  filter: saturate(0.85) brightness(0.85);
+}
+.journey-item.is-active .journey-photo:hover .journey-img {
+  transform: scale(1.04);
+}
+.journey-shade {
+  background: linear-gradient(180deg, rgb(10 29 25 / 0) 45%, rgb(10 29 25 / 0.7) 100%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.journey-text {
+  opacity: 0;
+  transform: translateY(1rem);
+  transition:
+    opacity 0.35s ease,
+    transform 0.6s var(--ease);
+}
+.journey-item.is-active .journey-shade {
+  opacity: 1;
+}
+.journey-item.is-active .journey-text {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.35s;
+}
+.journey-arrow {
+  position: absolute;
+  bottom: calc(var(--hs) / 2 - 1.75rem);
+  display: none;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  color: var(--color-cream);
+  filter: drop-shadow(0 2px 6px rgb(10 29 25 / 0.5));
+  transition: transform 0.3s var(--ease);
+}
+.journey-arrow:hover {
+  transform: scale(1.1);
+}
+.journey-arrow:focus-visible {
+  outline: 2px solid var(--color-orange);
+  outline-offset: 2px;
+  border-radius: 999px;
+}
+@media (min-width: 640px) {
+  .journey-arrow {
+    display: grid;
+  }
+  /* over the middle of the photo just before the selected one */
+  .journey-arrow--prev {
+    left: calc(var(--g) + (min(var(--i), var(--before)) - 1) * (var(--s) + var(--gap)) + var(--s) / 2 - 1.75rem);
+  }
+  /* over the middle of the photo just after it */
+  .journey-arrow--next {
+    left: calc(var(--g) + min(var(--i), var(--before)) * (var(--s) + var(--gap)) + var(--a) + var(--gap) + var(--s) / 2 - 1.75rem);
+  }
+}
