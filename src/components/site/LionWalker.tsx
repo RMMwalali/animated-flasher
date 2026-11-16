@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react'
 import { brandPaths } from '@/components/brand/paths'
 
-/** Scroll progress: the lion walks along the horizon swoosh. */
+/** Scroll progress: the lion walks along the horizon swoosh; it fades out at the footer. */
 export function LionWalker() {
   const lion = useRef<HTMLDivElement>(null)
   const bar = useRef<HTMLDivElement>(null)
@@ -14,8 +14,11 @@ export function LionWalker() {
       if (lion.current) lion.current.style.transform = `translateX(calc(${p} * (var(--w) - 100%)))`
       if (bar.current) {
         bar.current.setAttribute('aria-valuenow', String(Math.round(p * 100)))
-        // stay out of the way of full-screen openings (e.g. the home stage)
-        bar.current.style.opacity = window.scrollY > window.innerHeight * 0.6 ? '1' : '0'
+        // stay out of the way of full-screen openings (e.g. the home stage), and fade
+        // out once the footer comes into view so its text can be read
+        const footer = document.getElementById('site-footer')
+        const atFooter = footer ? footer.getBoundingClientRect().top < window.innerHeight - 80 : p > 0.97
+        bar.current.style.opacity = window.scrollY > window.innerHeight * 0.6 && !atFooter ? '1' : '0'
       }
     }
     const onScroll = () => {

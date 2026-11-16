@@ -28,11 +28,9 @@ test('integrations are admin-only and keys never come back in full', async ({ re
   await request.post('/api/globals/integrations', { headers, data: { indexNow: { key: '' }, google: { placesApiKey: '' } } })
 })
 
-test('WhatsApp button, cookie choices, and empty widgets stay hidden', async ({ page }) => {
+test('cookie choices, and empty widgets stay hidden', async ({ page }) => {
   await page.addInitScript(() => sessionStorage.setItem('ngina-intro', '1'))
   await page.goto('/')
-  const wa = page.getByRole('link', { name: /chat with us on whatsapp/i })
-  await expect(wa).toHaveAttribute('href', /^https:\/\/wa\.me\/254720972512\?text=/)
   await page.getByRole('button', { name: 'Choose', exact: true }).click()
   await page.getByRole('checkbox', { name: /visit statistics/i }).click()
   await page.getByRole('button', { name: 'Save choices' }).click()

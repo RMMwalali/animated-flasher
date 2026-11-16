@@ -22,8 +22,6 @@ export const sampleSettings = {
   // No fixed office hours: guests from every time zone can enquire any time.
   hours: [] as { days: string[]; opens: string; closes: string }[],
   responseTime: '24 hours',
-  whatsappButton: true,
-  whatsappMessage: 'Jambo! I would like to ask about a trip.',
   liveChat: true,
   chatGreeting: 'Jambo! Ask us anything about safaris, the coast or your dates.',
   bankAccounts: [] as { label: string; currency: string; bankName: string; branch?: string | null; accountName: string; accountNumber: string; swift?: string | null; bankCode?: string | null }[],
@@ -72,7 +70,6 @@ export const sampleSettings = {
     hideFromSearch: false,
   },
   defaultDepositPercent: 30,
-  showSampleBanner: true,
 }
 
 export const sampleHome = {

@@ -2594,11 +2594,6 @@ export interface SiteSetting {
       }[]
     | null;
   /**
-   * A small round button in the bottom-right corner, using the WhatsApp number above.
-   */
-  whatsappButton?: boolean | null;
-  whatsappMessage?: string | null;
-  /**
    * Visitors' messages arrive in the Inbox. While someone on the team has the Inbox open, the chat shows "online"; otherwise it asks for an email address and replies go out by email too.
    */
   liveChat?: boolean | null;
@@ -2771,10 +2766,6 @@ export interface SiteSetting {
     teamEmails?: string | null;
   };
   defaultDepositPercent?: number | null;
-  /**
-   * Untick at launch, once sample content is replaced.
-   */
-  showSampleBanner?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3063,8 +3054,6 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         closes?: T;
         id?: T;
       };
-  whatsappButton?: T;
-  whatsappMessage?: T;
   liveChat?: T;
   chatGreeting?: T;
   responseTime?: T;
@@ -3143,7 +3132,6 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         teamEmails?: T;
       };
   defaultDepositPercent?: T;
-  showSampleBanner?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

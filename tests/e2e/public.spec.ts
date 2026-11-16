@@ -101,3 +101,20 @@ test('no hand-drawn strokes: emphasis is colour, buttons are plain', async ({ pa
     expect(color).not.toBe(await page.locator('body').evaluate((el) => getComputedStyle(el).color))
   }
 })
+
+test('no floating WhatsApp button', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('[data-whatsapp]')).toHaveCount(0)
+  await expect(page.locator('img[src*="whatsapp-3d"]')).toHaveCount(0)
+})
+
+test('the scroll lion fades out at the footer', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'the lion shows on larger screens')
+  await page.addInitScript(() => sessionStorage.setItem('ngina-intro', '1'))
+  await page.goto('/blog/tsavo-east-from-diani')
+  const lion = page.getByRole('progressbar', { name: 'Page scroll progress' })
+  await page.evaluate(() => window.scrollTo(0, window.innerHeight * 1.2))
+  await expect.poll(() => lion.evaluate((el) => getComputedStyle(el).opacity)).toBe('1')
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
+  await expect.poll(() => lion.evaluate((el) => getComputedStyle(el).opacity)).toBe('0')
+})

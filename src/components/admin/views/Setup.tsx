@@ -43,7 +43,6 @@ export async function SetupView(props: AdminViewServerProps) {
               { href: '/admin/globals/site-settings', label: 'Review links (Google, TripAdvisor, SafariBookings)', status: reviewLinks ? { label: `${reviewLinks} set`, tone: 'teal' } : todo },
               { href: '/admin/collections/trips?where[sample][equals]=true', label: 'Replace sample journeys with your own', status: samples ? { label: `${samples} sample`, tone: 'ochre' } : ok },
               { href: '/admin/collections/media', label: 'Upload your own photos (and add descriptions)' },
-              { href: '/admin/globals/site-settings', label: 'Turn off the "sample content" banner', status: settings.showSampleBanner ? todo : ok },
             ]}
           />
         </Section>

@@ -63,8 +63,6 @@ export const SiteSettings: GlobalConfig = {
               ] }],
             },
             { type: 'row', fields: [
-              { name: 'whatsappButton', type: 'checkbox', defaultValue: true, label: 'Show a WhatsApp button on every page', admin: { description: 'A small round button in the bottom-right corner, using the WhatsApp number above.' } },
-              { name: 'whatsappMessage', type: 'text', defaultValue: 'Jambo! I would like to ask about a trip.', label: 'Message it starts with', admin: { condition: (_, s) => s?.whatsappButton !== false } },
               { name: 'liveChat', type: 'checkbox', defaultValue: true, label: 'Show live chat on every page', admin: { description: 'Visitors\' messages arrive in the Inbox. While someone on the team has the Inbox open, the chat shows "online"; otherwise it asks for an email address and replies go out by email too.' } },
               { name: 'chatGreeting', type: 'text', defaultValue: 'Jambo! Ask us anything about safaris, the coast or your dates.', label: 'Chat greeting', admin: { condition: (_, s) => s?.liveChat !== false } },
             ] },
@@ -192,7 +190,6 @@ export const SiteSettings: GlobalConfig = {
               { name: 'teamEmails', type: 'text', admin: { description: 'Comma-separated addresses told about unassigned leads.' } },
             ] },
             { name: 'defaultDepositPercent', type: 'number', defaultValue: 30, min: 0, max: 100 },
-            { name: 'showSampleBanner', type: 'checkbox', defaultValue: true, label: 'Show "sample content" banner on the website', admin: { description: 'Untick at launch, once sample content is replaced.' } },
           ],
         },
       ],

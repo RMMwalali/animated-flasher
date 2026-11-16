@@ -7,12 +7,12 @@ export type TrustItem = {
 }
 
 /**
- * Licences & memberships that may be shown: sample placeholders only while
- * the sample banner is on (previews), never anything past its expiry date.
+ * Licences & memberships that may be shown: never sample placeholders (only
+ * real entries you add), never anything past its expiry date.
  */
-export function visibleTrust(s: Pick<SettingsVM, 'trust' | 'showSampleBanner'>, now = new Date()): TrustItem[] {
+export function visibleTrust(s: Pick<SettingsVM, 'trust'>, now = new Date()): TrustItem[] {
   return ((s.trust ?? []) as TrustItem[]).filter((t) => {
-    if (t.sample && !s.showSampleBanner) return false
+    if (t.sample) return false
     if (t.validUntil && new Date(t.validUntil) < now) return false
     return true
   })

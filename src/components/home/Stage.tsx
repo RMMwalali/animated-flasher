@@ -1,18 +1,18 @@
 'use client'
+import { Media } from '@/components/site/Media'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react'
 import { Icon } from '@/components/icons/Icon'
-import { Scene } from '@/components/site/Scene'
 import { ENTERED_EVENT } from '@/components/site/WelcomeGate'
 import type { MediaVM, StageSlide } from '@/lib/content'
 
 type Props = { slides: StageSlide[]; seconds: number; film?: MediaVM | null; title: string; children?: React.ReactNode }
 
 /**
- * The home stage: one full-screen scene at a time (photo, muted clip or
- * illustration) with a single statement. Scenes cross-fade on a timer; the
+ * The home stage: one full-screen scene at a time (photo or muted clip)
+ * with a single statement. Scenes cross-fade on a timer; the
  * statement's words rise in and its key word is picked out in colour
  * stroke. Pauses on hover/focus, when the tab is hidden, and via a button.
  */
@@ -97,7 +97,7 @@ export function Stage({ slides, seconds, film, title, children }: Props) {
                 style={{ objectPosition: s.image.focalX != null ? `${s.image.focalX}% ${s.image.focalY}%` : undefined }}
               />
             ) : (
-              <Scene kind={s.scene} parallax={false} />
+              <Media fallback={s.scene} sizes="100vw" priority={k === 0} />
             )}
             {s.video?.url && entered && (k === i || k === (i + 1) % n) && (
               <video className="absolute inset-0 h-full w-full object-cover" src={s.video.url} poster={s.image?.url} muted loop playsInline autoPlay={k === i} preload="metadata" aria-hidden="true" />
