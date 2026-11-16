@@ -1,5 +1,9 @@
 import type { CollectionConfig } from 'payload'
+import type { Condition } from 'payload'
 import { admins, isAdmin, ROLES } from '@/access'
+
+/** Hide a field on the first-account screen (no one logged in yet): sign-up asks only name, email and password. */
+const signedIn: Condition = (_data, _sibling, { user }) => Boolean(user)
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -39,22 +43,24 @@ export const Users: CollectionConfig = {
         { label: 'Content editor', value: 'editor' },
       ] satisfies { label: string; value: (typeof ROLES)[number] }[],
       access: { update: ({ req }) => isAdmin(req.user as never), create: ({ req }) => isAdmin(req.user as never) },
+      admin: { condition: signedIn, description: 'The first account is always an Admin.' },
     },
-    { name: 'active', type: 'checkbox', defaultValue: true, admin: { description: 'Untick to block this person from logging in.' }, access: { update: ({ req }) => isAdmin(req.user as never) } },
-    { name: 'phone', type: 'text' },
-    { name: 'title', type: 'text', label: 'Job title', admin: { description: 'Shown in email signatures.' } },
-    { name: 'signature', type: 'textarea', admin: { description: 'Added under emails you send from the inbox.' } },
+    { name: 'active', type: 'checkbox', defaultValue: true, admin: { condition: signedIn, description: 'Untick to block this person from logging in.' }, access: { update: ({ req }) => isAdmin(req.user as never) } },
+    { name: 'phone', type: 'text', admin: { condition: signedIn } },
+    { name: 'title', type: 'text', label: 'Job title', admin: { condition: signedIn, description: 'Shown in email signatures.' } },
+    { name: 'signature', type: 'textarea', admin: { condition: signedIn, description: 'Added under emails you send from the inbox.' } },
     {
       name: 'notify',
       type: 'group',
       label: 'Notifications',
+      admin: { condition: signedIn },
       fields: [
         { name: 'newLeads', type: 'checkbox', defaultValue: true, label: 'Email me when a lead is assigned to me' },
         { name: 'newMessages', type: 'checkbox', defaultValue: true, label: 'Email me when a guest replies to one of my conversations' },
         { name: 'chat', type: 'checkbox', defaultValue: true, label: 'Email me about new chats when I am offline' },
       ],
     },
-    { name: 'takesNewLeads', type: 'checkbox', defaultValue: true, label: 'Include me in automatic lead assignment' },
+    { name: 'takesNewLeads', type: 'checkbox', defaultValue: true, label: 'Include me in automatic lead assignment', admin: { condition: signedIn } },
   ],
   hooks: {
     beforeChange: [

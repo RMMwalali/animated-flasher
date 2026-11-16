@@ -7,6 +7,8 @@ import * as migration_20261114_170259_booking_engine from './20261114_170259_boo
 import * as migration_20261114_182516_seo_controls from './20261114_182516_seo_controls';
 import * as migration_20261114_185147_integrations from './20261114_185147_integrations';
 import * as migration_20261115_041057_inbox from './20261115_041057_inbox';
+import * as migration_20261116_060921_remove_welcome_sound from './20261116_060921_remove_welcome_sound';
+import * as migration_20261116_061208_home_title from './20261116_061208_home_title';
 
 export const migrations = [
   {
@@ -52,6 +54,16 @@ export const migrations = [
   {
     up: migration_20261115_041057_inbox.up,
     down: migration_20261115_041057_inbox.down,
-    name: '20261115_041057_inbox'
+    name: '20261115_041057_inbox',
+  },
+  {
+    up: migration_20261116_060921_remove_welcome_sound.up,
+    down: migration_20261116_060921_remove_welcome_sound.down,
+    name: '20261116_060921_remove_welcome_sound',
+  },
+  {
+    up: migration_20261116_061208_home_title.up,
+    down: migration_20261116_061208_home_title.down,
+    name: '20261116_061208_home_title'
   },
 ];

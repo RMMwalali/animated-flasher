@@ -33,3 +33,20 @@ test('site name and business data are published for Google', async ({ request })
   expect(html).toMatch(/"hasMap":"https:\/\/(www\.google\.com\/maps|maps\.app\.goo\.gl)/)
   expect(html).not.toContain('openingHours')
 })
+
+test('search titles edited in the admin reach the website straight away', async ({ request, isMobile }) => {
+  const password = process.env.E2E_ADMIN_PASSWORD ?? process.env.SEED_ADMIN_PASSWORD
+  test.skip(isMobile || !password, 'desktop, needs the seeded admin password')
+  const { token } = (await (await request.post('/api/users/login', { data: { email: process.env.E2E_ADMIN_EMAIL ?? 'admin@ngina.local', password } })).json()) as { token: string }
+  const headers = { Authorization: `JWT ${token}` }
+  const titleOf = async (p: string) => /<title>([^<]+)<\/title>/.exec(await (await request.get(p)).text())?.[1]
+  // home page: Business settings → Search & Google
+  await request.post('/api/globals/site-settings', { headers, data: { search: { homeTitle: 'E2E home title' } } })
+  await expect.poll(() => titleOf('/'), { timeout: 15_000 }).toBe('E2E home title')
+  await request.post('/api/globals/site-settings', { headers, data: { search: { homeTitle: '' } } })
+  // a journey: Search & sharing → Search title
+  const trip = (await (await request.get('/api/trips?where[slug][equals]=shimba-hills-morning&depth=0', { headers })).json()).docs[0]
+  await request.patch(`/api/trips/${trip.id}`, { headers, data: { seo: { ...trip.seo, title: 'E2E trip title' }, _status: 'published' } })
+  await expect.poll(() => titleOf('/safaris/shimba-hills-morning'), { timeout: 15_000 }).toContain('E2E trip title')
+  await request.patch(`/api/trips/${trip.id}`, { headers, data: { seo: { ...trip.seo, title: '' }, _status: 'published' } })
+})

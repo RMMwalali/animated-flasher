@@ -36,9 +36,8 @@ export type AuthorVM = { name: string; slug: string; role?: string | null; bio: 
 export type PostVM = { slug: string; title: string; excerpt: string; content: unknown; faqs: QA[]; author: AuthorVM; publishedAt: string; updatedAt?: string; topics: string[]; heroImage?: MediaVM | null; sample: boolean; seo?: SEO }
 export type PageVM = { slug: string; title: string; hero: { eyebrow?: string | null; statement?: string | null; emphasis?: string | null; intro?: string | null; image?: MediaVM | null; tone?: string | null }; layout: any[]; sample: boolean; seo?: SEO; updatedAt?: string }
 export type StageSlide = { statement: string; emphasis?: string | null; scene: 'coast' | 'safari' | 'dawn' | 'night'; image?: MediaVM | null; video?: MediaVM | null }
-export type HomeVM = Omit<typeof S.sampleHome, 'stage' | 'welcome'> & {
+export type HomeVM = Omit<typeof S.sampleHome, 'stage'> & {
   heroImage?: MediaVM | null; heroVideo?: MediaVM | null; film?: MediaVM | null
-  welcome: { soundNote: string; enterLabel: string; quietLabel: string; ambientAudio?: MediaVM | null }
   stage: StageSlide[]
   coast: typeof S.sampleHome.coast & { image?: MediaVM | null; video?: MediaVM | null }
   safari: typeof S.sampleHome.safari & { image?: MediaVM | null; video?: MediaVM | null }
@@ -154,7 +153,7 @@ export const getHome = cache(async (): Promise<HomeVM> => {
   const h = (await q((p) => p.findGlobal({ slug: 'home', depth: 1 }))) as Home | null
   if (!h || !h.heroStatement)
     return {
-      ...S.sampleHome, welcome: { ...S.sampleHome.welcome }, stage: sampleStage(),
+      ...S.sampleHome, stage: sampleStage(),
       coast: { ...S.sampleHome.coast, image: samplePhoto(S.sampleHome.coast.photo) },
       safari: { ...S.sampleHome.safari, image: samplePhoto(S.sampleHome.safari.photo) },
     } as HomeVM
@@ -169,12 +168,6 @@ export const getHome = cache(async (): Promise<HomeVM> => {
     coast: ch(h.coast, S.sampleHome.coast) as HomeVM['coast'], safari: ch(h.safari, S.sampleHome.safari) as HomeVM['safari'],
     seasons: (h.seasons?.length ? h.seasons : S.sampleHome.seasons) as any,
     tiktokVideos: (h.tiktokVideos ?? []).map((v) => ({ url: v.url })),
-    welcome: {
-      soundNote: h.welcome?.soundNote || S.sampleHome.welcome.soundNote,
-      enterLabel: h.welcome?.enterLabel || S.sampleHome.welcome.enterLabel,
-      quietLabel: h.welcome?.quietLabel || S.sampleHome.welcome.quietLabel,
-      ambientAudio: media(h.welcome?.ambientAudio as Media),
-    },
     stage: h.stage?.length
       ? h.stage.map((x) => ({ statement: x.statement, emphasis: x.emphasis, scene: (x.scene ?? 'safari') as StageSlide['scene'], image: media(x.image as Media), video: media(x.video as Media) }))
       : sampleStage(),

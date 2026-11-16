@@ -55,7 +55,7 @@ The left-hand menu is grouped and numbered. At the top is **Workspace**: the vie
 
 | Area | What it is for |
 | --- | --- |
-| **Home page** | The big statements, chapter texts, photos and the when-to-go strip. The **Featured journeys** tab sets the title and short intro above the sideways row of journeys. |
+| **Home page** | The opening (the logo appears, then the website opens through the elephant: no sound, no buttons, once per visit; switch it off under Opening), the big statements, chapter texts, photos and the when-to-go strip. The **Featured journeys** tab sets the title and short intro above the sideways row of journeys. |
 | **Journeys** | Safaris, coastal tours and walking trips: price from, days, best months, day-by-day plan, inclusions, Q&A and search settings. Tick **Featured** to show one on the home page. |
 | **Destinations** | One page per place, with key facts (distance from Diani, altitude, area) and Q&A. Keep these accurate: Google and AI assistants quote them. |
 | **Blog** | Articles at `/blog`. Give each one a photo, one or more topics (they become the filter buttons on the blog page) and clear headings: every heading appears in the article's "In this article" list. Related articles are picked automatically from shared topics. Old `/journal` links forward to the blog. |
@@ -150,7 +150,7 @@ Only if you prefer Cloudflare to Vercel Blob for photos:
 
 Once the back office is on:
 - **Licences & memberships:** Business settings → Trust. For each one, fill in the number, the expiry date (expired ones hide automatically), and optionally upload a photo or PDF of the certificate. It appears as "View certificate". Untick **Sample** to show it on the live site.
-- **Photos:** upload in **Photos & videos**, then pick them on the Home page (Welcome & stage slides), Journeys, Destinations and the Wildlife guide. Always add a short description.
+- **Photos:** upload in **Photos & videos**, then pick them on the Home page (Stage slides), Journeys, Destinations and the Wildlife guide. Always add a short description.
 
 ### Where to put keys
 
@@ -214,7 +214,7 @@ Everything here is in the back office: **Business settings**.
 - **Map pin.** In Google Maps, open your business (or the exact spot) and press **Share → Copy link**. Paste the link into **Business → Google Maps link** and save: the pin fills in by itself, and the Contact page shows the map.
 - **Search & Google tab:**
   - **Site name:** the name Google shows above your results.
-  - **Home page description.**
+  - **Home page title** and **Home page description:** what Google shows for your home page. Other pages set their own under "Search & sharing".
   - **Site icon:** the small square logo next to your name in Google and browser tabs. Use a square PNG of at least 512×512.
   - **Default share image.**
   - **Google and Bing verification codes:** paste the code or the whole tag; no DNS needed.

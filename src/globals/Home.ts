@@ -37,24 +37,13 @@ export const Home: GlobalConfig = {
             { name: 'heroIntro', type: 'textarea' },
             { name: 'heroImage', type: 'upload', relationTo: 'media', admin: { description: 'Wide landscape photo, at least 2400px wide.' } },
             { name: 'heroVideo', type: 'upload', relationTo: 'media', admin: { description: 'Optional short muted loop (MP4, under 8 MB). Loads after the page.' } },
-            { name: 'playIntro', type: 'checkbox', defaultValue: true, label: 'Play the elephant intro on first visit' },
+            { name: 'playIntro', type: 'checkbox', defaultValue: true, label: 'Play the logo opening on first visit', admin: { description: 'The logo appears, then the website opens up through the elephant. About 2.5 seconds, once per visit; visitors can tap to skip.' } },
           ],
         },
         {
-          label: 'Welcome & stage',
-          description: 'The first screen visitors see: a welcome with a sound choice, then a full-screen stage that cycles through these slides.',
+          label: 'Stage',
+          description: 'The full-screen opening of the home page, cycling through these slides after the logo opening.',
           fields: [
-            {
-              name: 'welcome', type: 'group',
-              fields: [
-                { name: 'soundNote', type: 'text', defaultValue: 'Best with sound: the ocean and the bush', admin: { description: 'Short line above the enter button.' } },
-                { type: 'row', fields: [
-                  { name: 'enterLabel', type: 'text', defaultValue: 'Karibu', admin: { description: 'Enter button (with sound).' } },
-                  { name: 'quietLabel', type: 'text', defaultValue: 'Enter without sound' },
-                ] },
-                { name: 'ambientAudio', type: 'upload', relationTo: 'media', admin: { description: 'Optional ambient sound (MP3, a gentle loop under 2 MB). Without it a soft generated surf sound plays.' } },
-              ],
-            },
             {
               name: 'stage', type: 'array', label: 'Stage slides', minRows: 1, maxRows: 6,
               admin: { description: 'Each slide shows one short statement over a photo or muted clip. 3 slides work best.', initCollapsed: true },

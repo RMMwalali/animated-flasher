@@ -4,13 +4,12 @@ import { Icon } from '@/components/icons/Icon'
 
 /**
  * Muted background loop that only loads once visible and after the page is
- * idle (never competes with LCP). Includes play/pause and sound toggles.
+ * idle (never competes with LCP). Always muted; includes play/pause.
  */
-export function LazyVideo({ src, poster, label, withSound = false }: { src: string; poster?: string; label: string; withSound?: boolean }) {
+export function LazyVideo({ src, poster, label }: { src: string; poster?: string; label: string; withSound?: boolean }) {
   const ref = useRef<HTMLVideoElement>(null)
   const [load, setLoad] = useState(false)
   const [playing, setPlaying] = useState(true)
-  const [muted, setMuted] = useState(true)
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -49,7 +48,7 @@ export function LazyVideo({ src, poster, label, withSound = false }: { src: stri
         ref={ref}
         className="absolute inset-0 h-full w-full object-cover"
         poster={poster}
-        muted={muted}
+        muted
         loop
         playsInline
         autoPlay={playing}
@@ -62,11 +61,6 @@ export function LazyVideo({ src, poster, label, withSound = false }: { src: stri
         <button type="button" onClick={toggle} className="grid size-11 place-items-center rounded-full border border-cream/60 text-cream backdrop-blur-sm" aria-label={playing ? 'Pause video' : 'Play video'}>
           <Icon name={playing ? 'pause' : 'play'} size={18} />
         </button>
-        {withSound && (
-          <button type="button" onClick={() => setMuted((m) => !m)} className="grid size-11 place-items-center rounded-full border border-cream/60 text-cream backdrop-blur-sm" aria-label={muted ? 'Turn sound on' : 'Turn sound off'} aria-pressed={!muted}>
-            <Icon name={muted ? 'sound-off' : 'sound-on'} size={18} />
-          </button>
-        )}
       </div>
     </>
   )

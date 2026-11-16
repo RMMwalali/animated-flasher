@@ -285,44 +285,16 @@ html[data-intro='done'] .intro-gate {
   }
 }
 
-/* ── Welcome gate ─────────────────────────────────────────────── */
-html.js .intro-gate {
-  animation: none; /* JS is running: the gate waits for the visitor */
+/* Logo intro: the logo is painted (and fades in) before any script runs, then the
+   script opens the site through the elephant. The 6 s failsafe above removes the
+   overlay if scripts never finish. */
+.intro-logo {
+  animation: intro-logo-in 0.8s var(--ease-out-expo) both;
 }
-.welcome-haze .haze {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(70px);
-  opacity: 0.75;
-  animation: haze-drift 26s ease-in-out infinite alternate;
-}
-.welcome-haze .haze-a {
-  width: 70vmax;
-  height: 50vmax;
-  left: -20vmax;
-  top: -18vmax;
-  background: var(--color-sky-100);
-}
-.welcome-haze .haze-b {
-  width: 55vmax;
-  height: 40vmax;
-  right: -18vmax;
-  bottom: -10vmax;
-  background: color-mix(in srgb, var(--color-ochre) 30%, transparent);
-  animation-duration: 32s;
-  animation-direction: alternate-reverse;
-}
-.welcome-haze .haze-c {
-  width: 40vmax;
-  height: 30vmax;
-  left: 30%;
-  top: 35%;
-  background: color-mix(in srgb, var(--color-sky-200) 55%, transparent);
-  animation-duration: 38s;
-}
-@keyframes haze-drift {
-  to {
-    transform: translate3d(8vmax, 5vmax, 0) scale(1.15);
+@keyframes intro-logo-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
   }
 }
 

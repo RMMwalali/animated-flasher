@@ -61,6 +61,7 @@ export const sampleSettings = {
   notifications: { teamEmails: 'cngina35@gmail.com' },
   search: {
     siteName: '',
+    homeTitle: '',
     alternateName: 'Ngina Safaris',
     defaultDescription: 'Diani Beach tour operator: safaris to Tsavo, Amboseli and the Maasai Mara, Kisite-Mpunguti dhow days, Lamu, Mombasa and Mount Kenya treks.',
     googleVerification: '',
@@ -78,7 +79,6 @@ export const sampleHome = {
   heroEmphasis: 'wild',
   heroIntro: 'A Diani Beach team guiding coastal days and safaris beyond: Tsavo, Amboseli, the Mara and the reefs on our doorstep.',
   playIntro: true,
-  welcome: { soundNote: 'Best with sound: the ocean and the bush', enterLabel: 'Karibu', quietLabel: 'Enter without sound' },
   stage: [
     { statement: 'Wake to the Indian Ocean.', emphasis: 'Ocean', scene: 'coast', photo: 'dianiSunset' as PhotoKey },
     { statement: 'Walk where the elephants run red.', emphasis: 'red', scene: 'safari', photo: 'samburuElephants' as PhotoKey },

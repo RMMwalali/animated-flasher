@@ -8,20 +8,24 @@ import { Trust } from '@/components/home/Trust'
 import { WhenToGo } from '@/components/home/WhenToGo'
 import { Reviews } from '@/components/social/Reviews'
 import { TikTokSection } from '@/components/social/TikTokSection'
-import { WelcomeGate } from '@/components/site/WelcomeGate'
+import { LogoIntro } from '@/components/site/WelcomeGate'
 import { getHome, getSettings, getTrips } from '@/lib/content'
 import { pageMeta } from '@/lib/seo/meta'
 
 export const revalidate = 3600
 
+/** Home title and description come from Business settings → Search & Google. */
 export async function generateMetadata(): Promise<Metadata> {
-  const home = await getHome()
-  return pageMeta({
-    title: 'Ngina Trails and Safaris · Safaris and coastal tours from Diani Beach, Kenya',
-    description: home.heroIntro || 'Safaris and coastal journeys from Diani Beach, Kenya.',
+  const [home, settings] = await Promise.all([getHome(), getSettings()])
+  const name = settings.search.siteName || settings.businessName
+  const meta = pageMeta({
+    title: settings.search.homeTitle || `${name} · Safaris and coastal tours from Diani Beach, Kenya`,
+    description: settings.search.defaultDescription || home.heroIntro || 'Safaris and coastal journeys from Diani Beach, Kenya.',
     path: '/',
     ogTitle: home.heroStatement,
   })
+  // the home title is used exactly as written (no " · site name" added)
+  return { ...meta, title: { absolute: String((meta.title as { absolute?: string })?.absolute ?? meta.title) } }
 }
 
 export default async function HomePage() {
@@ -29,9 +33,7 @@ export default async function HomePage() {
   const trips = featured.length ? featured : (await getTrips()).slice(0, 6)
   return (
     <>
-      {home.playIntro && (
-        <WelcomeGate soundNote={home.welcome.soundNote} enterLabel={home.welcome.enterLabel} quietLabel={home.welcome.quietLabel} audioUrl={home.welcome.ambientAudio?.url} />
-      )}
+      {home.playIntro && <LogoIntro />}
       <Stage slides={home.stage} seconds={home.slideSeconds} film={home.film} title={`${settings.businessName}: safaris and coastal tours from Diani Beach, Kenya`} />
       <Story home={home} />
       <Chapter chapter={home.coast} tone="coast" n={2} />
