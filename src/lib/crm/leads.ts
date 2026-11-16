@@ -83,6 +83,31 @@ export async function captureEnquiry(payload: Payload, input: EnquiryInput) {
     },
   })
 
+  // A booking request for a journey: prepare a draft quote from the journey with the
+  // guest's dates and group, ready for the planner to check and send.
+  let draftQuote: { id: number; number?: string | null } | undefined
+  if (input.extra?.requestType === 'booking request' && tripIds[0] && input.travelStart) {
+    draftQuote = await payload
+      .create({
+        collection: 'quotes', overrideAccess: true,
+        data: {
+          title: tripTitle ?? 'Booking request', status: 'draft', contact: contact.id, lead: lead.id, trip: tripIds[0],
+          startDate: input.travelStart, adults: Math.max(1, input.adults ?? 2), children: Math.max(0, input.children ?? 0),
+        } as never,
+      })
+      .then((q) => ({ id: q.id, number: q.number }))
+      .catch((e) => {
+        payload.logger.warn(`draft quote for lead ${lead.id} failed: ${(e as Error).message}`)
+        return undefined
+      })
+    if (draftQuote) {
+      await payload.create({
+        collection: 'activities', overrideAccess: true,
+        data: { type: 'quote', summary: `Draft quote ${draftQuote.number} prepared from the booking request: check prices and availability, then send`, contact: contact.id, lead: lead.id },
+      })
+    }
+  }
+
   const threadKey = token(9)
   const conversation = await payload.create({
     collection: 'conversations', overrideAccess: true,
@@ -92,7 +117,7 @@ export async function captureEnquiry(payload: Payload, input: EnquiryInput) {
     collection: 'messages', overrideAccess: true,
     data: {
       conversation: conversation.id, direction: 'in', channel: 'email', fromName: contact.fullName, fromEmail: contact.email,
-      body: enquirySummary(input, tripTitle),
+      body: `${enquirySummary(input, tripTitle)}${draftQuote ? `\n\n[A draft quote ${draftQuote.number} is ready: ${env.SITE_URL}/admin/collections/quotes/${draftQuote.id}]` : ''}`,
     },
   })
 
@@ -122,7 +147,7 @@ export async function captureEnquiry(payload: Payload, input: EnquiryInput) {
   if (!assignedTo) {
     await notifyTeam({ payload } as never, `New unassigned lead: ${title}`, [input.message || 'No message.'], `${env.SITE_URL}/admin/collections/leads/${lead.id}`).catch(() => undefined)
   }
-  return { contactId: contact.id, leadId: lead.id, conversationId: conversation.id }
+  return { contactId: contact.id, leadId: lead.id, conversationId: conversation.id, quoteId: draftQuote?.id }
 }
 
 function enquirySummary(i: EnquiryInput, tripTitle?: string): string {

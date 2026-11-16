@@ -88,6 +88,7 @@ export const Leads: CollectionConfig = {
     { name: 'statusChangedAt', type: 'date', admin: { position: 'sidebar', readOnly: true } },
     { name: 'lostReason', type: 'text', admin: { position: 'sidebar', condition: (d) => d?.status === 'lost' } },
     { name: 'trips', type: 'relationship', relationTo: 'trips', hasMany: true, label: 'Interested in' },
+    { name: 'quotes', type: 'join', collection: 'quotes', on: 'lead', admin: { description: 'Quotes for this lead. A booking request from the website comes with a draft quote ready to check and send.', defaultColumns: ['number', 'title', 'status', 'total'] } },
     { name: 'interests', type: 'select', hasMany: true, options: ['safari', 'coast', 'walking', 'marine', 'culture', 'honeymoon', 'family', 'birding'] },
     { type: 'row', fields: [
       { name: 'travelStart', type: 'date', admin: { date: { pickerAppearance: 'dayOnly' } } },
