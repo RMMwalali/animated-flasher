@@ -10,10 +10,10 @@ export function LoadSampleButton({ hasContent }: { hasContent: boolean }) {
     setMsg('Loading photos and pages. This can take a minute…')
     try {
       const res = await fetch('/api/admin/load-sample', { method: 'POST', credentials: 'include' })
-      const json = (await res.json()) as { ok: boolean; created?: number; skipped?: number; photos?: number; error?: string }
+      const json = (await res.json()) as { ok: boolean; created?: number; skipped?: number; photos?: number; error?: string; note?: string }
       if (!json.ok) throw new Error(json.error)
       setStep('done')
-      setMsg(`Done: ${json.created} items added, ${json.skipped} already there. Refresh the website to see them.`)
+      setMsg(`Done: ${json.created} items added, ${json.skipped} already there. Refresh the website to see them.${json.note ? ` ${json.note}` : ''}`)
     } catch (e) {
       setStep('error')
       setMsg(`Could not load sample content: ${(e as Error).message}`)

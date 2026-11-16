@@ -76,6 +76,12 @@ export const samplePhoto = (key?: PhotoKey | null): MediaVM | null => {
   const p = photos[key]
   return { url: p.url, alt: p.alt, width: p.width, height: p.height, mimeType: 'image/webp' }
 }
+/**
+ * A sample item loaded into the database without its photo (e.g. on Vercel
+ * before photo storage is connected) still shows its own built-in photo.
+ */
+const builtIn = (list: readonly { slug: string; photo?: PhotoKey | null }[], slug: string, isSample: unknown): MediaVM | null =>
+  isSample ? samplePhoto(list.find((x) => x.slug === slug)?.photo ?? null) : null
 const sampleStage = () => S.sampleHome.stage.map(({ photo, ...x }) => ({ ...x, image: samplePhoto(photo) }))
 export function media(m: Media | number | null | undefined): MediaVM | null {
   if (!m || typeof m !== 'object' || !m.url) return null
@@ -100,7 +106,7 @@ function tripFromDoc(t: Trip): TripVM {
     itinerary: (t.itinerary ?? []).map((d) => ({ title: d.title, description: d.description, overnight: d.overnight, meals: d.meals, drive: d.drive })),
     inclusions: texts(t.inclusions), exclusions: texts(t.exclusions), faqs: (t.faqs ?? []) as QA[], keyFacts: (t.keyFacts ?? []) as Fact[],
     destinations: (t.destinations ?? []).map(ref).filter(Boolean) as TripVM['destinations'],
-    heroImage: media(t.heroImage as Media), gallery: ((t.gallery ?? []) as Media[]).map(media).filter(Boolean) as MediaVM[],
+    heroImage: media(t.heroImage as Media) ?? builtIn(S.sampleTrips as never, t.slug, t.sample), gallery: ((t.gallery ?? []) as Media[]).map(media).filter(Boolean) as MediaVM[],
     sample: Boolean(t.sample), seo: seo(t.seo), updatedAt: t.updatedAt, featured: Boolean(t.featured),
   }
 }
@@ -117,7 +123,7 @@ function destFromDoc(d: Destination): DestinationVM {
     slug: d.slug, name: d.name, region: d.region, summary: d.summary, statement: d.statement, emphasis: d.emphasis, county: d.county,
     distanceFromDiani: d.distanceFromDiani, altitude: d.altitude, area: d.area, lat: d.lat, lng: d.lng, bestMonths: d.bestMonths ?? [],
     keyFacts: (d.keyFacts ?? []) as Fact[], highlights: texts(d.highlights), faqs: (d.faqs ?? []) as QA[], body: d.body,
-    heroImage: media(d.heroImage as Media), sample: Boolean(d.sample), seo: seo(d.seo), updatedAt: d.updatedAt,
+    heroImage: media(d.heroImage as Media) ?? builtIn(S.sampleDestinations as never, d.slug, d.sample), sample: Boolean(d.sample), seo: seo(d.seo), updatedAt: d.updatedAt,
   }
 }
 function destFromSample(d: (typeof S.sampleDestinations)[number]): DestinationVM {
@@ -160,7 +166,7 @@ export const getHome = cache(async (): Promise<HomeVM> => {
   const ch = (c: Home['coast'], fb: typeof S.sampleHome.coast) => ({
     ...fb, ...Object.fromEntries(Object.entries(c ?? {}).filter(([, v]) => v != null && v !== '')),
     points: c?.points?.length ? c.points.map((x) => ({ title: x.title, text: x.text ?? '' })) : fb.points,
-    image: media(c?.image as Media), video: media(c?.video as Media),
+    image: media(c?.image as Media) ?? (c?.statement === fb.statement ? samplePhoto(fb.photo) : null), video: media(c?.video as Media),
   })
   return {
     ...S.sampleHome, ...Object.fromEntries(Object.entries(h).filter(([, v]) => v != null && v !== '')),
@@ -169,7 +175,7 @@ export const getHome = cache(async (): Promise<HomeVM> => {
     seasons: (h.seasons?.length ? h.seasons : S.sampleHome.seasons) as any,
     tiktokVideos: (h.tiktokVideos ?? []).map((v) => ({ url: v.url })),
     stage: h.stage?.length
-      ? h.stage.map((x) => ({ statement: x.statement, emphasis: x.emphasis, scene: (x.scene ?? 'safari') as StageSlide['scene'], image: media(x.image as Media), video: media(x.video as Media) }))
+      ? h.stage.map((x) => ({ statement: x.statement, emphasis: x.emphasis, scene: (x.scene ?? 'safari') as StageSlide['scene'], image: media(x.image as Media) ?? samplePhoto(S.sampleHome.stage.find((y) => y.statement === x.statement)?.photo ?? null), video: media(x.video as Media) }))
       : sampleStage(),
     slideSeconds: h.slideSeconds ?? S.sampleHome.slideSeconds,
     film: media(h.film as Media),
@@ -218,7 +224,7 @@ export const getWildlife = cache(async (): Promise<WildlifeVM[]> => {
   if (res && res.docs.length)
     return res.docs.map((w: Wildlife) => ({
       slug: w.slug, name: w.name, swahiliName: w.swahiliName, scientificName: w.scientificName, group: w.group, description: w.description, tip: w.tip,
-      whereToSee: (w.whereToSee ?? []).map(ref).filter(Boolean) as WildlifeVM['whereToSee'], bestMonths: w.bestMonths ?? [], image: media(w.image as Media),
+      whereToSee: (w.whereToSee ?? []).map(ref).filter(Boolean) as WildlifeVM['whereToSee'], bestMonths: w.bestMonths ?? [], image: media(w.image as Media) ?? builtIn(S.sampleWildlife as never, w.slug, true),
     }))
   return S.sampleWildlife.map((w) => ({ ...w, tip: 'tip' in w ? w.tip : null, bestMonths: 'bestMonths' in w ? [...w.bestMonths] : [], whereToSee: w.whereToSee.map((slug) => ({ slug, name: destName(slug) })), image: samplePhoto('photo' in w ? w.photo : null) }))
 })
@@ -226,7 +232,7 @@ export const getWildlife = cache(async (): Promise<WildlifeVM[]> => {
 export const getExperiences = cache(async (): Promise<ExperienceVM[]> => {
   const res = await q((p) => p.find({ collection: 'experiences', depth: 1, limit: 200, sort: 'order' }))
   if (res && res.docs.length)
-    return res.docs.map((e: Experience) => ({ slug: e.slug, title: e.title, category: e.category, summary: e.summary, duration: e.duration, priceFrom: e.priceFrom, location: ref(e.location), image: media(e.image as Media) }))
+    return res.docs.map((e: Experience) => ({ slug: e.slug, title: e.title, category: e.category, summary: e.summary, duration: e.duration, priceFrom: e.priceFrom, location: ref(e.location), image: media(e.image as Media) ?? builtIn(S.sampleExperiences as never, e.slug, e.sample) }))
   return S.sampleExperiences.map(({ photo, ...e }) => ({ ...e, priceFrom: 'priceFrom' in e ? e.priceFrom : null, location: { slug: e.location, name: destName(e.location) }, image: samplePhoto(photo) }))
 })
 
@@ -240,7 +246,7 @@ export const getPosts = cache(async (): Promise<PostVM[]> => {
   if (res && res.docs.length)
     return res.docs.map((d: Post) => ({
       slug: d.slug, title: d.title, excerpt: d.excerpt, content: d.content, faqs: (d.faqs ?? []) as QA[], author: authorFrom(d.author),
-      publishedAt: d.publishedAt ?? d.createdAt, updatedAt: d.updatedAt, topics: d.topics ?? [], heroImage: media(d.heroImage as Media), sample: Boolean(d.sample), seo: seo(d.seo),
+      publishedAt: d.publishedAt ?? d.createdAt, updatedAt: d.updatedAt, topics: d.topics ?? [], heroImage: media(d.heroImage as Media) ?? builtIn(S.samplePosts as never, d.slug, true), sample: Boolean(d.sample), seo: seo(d.seo),
     }))
   if (res && !(await isEmptyDb())) return []
   // newest first, like the database query; dates are illustrative
