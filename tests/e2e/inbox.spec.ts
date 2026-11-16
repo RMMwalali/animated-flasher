@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto'
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 import { adminHeaders } from './admin'
 
 const password = process.env.E2E_ADMIN_PASSWORD ?? process.env.SEED_ADMIN_PASSWORD
@@ -100,3 +100,79 @@ test.describe('inbox', () => {
     await request.patch(`/api/users/${agentId}`, { headers: adminHeaders(), data: { active: false } })
   })
 })
+
+const openChat = async (page: Page) => {
+  await page.getByRole('button', { name: 'Chat with us' }).click()
+  const panel = page.getByRole('dialog', { name: /live chat/i })
+  await expect(panel).toBeVisible()
+  return panel
+}
+
+// In this file, after the Inbox tests: an open Inbox marks the team online, so these
+// must not run at the same time as the Inbox UI test.
+test.describe('live chat (runs after the Inbox tests: they share the "team online" status)', () => {
+  test.skip(!password, 'needs the seeded admin password')
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('ngina-consent', JSON.stringify({ analytics: false, at: '' }))
+      sessionStorage.setItem('ngina-intro', '1')
+    })
+  })
+  // both tests set the shared "team online" status, so only one browser runs them
+  test.skip(({ isMobile }) => isMobile, 'desktop; the phone layout has its own test')
+
+  test('while the team is away, the chat asks for an email, and the message reaches the Inbox', async ({ page, request }) => {
+    const headers = adminHeaders()
+    await request.post('/api/globals/chat-status', { headers, data: { teamSeenAt: new Date(Date.now() - 10 * 60_000).toISOString() } })
+    await page.goto('/destinations')
+    const panel = await openChat(page)
+    await expect(panel.getByText('Away: we reply by email')).toBeVisible()
+    await panel.getByLabel('Message', { exact: true }).fill('Hello, is Amboseli good in April?')
+    await panel.getByRole('button', { name: 'Send message' }).click()
+    await expect(panel.getByRole('alert')).toContainText(/add your email/i)
+    const stamp = Date.now()
+    await panel.getByLabel('Your name').fill('Chat Away Guest')
+    await panel.getByLabel(/Your email/).fill(`e2e+chat${stamp}@example.com`)
+    await panel.getByRole('button', { name: 'Send message' }).click()
+    await expect(panel.getByText('Hello, is Amboseli good in April?')).toBeVisible()
+    await expect(panel.getByText(/team is away from the chat right now/)).toBeVisible()
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0)
+
+    const conv = (await (await request.get(`/api/conversations?where[channel][equals]=chat&where[subject][equals]=${encodeURIComponent('Live chat: Chat Away Guest')}&sort=-createdAt&depth=1`, { headers })).json()).docs[0]
+    expect(conv.status).toBe('open')
+    expect(conv.contact.email).toBe(`e2e+chat${stamp}@example.com`)
+    expect(conv.source.page).toBe('/destinations')
+  })
+
+  test('the team replies from the Inbox and the visitor sees it live', async ({ page, request }) => {
+    const headers = adminHeaders()
+    // the Inbox is open somewhere: the team is online
+    expect((await request.post('/api/admin/inbox', { headers, data: { action: 'presence' } })).ok()).toBeTruthy()
+    await page.goto('/')
+    const panel = await openChat(page)
+    await expect(panel.getByText('We are online')).toBeVisible()
+    const text = `Do you do day trips to Wasini? ${Date.now()}`
+    await panel.getByLabel('Message', { exact: true }).fill(text)
+    await panel.getByLabel('Message', { exact: true }).press('Enter')
+    await expect(panel.getByText(text)).toBeVisible()
+    await expect(panel.getByText(/team is away/)).toHaveCount(0)
+
+    const find = async () => (await (await request.get(`/api/messages?where[body][equals]=${encodeURIComponent(text)}&depth=0`, { headers })).json()).docs?.[0]
+    await expect.poll(find, { timeout: 10_000 }).toBeTruthy()
+    const msg = await find()
+    expect(msg.channel).toBe('chat')
+    const reply = await request.post('/api/admin/inbox', { headers, data: { action: 'reply', conversationId: msg.conversation, body: 'Yes, every day from Shimoni. Karibu!' } })
+    const r = (await reply.json()) as { ok: boolean; delivery?: string }
+    expect(r.ok).toBe(true)
+    expect(r.delivery).toBe('live')
+    await expect(panel.getByText('Yes, every day from Shimoni. Karibu!')).toBeVisible({ timeout: 10_000 })
+
+    // the chat continues after a page change (same visitor)
+    await page.goto('/contact')
+    const again = await openChat(page)
+    await expect(again.getByText(text)).toBeVisible()
+    await again.getByRole('button', { name: 'Close the chat' }).click()
+    await expect(again).toBeHidden()
+  })
+})
+
