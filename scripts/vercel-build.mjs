@@ -11,7 +11,20 @@ const run = (cmd, args, opts = {}) => {
   }
 }
 
-if (process.env.DATABASE_URL) {
+// Same rules as resolveDatabaseUrl in src/lib/env.ts: Neon may be connected
+// with a name prefix (e.g. NEON_DATABASE_URL).
+function databaseUrl(e) {
+  const pg = (v) => (v && /^postgres(ql)?:\/\//.test(v.trim()) ? v.trim() : undefined)
+  const named = pg(e.DATABASE_URL) || pg(e.POSTGRES_URL)
+  if (named) return named
+  const keys = Object.keys(e).sort()
+  const prefixed = (re) => keys.filter((k) => re.test(k)).map((k) => pg(e[k])).find(Boolean)
+  return prefixed(/_(DATABASE_URL|POSTGRES_URL)$/) || pg(e.DATABASE_URL_UNPOOLED) || pg(e.POSTGRES_URL_NON_POOLING) || prefixed(/_(DATABASE_URL_UNPOOLED|POSTGRES_URL_NON_POOLING)$/)
+}
+const dbUrl = databaseUrl(process.env)
+if (dbUrl) process.env.DATABASE_URL = dbUrl
+
+if (dbUrl) {
   console.log('[vercel-build] applying database migrations')
   // No stdin: if Payload would ask an interactive question, fail fast instead of hanging the build.
   run('pnpm', ['exec', 'payload', 'migrate'], {
@@ -21,6 +34,6 @@ if (process.env.DATABASE_URL) {
       '[vercel-build] Migrations did not complete. If the log above asks about "dev mode", this database was changed by a dev server or seed with schema push. Point DATABASE_URL at a fresh database (or a new Neon branch) and redeploy.',
   })
 } else {
-  console.warn('[vercel-build] DATABASE_URL is not set: skipping migrations. The site will show sample content and the admin will not work until a database is connected.')
+  console.warn('[vercel-build] No database URL found (DATABASE_URL, POSTGRES_URL or a prefixed version): skipping migrations. The site will show sample content and the admin will not work until a database is connected.')
 }
 run('pnpm', ['exec', 'next', 'build'])

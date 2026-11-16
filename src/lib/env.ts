@@ -58,10 +58,21 @@ export function resolveSiteUrl(e: Record<string, string | undefined>): string | 
 
 /**
  * Database URL. Vercel's Neon integration (Storage tab) sets DATABASE_URL and
- * POSTGRES_URL; either works, so connecting the database needs no typing.
+ * POSTGRES_URL, or the same names with a prefix chosen when connecting (e.g.
+ * NEON_DATABASE_URL); any of them works, so connecting needs no typing.
+ * Keep in step with scripts/vercel-build.mjs.
  */
 export function resolveDatabaseUrl(e: Record<string, string | undefined>): string | undefined {
-  return e.DATABASE_URL || e.POSTGRES_URL || e.DATABASE_URL_UNPOOLED || undefined
+  const pg = (v?: string) => (v && /^postgres(ql)?:\/\//.test(v.trim()) ? v.trim() : undefined)
+  const named = pg(e.DATABASE_URL) || pg(e.POSTGRES_URL)
+  if (named) return named
+  const keys = Object.keys(e).sort()
+  const prefixed = (re: RegExp) => keys.filter((k) => re.test(k)).map((k) => pg(e[k])).find(Boolean)
+  return (
+    prefixed(/_(DATABASE_URL|POSTGRES_URL)$/) ||
+    pg(e.DATABASE_URL_UNPOOLED) || pg(e.POSTGRES_URL_NON_POOLING) ||
+    prefixed(/_(DATABASE_URL_UNPOOLED|POSTGRES_URL_NON_POOLING)$/)
+  )
 }
 
 /**
