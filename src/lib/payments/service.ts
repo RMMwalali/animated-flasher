@@ -5,6 +5,7 @@ import { formatMoney, type Currency } from '@/lib/pricing'
 import { paymentReference } from '@/lib/ids'
 import { bookingMoneyState, creditedAmount, nextAmountDue } from './math'
 import { paymentProvider, type VerifyResult } from './provider'
+import { asAttachment, receiptDocument } from '@/lib/pdf'
 
 const idOf = (v: unknown) => (v && typeof v === 'object' ? (v as { id: number }).id : (v as number))
 const LOCKED = new Set(['travelling', 'completed', 'cancelled'])
@@ -40,9 +41,10 @@ async function sendReceipt(req: PayloadRequest, payment: any, booking: any, bala
     contactId: contact.id, leadId: idOf(booking.lead),
     subject: `Receipt ${receiptNumber}: ${booking.title}`,
     tag: 'receipt',
+    attachments: await receiptDocument(req.payload, payment.id, req).then((f) => (f ? [asAttachment(f)] : []), (e) => (req.payload.logger.warn(`receipt PDF failed: ${e}`), [])),
     content: {
       heading: `Thank you, ${contact.firstName}`,
-      paragraphs: ['We have received your payment. This email is your receipt.'],
+      paragraphs: ['We have received your payment. This email is your receipt; a PDF copy is attached.'],
       facts: [
         ['Receipt', receiptNumber],
         ['Booking', `${booking.reference} · ${booking.title}`],

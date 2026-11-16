@@ -121,6 +121,40 @@ test.describe('booking journey', () => {
     expect(logged.docs[0].body).not.toContain('asthma')
   })
 
+  test('PDF quote, invoice and receipt: attached to the emails and downloadable', async ({ request, isMobile }) => {
+    test.skip(isMobile, 'covered on desktop')
+    const { s, quote, path } = await sentQuote(request)
+    const quoteToken = path.split('/').pop()!
+    const isPdf = async (url: string, headers?: Record<string, string>) => {
+      const res = await request.get(url, { headers })
+      expect(res.status(), url).toBe(200)
+      expect(res.headers()['content-type']).toBe('application/pdf')
+      expect((await res.body()).subarray(0, 5).toString()).toBe('%PDF-')
+    }
+    await isPdf(`/api/documents/quote?token=${quoteToken}`)
+    // the quote email carried the PDF
+    const sentMsg = await s.get(`/api/messages?where[body][contains]=${encodeURIComponent(`Attached: Quote-${quote.number}.pdf`)}&depth=0`)
+    expect(sentMsg.totalDocs).toBeGreaterThan(0)
+
+    const accepted = await request.post('/api/quote/accept', { data: { token: quoteToken, name: 'Pdf Guest', agree: true } })
+    const tripToken = new URL(((await accepted.json()) as { tripUrl: string }).tripUrl).pathname.split('/').pop()!
+    await isPdf(`/api/documents/invoice?token=${tripToken}`)
+    const booking = (await s.get(`/api/quotes/${quote.id}?depth=1`)).booking
+
+    // a manual (bank) payment: the receipt email has the PDF, and the guest can download it
+    const pay = await request.post('/api/payments', { headers: s.headers, data: { booking: booking.id, kind: 'deposit', amount: booking.depositDue, currency: booking.currency, provider: 'manual', method: 'bank', status: 'success' } })
+    expect(pay.ok()).toBeTruthy()
+    const payment = (await pay.json()).doc
+    await expect.poll(async () => (await s.get(`/api/messages?where[body][contains]=${encodeURIComponent('Attached: Receipt-')}&where[conversation][exists]=true&depth=0&limit=50`)).docs.some((m: any) => m.body.includes(payment.reference))).toBe(true)
+    await isPdf(`/api/documents/receipt?token=${tripToken}&payment=${payment.id}`)
+
+    // staff links need a signed-in sales user; guests cannot guess other bookings' receipts
+    await isPdf(`/api/documents/invoice?id=${booking.id}`, s.headers)
+    expect((await request.get(`/api/documents/invoice?id=${booking.id}`)).status()).toBe(403)
+    expect((await request.get(`/api/documents/receipt?token=${quoteToken}&payment=${payment.id}`)).status()).toBe(404)
+    expect((await request.get(`/api/documents/invoice?token=${'x'.repeat(30)}`)).status()).toBe(404)
+  })
+
   test('guest can decline a quote with a reason', async ({ page, request, isMobile }) => {
     test.skip(isMobile, 'covered on desktop')
     const { s, quote, path } = await sentQuote(request)

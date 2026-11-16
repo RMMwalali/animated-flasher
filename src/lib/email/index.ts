@@ -9,6 +9,8 @@ export type OutgoingEmail = {
   tag?: string
   headers?: Record<string, string>
   metadata?: Record<string, string>
+  /** Files to attach; content is base64. */
+  attachments?: { name: string; content: string; contentType: string }[]
 }
 
 export type SendResult = { status: 'sent' | 'logged' | 'failed'; messageId?: string; error?: string }
@@ -33,6 +35,7 @@ const postmarkProvider: EmailProvider = {
         MessageStream: c.messageStream,
         Headers: e.headers ? Object.entries(e.headers).map(([Name, Value]) => ({ Name, Value })) : undefined,
         Metadata: e.metadata,
+        Attachments: e.attachments?.map((a) => ({ Name: a.name, Content: a.content, ContentType: a.contentType, ContentID: null })),
         TrackOpens: false,
       })
       return { status: 'sent', messageId: res.MessageID }
@@ -45,7 +48,7 @@ const postmarkProvider: EmailProvider = {
 /** Used when Postmark is not configured: the email is logged, not sent. */
 const logProvider: EmailProvider = {
   async send(e) {
-    console.info(`[email:logged] to=${e.to} subject="${e.subject}"\n${e.text.slice(0, 600)}`)
+    console.info(`[email:logged] to=${e.to} subject="${e.subject}"${e.attachments?.length ? ` attachments=${e.attachments.map((a) => a.name).join(',')}` : ''}\n${e.text.slice(0, 600)}`)
     return { status: 'logged' }
   },
 }
