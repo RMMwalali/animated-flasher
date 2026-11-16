@@ -32,6 +32,7 @@ export function QuoteActions() {
       </button>
       <button type="button" className="ng-btn ng-btn--ghost" disabled={!!busy || !sent} onClick={() => link(false)} title={sent ? undefined : 'Send the quote first'}>Copy guest link</button>
       <button type="button" className="ng-btn ng-btn--ghost" disabled={!!busy || !sent} onClick={() => link(true)}>Open guest page</button>
+      <a className="ng-btn ng-btn--ghost" href={`/api/documents/quote?id=${id}`} target="_blank" rel="noopener" title="Save first to include your latest changes">Quote PDF</a>
     </ToolBar>
   )
 }
