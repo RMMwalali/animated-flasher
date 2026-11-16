@@ -1,3 +1,4 @@
+import Image from 'next/image'
 /**
  * Brand marks rendered as CSS masks of the traced SVGs, so one file can take
  * any colour (currentColor) without redrawing the logo.
@@ -15,11 +16,31 @@ export function MaskedSvg({ src, ratio, className = '', label }: { src: string; 
 }
 
 /** Compact stacked lockup for the header: mark over the NGINA wordmark. */
-export function HeaderLogo({ className = '' }: { className?: string }) {
+/**
+ * The owner's logo (icon + "Ngina Trails and Safaris, Diani Beach, Kenya").
+ * `colour` for light backgrounds; `light` (dark parts in cream) for dark ones.
+ * Files: public/brand/logo-full*.png, made by scripts/brand/logo-assets.py.
+ */
+export function BrandLogo({ variant = 'colour', className = '', priority = false, sizes = '120px' }: { variant?: 'colour' | 'light'; className?: string; priority?: boolean; sizes?: string }) {
   return (
-    <span className={`flex flex-col items-center gap-1 ${className}`}>
-      <MaskedSvg src="/brand/mark-mono.svg" ratio={1846 / 871} className="h-7 sm:h-9" />
-      <MaskedSvg src="/brand/wordmark-ngina.svg" ratio={1633 / 310} className="h-3 sm:h-3.5" label="Ngina Trails and Safaris" />
+    <Image
+      src={variant === 'light' ? '/brand/logo-full-light.png' : '/brand/logo-full.png'}
+      alt="Ngina Trails and Safaris, Diani Beach, Kenya"
+      width={1200}
+      height={999}
+      sizes={sizes}
+      priority={priority}
+      className={`h-auto w-auto ${className}`}
+    />
+  )
+}
+
+/** Header: swaps between the two versions with the header's background. */
+export function HeaderLogo({ light = false, className = '' }: { light?: boolean; className?: string }) {
+  return (
+    <span className={`relative block ${className}`}>
+      <BrandLogo variant="light" priority className={`h-[60px] transition-opacity duration-500 sm:h-[72px] ${light ? 'opacity-0' : 'opacity-100'}`} />
+      <BrandLogo variant="colour" priority className={`absolute inset-0 h-[60px] transition-opacity duration-500 sm:h-[72px] ${light ? 'opacity-100' : 'opacity-0'}`} />
     </span>
   )
 }
