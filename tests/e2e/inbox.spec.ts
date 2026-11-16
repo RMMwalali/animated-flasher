@@ -44,15 +44,15 @@ test.describe('inbox', () => {
     // a throwaway agent of its own: parallel tests signing in as the shared admin can retire each other's sessions
     const admin = await login(request)
     const agentEmail = `agent-${randomBytes(4).toString('hex')}@example.com`
-    const agentPassword = `Pw-${randomBytes(12).toString('hex')}`
-    const created = await request.post('/api/users', { headers: admin, data: { email: agentEmail, password: agentPassword, name: 'E2E Agent', roles: ['sales'] } })
+    const agentPass = randomBytes(12).toString('base64url') // random for each run
+    const created = await request.post('/api/users', { headers: admin, data: { email: agentEmail, password: agentPass, name: 'E2E Agent', roles: ['sales'] } })
     expect(created.ok(), await created.text()).toBeTruthy()
     const agentId = (await created.json()).doc.id
-    const agentToken = ((await (await request.post('/api/users/login', { data: { email: agentEmail, password: agentPassword } })).json()) as { token: string }).token
+    const agentToken = ((await (await request.post('/api/users/login', { data: { email: agentEmail, password: agentPass } })).json()) as { token: string }).token
     const agent = { Authorization: `JWT ${agentToken}` }
     await page.goto('/admin/login')
     await page.getByLabel(/email/i).fill(agentEmail)
-    await page.getByLabel(/password/i).fill(agentPassword)
+    await page.getByLabel(/password/i).fill(agentPass)
     await page.getByRole('button', { name: /log ?in/i }).click()
     await page.waitForURL(/\/admin(?!\/login)/)
     await page.goto('/admin/inbox')
