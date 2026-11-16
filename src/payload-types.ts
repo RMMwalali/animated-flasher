@@ -143,11 +143,13 @@ export interface Config {
     'site-settings': SiteSetting;
     home: Home;
     integrations: Integration;
+    'chat-status': ChatStatus;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
     integrations: IntegrationsSelect<false> | IntegrationsSelect<true>;
+    'chat-status': ChatStatusSelect<false> | ChatStatusSelect<true>;
   };
   locale: null;
   widgets: {
@@ -885,6 +887,10 @@ export interface Conversation {
   lastMessagePreview?: string | null;
   lastDirection?: ('in' | 'out') | null;
   visitorTokenHash?: string | null;
+  /**
+   * Last time the visitor had the chat open.
+   */
+  visitorSeenAt?: string | null;
   threadKey?: string | null;
   /**
    * Where this came from. Captured automatically.
@@ -1738,6 +1744,7 @@ export interface ConversationsSelect<T extends boolean = true> {
   lastMessagePreview?: T;
   lastDirection?: T;
   visitorTokenHash?: T;
+  visitorSeenAt?: T;
   threadKey?: T;
   source?:
     | T
@@ -2592,6 +2599,11 @@ export interface SiteSetting {
   whatsappButton?: boolean | null;
   whatsappMessage?: string | null;
   /**
+   * Visitors' messages arrive in the Inbox. While someone on the team has the Inbox open, the chat shows "online"; otherwise it asks for an email address and replies go out by email too.
+   */
+  liveChat?: boolean | null;
+  chatGreeting?: string | null;
+  /**
    * Shown on the website and in emails: "we reply within …", e.g. 24 hours.
    */
   responseTime?: string | null;
@@ -3012,6 +3024,16 @@ export interface Integration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chat-status".
+ */
+export interface ChatStatus {
+  id: number;
+  teamSeenAt?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
@@ -3043,6 +3065,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
       };
   whatsappButton?: T;
   whatsappMessage?: T;
+  liveChat?: T;
+  chatGreeting?: T;
   responseTime?: T;
   social?:
     | T
@@ -3275,6 +3299,16 @@ export interface IntegrationsSelect<T extends boolean = true> {
     | {
         key?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chat-status_select".
+ */
+export interface ChatStatusSelect<T extends boolean = true> {
+  teamSeenAt?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

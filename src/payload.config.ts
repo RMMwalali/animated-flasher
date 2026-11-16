@@ -18,6 +18,7 @@ import { Users } from './collections/Users'
 import { Wildlife } from './collections/Wildlife'
 import { Activities, CannedReplies, Companies, Contacts, Conversations, Leads, Messages, Tasks } from './collections/crm'
 import { AuditLogs, Bookings, Departures, Payments, Quotes, RateLimits, ReviewRequests, Suppliers, Travellers } from './collections/ops'
+import { ChatStatus } from './globals/ChatStatus'
 import { Home } from './globals/Home'
 import { Integrations } from './globals/Integrations'
 import { SiteSettings } from './globals/SiteSettings'
@@ -67,7 +68,7 @@ export default buildConfig({
     },
   },
   collections,
-  globals: [SiteSettings, Home, Integrations],
+  globals: [SiteSettings, Home, Integrations, ChatStatus],
   editor: lexicalEditor(),
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
   db: postgresAdapter({

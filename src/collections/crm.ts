@@ -169,6 +169,8 @@ export const Conversations: CollectionConfig = {
     { name: 'lastDirection', type: 'select', options: ['in', 'out'] },
     // visitor chat session: sha256 of the token in the visitor's cookie
     { name: 'visitorTokenHash', type: 'text', index: true, admin: { hidden: true }, access: { read: () => false } },
+    // last time the visitor's chat window checked for replies (if they have gone, replies are emailed too)
+    { name: 'visitorSeenAt', type: 'date', admin: { readOnly: true, condition: (d) => d?.channel === 'chat', description: 'Last time the visitor had the chat open.' } },
     // a stable token used in reply-to addresses so guest email replies thread here
     { name: 'threadKey', type: 'text', index: true, admin: { readOnly: true } },
     sourceGroup,
