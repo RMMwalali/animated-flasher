@@ -15,6 +15,8 @@ export type SeedOptions = {
   /** How to get the bytes of a sample photo (disk for the script, HTTP for the admin button). */
   loadPhoto: (url: string, filename: string) => Promise<PhotoFile>
   overwriteGlobals?: boolean
+  /** false when there is no photo storage (e.g. Vercel without Blob): content loads without uploading photos. */
+  uploadPhotos?: boolean
 }
 export type SeedResult = { photos: number; created: number; skipped: number; trips: Record<string, any>; destinations: Record<string, number> }
 
@@ -38,7 +40,7 @@ export async function seedContent(payload: Payload, opts: SeedOptions): Promise<
 
   // ---------- sample photos (free stock, see docs/PHOTO-CREDITS.md) ----------
   const media: Record<string, number> = {}
-  for (const [key, p] of Object.entries(photos)) {
+  for (const [key, p] of opts.uploadPhotos === false ? [] : Object.entries(photos)) {
     const filename = p.url.split('/').pop()!
     // match on filename or the sample's unique description: storage may rename files (e.g. "-2")
     const found = await payload.find({ collection: 'media', where: { or: [{ filename: { equals: filename } }, { alt: { equals: p.alt } }] }, limit: 1, depth: 0, overrideAccess: true })

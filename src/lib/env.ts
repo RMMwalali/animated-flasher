@@ -87,8 +87,18 @@ export function resolvePayloadSecret(e: Record<string, string | undefined>, dbUr
   return undefined
 }
 
+/**
+ * Vercel Blob token. The Storage tab sets BLOB_READ_WRITE_TOKEN, or the same
+ * name with a prefix chosen when connecting (e.g. NGINA_READ_WRITE_TOKEN).
+ */
+export function resolveBlobToken(e: Record<string, string | undefined>): string | undefined {
+  const ok = (v?: string) => (v && v.trim().startsWith('vercel_blob_rw_') ? v.trim() : undefined)
+  if (ok(e.BLOB_READ_WRITE_TOKEN)) return ok(e.BLOB_READ_WRITE_TOKEN)
+  return Object.keys(e).sort().filter((k) => k.endsWith('READ_WRITE_TOKEN')).map((k) => ok(e[k])).find(Boolean)
+}
+
 const dbUrl = resolveDatabaseUrl(process.env)
-const resolved = { SITE_URL: resolveSiteUrl(process.env), DATABASE_URL: dbUrl, PAYLOAD_SECRET: resolvePayloadSecret(process.env, dbUrl) }
+const resolved = { SITE_URL: resolveSiteUrl(process.env), DATABASE_URL: dbUrl, PAYLOAD_SECRET: resolvePayloadSecret(process.env, dbUrl), BLOB_READ_WRITE_TOKEN: resolveBlobToken(process.env) }
 const parsed = schema.safeParse({ ...process.env, ...resolved })
 if (!parsed.success) {
   console.warn('[env] invalid environment variables:', parsed.error.flatten().fieldErrors)

@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { isAdmin } from '@/access'
 import { getPayloadSafe } from '@/lib/content'
 import { seedContent } from '@/lib/seed/content'
+import { features } from '@/lib/env'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 300
@@ -18,9 +19,13 @@ export async function POST(req: NextRequest) {
   if (!user || !isAdmin(user as never)) return NextResponse.json({ ok: false, error: 'Admins only.' }, { status: 403 })
 
   const origin = req.nextUrl.origin
+  // On Vercel without Blob there is nowhere to save files: load the content and show
+  // the photos straight from the website's built-in library instead.
+  const uploadPhotos = !(process.env.VERCEL && features.storageProvider === 'local')
   try {
     const res = await seedContent(payload, {
       overwriteGlobals: false,
+      uploadPhotos,
       log: (m) => payload.logger.info(`[load-sample] ${m}`),
       loadPhoto: async (url, name) => {
         const r = await fetch(new URL(url, origin), { signal: AbortSignal.timeout(30_000) })
@@ -33,7 +38,10 @@ export async function POST(req: NextRequest) {
       const { revalidatePath } = await import('next/cache')
       revalidatePath('/', 'layout')
     } catch {}
-    return NextResponse.json({ ok: true, ...{ photos: res.photos, created: res.created, skipped: res.skipped } })
+    return NextResponse.json({
+      ok: true, photos: res.photos, created: res.created, skipped: res.skipped,
+      note: uploadPhotos ? undefined : 'Loaded. Photos are shown from the website\'s built-in library. To upload your own photos, connect Vercel Blob (Vercel → your project → Storage) and redeploy.',
+    })
   } catch (e) {
     payload.logger.error(`load-sample failed: ${(e as Error).message}`)
     return NextResponse.json({ ok: false, error: (e as Error).message }, { status: 500 })
