@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { OtherWaysToPay } from '@/components/booking/OtherWaysToPay'
 import { PayButton } from '@/components/booking/PayButton'
 import { PrintButton } from '@/components/booking/PrintButton'
+import { PdfLink } from '@/components/booking/PdfLink'
 import { Icon } from '@/components/icons/Icon'
 import { Media } from '@/components/site/Media'
 import { findBookingByToken } from '@/lib/booking/flows'
@@ -147,9 +148,12 @@ export default async function TripPage({ params }: Props) {
                 {payments.length > 0 && (
                   <ul className="mt-6 grid gap-2 border-t border-line pt-4 text-sm">
                     {payments.map((p) => (
-                      <li key={p.id} className="flex justify-between gap-3">
-                        <span>{longDate(p.paidAt ?? p.createdAt)} · {p.kind}{p.receiptNumber ? ` · ${p.receiptNumber}` : ''}</span>
-                        <span className="font-semibold">{formatMoney(p.amount, p.currency as Currency)}</span>
+                      <li key={p.id} className="grid gap-0.5">
+                        <span className="flex justify-between gap-3">
+                          <span>{longDate(p.paidAt ?? p.createdAt)} · {p.kind}{p.receiptNumber ? ` · ${p.receiptNumber}` : ''}</span>
+                          <span className="font-semibold">{formatMoney(p.amount, p.currency as Currency)}</span>
+                        </span>
+                        {p.status === 'success' && <PdfLink small href={`/api/documents/receipt?token=${token}&payment=${p.id}`} label="Receipt (PDF)" />}
                       </li>
                     ))}
                   </ul>
@@ -166,7 +170,10 @@ export default async function TripPage({ params }: Props) {
                 {!settings.whatsapp && !settings.email && !settings.phone && <p className="mt-3">Reply to any email from us and it reaches your planner.</p>}
                 <p className="mt-3 text-sm text-deep/80">Quote your booking reference, {b.reference}.</p>
               </div>
-              <PrintButton label="Print or save this page" />
+              <div className="flex flex-wrap gap-3">
+                <PdfLink href={`/api/documents/invoice?token=${token}`} label="Invoice (PDF)" />
+                <PrintButton label="Print this page" />
+              </div>
             </aside>
           </div>
         </div>

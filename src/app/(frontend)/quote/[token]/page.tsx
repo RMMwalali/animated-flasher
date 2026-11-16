@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { PrintButton } from '@/components/booking/PrintButton'
+import { PdfLink } from '@/components/booking/PdfLink'
 import { QuoteDecision } from '@/components/booking/QuoteDecision'
 import { Media } from '@/components/site/Media'
 import { findQuoteByToken, markQuoteViewed, tripUrl } from '@/lib/booking/flows'
@@ -113,7 +113,7 @@ export default async function QuotePage({ params }: Props) {
                 </tbody>
               </table>
             </div>
-            <PrintButton />
+            <PdfLink href={`/api/documents/quote?token=${token}`} label="Download this quote (PDF)" />
           </aside>
         </div>
         {state === 'open' && (

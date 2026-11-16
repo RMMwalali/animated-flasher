@@ -43,6 +43,8 @@ export type GuestEmail = {
   authorId?: number | null
   conversationId?: number | null
   leadId?: number | null
+  /** PDFs etc. attached to the email (content is base64). */
+  attachments?: { name: string; content: string; contentType: string }[]
 }
 
 /** Send an email to a guest and save it in their conversation. */
@@ -55,12 +57,12 @@ export async function sendToGuest(p: P, e: GuestEmail): Promise<SendResult & { c
     ? await payload.findByID({ collection: 'conversations', id: e.conversationId, depth: 0, overrideAccess: true, req })
     : await guestConversation(p, { contactId: e.contactId, subject: e.subject, leadId: e.leadId })
   const replyTo = conv.threadKey ? await threadReplyTo(conv.threadKey) : undefined
-  const res = await sendEmail({ to: contact.email, subject: e.subject, content: e.content, tag: e.tag, replyTo, metadata: { conversation: String(conv.id) } })
+  const res = await sendEmail({ to: contact.email, subject: e.subject, content: e.content, tag: e.tag, replyTo, metadata: { conversation: String(conv.id) }, attachments: e.attachments })
   await payload.create({
     collection: 'messages', overrideAccess: true, req,
     data: {
       conversation: conv.id, direction: 'out', channel: 'email', automated: !e.authorId, author: e.authorId ?? undefined,
-      body: `${e.subject}\n\n${renderEmail(e.content).text}`.slice(0, 20000),
+      body: `${e.subject}\n\n${renderEmail(e.content).text}${e.attachments?.length ? `\n\n[Attached: ${e.attachments.map((a) => a.name).join(', ')}]` : ''}`.slice(0, 20000),
       deliveryStatus: res.status, emailMessageId: res.messageId,
     },
   })

@@ -13,6 +13,7 @@ import { paymentProvider } from '@/lib/payments/provider'
 import { processReviewRequests } from '@/lib/crm/reviews'
 import { getSettings } from '@/lib/crm/settings'
 import { otherWaysToPayLines } from '@/components/booking/OtherWaysToPay'
+import { asAttachment, invoiceDocument, quoteDocument, type PdfFile } from '@/lib/pdf'
 import { dueActions, nextPayment, quoteState } from './rules'
 
 const idOf = (v: unknown) => (v && typeof v === 'object' ? (v as { id: number }).id : (v as number))
@@ -28,6 +29,17 @@ export class GuestError extends Error {
 }
 
 export const localReq = (payload: Payload) => createLocalReq({}, payload)
+
+/** A PDF to attach; a document that fails to build never stops the email. */
+export async function attach(payload: Payload, make: () => Promise<PdfFile | null>) {
+  try {
+    const f = await make()
+    return f ? [asAttachment(f)] : []
+  } catch (e) {
+    payload.logger.warn(`PDF attachment failed: ${e}`)
+    return []
+  }
+}
 
 function signatureOf(user: any): string {
   if (!user) return 'The Ngina Trails and Safaris team\nDiani Beach, Kenya'
@@ -57,11 +69,12 @@ export async function sendQuoteToGuest(req: PayloadRequest, quoteId: number | st
     contactId: contact.id, authorId: (req.user as any)?.id, leadId: idOf(quote.lead),
     subject: `Your trip plan: ${quote.title} (${quote.number})`,
     tag: 'quote',
+    attachments: await attach(req.payload, () => quoteDocument(req.payload, updated.id, req)),
     content: {
       preheader: `Your plan and price for ${quote.title}, ready to review.`,
       heading: `Jambo ${contact.firstName},`,
       paragraphs: [
-        `Here is your plan for ${quote.title}. Open it to see the day-by-day plan, what is included and the price. If it looks right, you can accept it online and we will confirm your booking.`,
+        `Here is your plan for ${quote.title}. Open it to see the day-by-day plan, what is included and the price. If it looks right, you can accept it online and we will confirm your booking. A PDF copy is attached.`,
         'Want to change something? Just reply to this email.',
       ],
       facts: [
@@ -163,6 +176,7 @@ export async function sendBookingConfirmation(req: PayloadRequest, bookingId: nu
     contactId: contact.id, authorId: (req.user as any)?.id, leadId: idOf(booking.lead),
     subject: `Booking ${booking.reference}: ${booking.title}`,
     tag: 'booking-confirmation',
+    attachments: await attach(req.payload, () => invoiceDocument(req.payload, booking.id, req)),
     content: {
       preheader: `Your trip page and next steps for ${booking.title}.`,
       heading: `Asante, ${contact.firstName}!`,
@@ -170,7 +184,7 @@ export async function sendBookingConfirmation(req: PayloadRequest, bookingId: nu
         depositLeft > 0
           ? `Thank you for booking ${booking.title}. Your dates are held for you: pay the deposit from your trip page to confirm them.`
           : `Thank you for booking ${booking.title}. Your trip is confirmed.`,
-        'Your trip page has your plan, payments, balance and a checklist for before you fly (including the Kenya eTA). Keep this email: the link is private to you.',
+        'Your trip page has your plan, payments, balance and a checklist for before you fly (including the Kenya eTA). Your invoice is attached as a PDF. Keep this email: the link is private to you.',
         ...otherWaysToPayLines(await getSettings(req), String(booking.reference)),
       ],
       facts: [
@@ -214,6 +228,7 @@ export async function requestPayment(req: PayloadRequest, bookingId: number | st
     contactId: contact.id, authorId: (req.user as any)?.id, leadId: idOf(booking.lead),
     subject: `${opts.kind === 'deposit' ? 'Deposit' : 'Balance'} for booking ${booking.reference}`,
     tag: `payment-request-${opts.kind}`,
+    attachments: await attach(req.payload, () => invoiceDocument(req.payload, booking.id, req)),
     content: {
       heading: `Jambo ${contact.firstName},`,
       paragraphs: [
@@ -309,6 +324,7 @@ async function sendBalanceReminder(req: PayloadRequest, b: any) {
     contactId: contact.id, leadId: idOf(b.lead),
     subject: `Balance due for ${b.title} (${b.reference})`,
     tag: 'balance-reminder',
+    attachments: await attach(req.payload, () => invoiceDocument(req.payload, b.id, req)),
     content: {
       heading: `Jambo ${contact.firstName},`,
       paragraphs: [
