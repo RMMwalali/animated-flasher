@@ -1,7 +1,16 @@
-import type { Field, GlobalConfig } from 'payload'
+import type { Field, GlobalConfig, PayloadRequest } from 'payload'
 import { admins } from '@/access'
 import { invalidateConfig } from '@/lib/config'
 import { decryptSecret, encryptSecret, isEncrypted, isMasked, maskSecret } from '@/lib/secrets'
+
+/** The encrypted value currently in the database for a field path, bypassing read hooks. */
+async function storedSecret(req: PayloadRequest, path: (string | number)[]): Promise<string | null> {
+  const ctx = req.context as { rawIntegrations?: Promise<Record<string, unknown> | null> }
+  ctx.rawIntegrations ??= req.payload.db.findGlobal({ slug: 'integrations', req }).catch(() => null) as Promise<Record<string, unknown> | null>
+  let v: unknown = await ctx.rawIntegrations
+  for (const key of path) v = v && typeof v === 'object' ? (v as Record<string, unknown>)[String(key)] : undefined
+  return isEncrypted(v) ? v : null
+}
 
 /**
  * A key field that is stored encrypted and never shown again in full: the
@@ -14,9 +23,11 @@ const secret = (name: string, label: string, description?: string, condition?: (
   admin: { description: description ? `${description} Stored encrypted; only the last 4 characters are shown.` : 'Stored encrypted; only the last 4 characters are shown.', autoComplete: 'off', condition },
   hooks: {
     beforeChange: [
-      ({ value, previousValue }) => {
+      async ({ value, req, path }) => {
         if (value == null || value === '') return null
-        if (isMasked(value)) return previousValue
+        // The admin sends back the masked "••••1234" it was shown. Keep the stored key: read it
+        // straight from the database (the copy Payload hands to hooks is already masked).
+        if (isMasked(value)) return storedSecret(req, path)
         const v = String(value).trim()
         return isEncrypted(v) ? v : encryptSecret(v)
       },

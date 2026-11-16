@@ -5,7 +5,6 @@ import { useEffect } from 'react'
 import { Icon } from '@/components/icons/Icon'
 import { Brush } from './Brush'
 import { BrushCircle } from './BrushCircle'
-import { SoundToggle } from './SoundToggle'
 import { ExploreButton } from './Explore'
 import { HeaderLogo, LocationLine } from './Logo'
 import { MENU } from './nav'
@@ -29,7 +28,6 @@ export function Menu({ open, onClose, contact }: { open: boolean; onClose: () =>
         <DialogTitle className="sr-only">Menu</DialogTitle>
         <div className="gutter grid h-[76px] grid-cols-[1fr_auto_1fr] items-center sm:h-[88px]">
           <div className="flex items-center">
-            <SoundToggle className="lg:hidden" />
             <button type="button" onClick={onClose} className="relative hidden size-12 place-items-center rounded-full lg:grid" aria-label="Close menu">
               <BrushCircle className="absolute inset-0 size-full text-orange-300" />
               <Icon name="close" size={20} />

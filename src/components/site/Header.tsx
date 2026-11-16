@@ -7,7 +7,6 @@ import { BrushCircle } from './BrushCircle'
 import { HeaderLogo } from './Logo'
 import { initialHeaderState, nextHeaderState } from './headerState'
 import { Menu } from './Menu'
-import { SoundToggle } from './SoundToggle'
 import type { ContactInfo } from './types'
 
 const LEFT = [
@@ -22,7 +21,7 @@ const RIGHT = [
 
 /**
  * Desktop: menu + key links left, centred logo, links + "Plan your trip"
- * right. Phone: sound and menu in hand-drawn rings either side of the logo.
+ * right. Phone: centred logo with the menu in a hand-drawn ring.
  * Transparent over dark heroes, cream once scrolled; hides on scroll down.
  */
 export function Header({ contact, overHero = true, banner }: { contact: ContactInfo; overHero?: boolean; banner?: ReactNode }) {
@@ -80,7 +79,6 @@ export function Header({ contact, overHero = true, banner }: { contact: ContactI
         {banner}
         <div className="gutter grid h-[76px] grid-cols-[1fr_auto_1fr] items-center sm:h-[88px]">
           <div className="flex items-center gap-6">
-            <SoundToggle className="lg:hidden" />
             <button type="button" onClick={() => setOpen(true)} className="relative hidden size-12 place-items-center rounded-full lg:grid" aria-haspopup="dialog" aria-expanded={open} aria-label="Open menu">
               <BrushCircle className="absolute inset-0 size-full text-orange" />
               <Icon name="menu" size={20} />

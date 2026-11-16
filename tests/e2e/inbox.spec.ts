@@ -41,10 +41,18 @@ test.describe('inbox', () => {
   })
 
   test('agent replies, notes and logs a WhatsApp chat from the Inbox', async ({ page, request }) => {
-    const headers = await login(request)
+    // a throwaway agent of its own: parallel tests signing in as the shared admin can retire each other's sessions
+    const admin = await login(request)
+    const agentEmail = `agent-${randomBytes(4).toString('hex')}@example.com`
+    const agentPassword = `Pw-${randomBytes(12).toString('hex')}`
+    const created = await request.post('/api/users', { headers: admin, data: { email: agentEmail, password: agentPassword, name: 'E2E Agent', roles: ['sales'] } })
+    expect(created.ok(), await created.text()).toBeTruthy()
+    const agentId = (await created.json()).doc.id
+    const agentToken = ((await (await request.post('/api/users/login', { data: { email: agentEmail, password: agentPassword } })).json()) as { token: string }).token
+    const agent = { Authorization: `JWT ${agentToken}` }
     await page.goto('/admin/login')
-    await page.getByLabel(/email/i).fill(email)
-    await page.getByLabel(/password/i).fill(password!)
+    await page.getByLabel(/email/i).fill(agentEmail)
+    await page.getByLabel(/password/i).fill(agentPassword)
     await page.getByRole('button', { name: /log ?in/i }).click()
     await page.waitForURL(/\/admin(?!\/login)/)
     await page.goto('/admin/inbox')
@@ -52,20 +60,27 @@ test.describe('inbox', () => {
     await page.locator('.ng-inbox__item').first().click()
     await expect(page.locator('.ng-inbox__head h2')).toBeVisible()
     await page.getByRole('tab', { name: 'Internal note' }).click()
-    await page.getByRole('textbox', { name: 'Internal note' }).fill('E2E note: guest prefers WhatsApp')
+    const note = `E2E note ${randomBytes(3).toString('hex')}: guest prefers WhatsApp`
+    await page.getByRole('textbox', { name: 'Internal note' }).fill(note)
     await page.getByRole('button', { name: 'Add note' }).click()
-    await expect(page.locator('.ng-msg--note').filter({ hasText: 'E2E note: guest prefers WhatsApp' })).toBeVisible()
+    await expect(page.locator('.ng-msg--note').filter({ hasText: note })).toBeVisible()
     await page.getByRole('tab', { name: 'Reply by email' }).click()
-    await page.getByRole('textbox', { name: 'Reply' }).fill('Jambo! Here are the dates.')
+    const reply = `Jambo! Here are the dates (${randomBytes(3).toString('hex')}).`
+    await page.getByRole('textbox', { name: 'Reply' }).fill(reply)
     await page.getByRole('button', { name: /^(Send|Save)$/ }).click()
-    await expect(page.locator('.ng-msg--out').filter({ hasText: 'Jambo! Here are the dates.' })).toBeVisible()
+    await expect(page.locator('.ng-msg--out').filter({ hasText: reply })).toBeVisible()
 
-    const contact = (await (await request.get('/api/contacts?limit=1&depth=0&sort=createdAt', { headers })).json()).docs[0]
+    const cr = await request.get('/api/contacts?limit=1&depth=0&sort=createdAt', { headers: agent })
+    const cj = await cr.json()
+    expect(cr.ok(), `contacts lookup: ${cr.status()} ${JSON.stringify(cj).slice(0, 200)}`).toBeTruthy()
+    const contact = cj.docs[0]
     await page.getByRole('button', { name: 'Log WhatsApp / call' }).click()
     await page.getByLabel('Search guests').fill(contact.fullName.slice(0, 6))
     await page.locator('.ng-inbox__results').getByRole('button', { name: new RegExp(contact.fullName) }).first().click()
-    await page.locator('.ng-inbox__panel').getByRole('textbox', { name: 'Message' }).fill('Guest asked about child prices on WhatsApp')
+    const said = `Guest asked about child prices on WhatsApp (${randomBytes(3).toString('hex')})`
+    await page.locator('.ng-inbox__panel').getByRole('textbox', { name: 'Message' }).fill(said)
     await page.getByRole('button', { name: 'Save to the Inbox' }).click()
-    await expect(page.locator('.ng-msg').filter({ hasText: 'Guest asked about child prices on WhatsApp' })).toBeVisible()
+    await expect(page.locator('.ng-msg').filter({ hasText: said })).toBeVisible()
+    await request.patch(`/api/users/${agentId}`, { headers: await login(request), data: { active: false } })
   })
 })

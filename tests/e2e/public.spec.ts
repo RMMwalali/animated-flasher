@@ -49,26 +49,32 @@ test('structured data and SEO basics are present', async ({ page }) => {
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /^https?:\/\/[^/]+\/?$/)
 })
 
-test('first visit: welcome gate, then the stage (motion enabled)', async ({ browser }, testInfo) => {
+test('first visit: logo opening plays on its own, then the stage (motion enabled)', async ({ browser }, testInfo) => {
   const ctx = await browser.newContext({ ...testInfo.project.use, reducedMotion: 'no-preference' })
   await ctx.addInitScript(() => localStorage.setItem('ngina-consent', JSON.stringify({ analytics: false, at: '' })))
   const page = await ctx.newPage()
   await page.goto('/')
-  const gate = page.getByRole('dialog', { name: /best with sound/i })
-  await expect(gate).toBeVisible()
-  // the page behind the gate is not interactive
-  await expect(page.locator('#site-header')).toHaveAttribute('inert', '')
-  await page.getByRole('button', { name: /karibu/i }).waitFor()
-  await page.getByRole('button', { name: /enter without sound/i }).click()
-  await expect(gate).toHaveCount(0, { timeout: 8000 })
+  const intro = page.locator('[data-intro-overlay]')
+  await expect(intro).toBeAttached()
+  // no buttons, no sound: nothing to click
+  await expect(page.getByRole('button', { name: /karibu|sound/i })).toHaveCount(0)
+  await expect(intro).toHaveCount(0, { timeout: 8000 })
   await expect(page.locator('#site-header')).not.toHaveAttribute('inert', '')
-  const line = page.locator('.stage-line.is-active')
-  await expect(line).toHaveCount(1)
-  await expect(page.locator('[data-cta="home-stage-explore"]')).toBeInViewport()
-  // repeat visit in the same session skips the welcome
-  await page.reload()
-  await expect(page.getByRole('dialog', { name: /best with sound/i })).toHaveCount(0)
   await expect(page.locator('.stage-line.is-active')).toHaveCount(1)
+  await expect(page.locator('[data-cta="home-stage-explore"]')).toBeInViewport()
+  // repeat visit in the same session skips it
+  await page.reload()
+  await expect(page.locator('[data-intro-overlay]')).toHaveCount(0)
+  await expect(page.locator('.stage-line.is-active')).toHaveCount(1)
+  await ctx.close()
+})
+
+test('the logo opening can be skipped with a tap', async ({ browser }, testInfo) => {
+  const ctx = await browser.newContext({ ...testInfo.project.use, reducedMotion: 'no-preference' })
+  const page = await ctx.newPage()
+  await page.goto('/')
+  await page.locator('[data-intro-overlay]').click({ position: { x: 20, y: 20 } })
+  await expect(page.locator('[data-intro-overlay]')).toHaveCount(0, { timeout: 3000 })
   await ctx.close()
 })
 

@@ -84,6 +84,7 @@ export const SiteSettings: GlobalConfig = {
                   { name: 'siteName', type: 'text', label: 'Site name in search results', admin: { description: 'The name shown above your results on Google. Leave empty to use the business name.' } },
                   { name: 'alternateName', type: 'text', label: 'Also known as', admin: { description: 'Optional short name, e.g. "Ngina Safaris".' } },
                 ] },
+                { name: 'homeTitle', type: 'text', label: 'Home page title', maxLength: 70, admin: { description: 'The blue headline Google shows for your home page (about 60 characters). Leave empty for "Site name · Safaris and coastal tours from Diani Beach, Kenya".' } },
                 { name: 'defaultDescription', type: 'textarea', label: 'Home page description', maxLength: 200, admin: { description: 'Shown under your home page on Google (about 155 characters). Other pages describe themselves automatically.' } },
                 { type: 'row', fields: [
                   { name: 'siteIcon', type: 'upload', relationTo: 'media', label: 'Site icon', admin: { description: 'The small square logo next to your name in Google results and browser tabs. Square PNG, at least 512×512. Leave empty to use the elephant.' } },

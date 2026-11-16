@@ -2580,6 +2580,10 @@ export interface SiteSetting {
      */
     alternateName?: string | null;
     /**
+     * The blue headline Google shows for your home page (about 60 characters). Leave empty for "Site name · Safaris and coastal tours from Diani Beach, Kenya".
+     */
+    homeTitle?: string | null;
+    /**
      * Shown under your home page on Google (about 155 characters). Other pages describe themselves automatically.
      */
     defaultDescription?: string | null;
@@ -2735,22 +2739,10 @@ export interface Home {
    * Optional short muted loop (MP4, under 8 MB). Loads after the page.
    */
   heroVideo?: (number | null) | Media;
+  /**
+   * The logo appears, then the website opens up through the elephant. About 2.5 seconds, once per visit; visitors can tap to skip.
+   */
   playIntro?: boolean | null;
-  welcome?: {
-    /**
-     * Short line above the enter button.
-     */
-    soundNote?: string | null;
-    /**
-     * Enter button (with sound).
-     */
-    enterLabel?: string | null;
-    quietLabel?: string | null;
-    /**
-     * Optional ambient sound (MP3, a gentle loop under 2 MB). Without it a soft generated surf sound plays.
-     */
-    ambientAudio?: (number | null) | Media;
-  };
   /**
    * Each slide shows one short statement over a photo or muted clip. 3 slides work best.
    */
@@ -3019,6 +3011,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | {
         siteName?: T;
         alternateName?: T;
+        homeTitle?: T;
         defaultDescription?: T;
         siteIcon?: T;
         shareImage?: T;
@@ -3098,14 +3091,6 @@ export interface HomeSelect<T extends boolean = true> {
   heroImage?: T;
   heroVideo?: T;
   playIntro?: T;
-  welcome?:
-    | T
-    | {
-        soundNote?: T;
-        enterLabel?: T;
-        quietLabel?: T;
-        ambientAudio?: T;
-      };
   stage?:
     | T
     | {

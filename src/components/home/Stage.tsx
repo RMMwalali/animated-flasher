@@ -8,7 +8,6 @@ import { Icon } from '@/components/icons/Icon'
 import { Brush } from '@/components/site/Brush'
 import { BrushCircle } from '@/components/site/BrushCircle'
 import { Scene } from '@/components/site/Scene'
-import { SoundToggle } from '@/components/site/SoundToggle'
 import { ENTERED_EVENT } from '@/components/site/WelcomeGate'
 import type { MediaVM, StageSlide } from '@/lib/content'
 
@@ -29,7 +28,7 @@ export function Stage({ slides, seconds, film, title, children }: Props) {
   const root = useRef<HTMLElement>(null)
   const n = slides.length
 
-  // Start once the welcome has finished (or immediately for repeat visits).
+  // Start once the logo opening has finished (or immediately for repeat visits).
   useEffect(() => {
     const go = () => setEntered(true)
     if (document.documentElement.dataset.intro === 'done' || document.documentElement.dataset.intro === 'seen') {
@@ -166,7 +165,6 @@ export function Stage({ slides, seconds, film, title, children }: Props) {
               <Icon name={paused ? 'play' : 'pause'} size={16} />
             </button>
           )}
-          <SoundToggle className="hidden lg:grid" />
         </div>
       </div>
 
