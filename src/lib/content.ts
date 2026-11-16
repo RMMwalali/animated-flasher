@@ -227,7 +227,7 @@ export const getExperiences = cache(async (): Promise<ExperienceVM[]> => {
   const res = await q((p) => p.find({ collection: 'experiences', depth: 1, limit: 200, sort: 'order' }))
   if (res && res.docs.length)
     return res.docs.map((e: Experience) => ({ slug: e.slug, title: e.title, category: e.category, summary: e.summary, duration: e.duration, priceFrom: e.priceFrom, location: ref(e.location), image: media(e.image as Media) }))
-  return S.sampleExperiences.map((e) => ({ ...e, priceFrom: 'priceFrom' in e ? e.priceFrom : null, location: { slug: e.location, name: destName(e.location) }, image: null }))
+  return S.sampleExperiences.map(({ photo, ...e }) => ({ ...e, priceFrom: 'priceFrom' in e ? e.priceFrom : null, location: { slug: e.location, name: destName(e.location) }, image: samplePhoto(photo) }))
 })
 
 const authorFrom = (a: any): AuthorVM =>

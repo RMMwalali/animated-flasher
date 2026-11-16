@@ -22,8 +22,6 @@ test('the chat button can be hidden for the visit', async ({ page }) => {
   await expect(launcher).toHaveCount(0)
   await page.reload()
   await expect(page.getByRole('button', { name: 'Chat with us' })).toHaveCount(0)
-  // WhatsApp stays
-  await expect(page.locator('[data-whatsapp]')).toBeVisible()
 })
 
 test('chat refuses other sites and empty messages', async ({ request }) => {

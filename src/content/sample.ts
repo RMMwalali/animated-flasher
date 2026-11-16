@@ -22,8 +22,6 @@ export const sampleSettings = {
   // No fixed office hours: guests from every time zone can enquire any time.
   hours: [] as { days: string[]; opens: string; closes: string }[],
   responseTime: '24 hours',
-  whatsappButton: true,
-  whatsappMessage: 'Jambo! I would like to ask about a trip.',
   liveChat: true,
   chatGreeting: 'Jambo! Ask us anything about safaris, the coast or your dates.',
   bankAccounts: [] as { label: string; currency: string; bankName: string; branch?: string | null; accountName: string; accountNumber: string; swift?: string | null; bankCode?: string | null }[],
@@ -72,7 +70,6 @@ export const sampleSettings = {
     hideFromSearch: false,
   },
   defaultDepositPercent: 30,
-  showSampleBanner: true,
 }
 
 export const sampleHome = {
@@ -163,7 +160,7 @@ export const sampleDestinations = [
     ],
   },
   {
-    name: 'Wasini Island & Kisite-Mpunguti', slug: 'wasini-kisite', region: 'coast', order: 2,
+    name: 'Wasini Island & Kisite-Mpunguti', slug: 'wasini-kisite', photo: 'wasiniDhow' as PhotoKey, region: 'coast', order: 2,
     summary: 'A protected marine park of coral islands near Shimoni, reached by dhow, with dolphins and some of Kenya\'s best snorkelling.',
     statement: 'Dolphins, dhows and coral gardens.', emphasis: 'coral',
     county: 'Kwale County', distanceFromDiani: 'About 60 km south / 1 h 15 min to Shimoni', altitude: 'Sea level', area: '', lat: -4.6600, lng: 39.3800,
@@ -178,7 +175,7 @@ export const sampleDestinations = [
     faqs: [faq('Can non-swimmers join the Kisite dhow trip?', 'Yes. Life jackets are provided and you can snorkel close to the boat or simply watch from the deck.')],
   },
   {
-    name: 'Shimba Hills', slug: 'shimba-hills', region: 'safari', order: 3,
+    name: 'Shimba Hills', slug: 'shimba-hills', photo: 'shimbaSable' as PhotoKey, region: 'safari', order: 3,
     summary: 'A forested coastal plateau above Diani, home to the only population of sable antelope in Kenya, with waterfalls and forest walks.',
     statement: 'Forest, falls and the rare sable antelope.', emphasis: 'rare',
     county: 'Kwale County', distanceFromDiani: 'About 30 km / 45 min', altitude: 'About 120 to 450 m', area: '', lat: -4.2333, lng: 39.4167,
@@ -209,7 +206,7 @@ export const sampleDestinations = [
     ],
   },
   {
-    name: 'Tsavo West', slug: 'tsavo-west', region: 'safari', order: 5,
+    name: 'Tsavo West', slug: 'tsavo-west', photo: 'mzimaSprings' as PhotoKey, region: 'safari', order: 5,
     summary: 'Volcanic hills, lava flows and the clear pools of Mzima Springs, where hippos can be watched from an underwater hide.',
     statement: 'Lava fields and crystal springs.', emphasis: 'springs',
     county: 'Taita-Taveta', distanceFromDiani: 'About 250 km / 5 h', altitude: 'About 230 to 1,800 m', area: '9,065 km²', lat: -3.0000, lng: 38.1000,
@@ -265,7 +262,7 @@ export const sampleDestinations = [
     faqs: [faq('What are the Samburu special five?', 'Grevy\'s zebra, reticulated giraffe, Somali ostrich, beisa oryx and gerenuk.')],
   },
   {
-    name: 'Lake Nakuru', slug: 'lake-nakuru', region: 'safari', order: 9,
+    name: 'Lake Nakuru', slug: 'lake-nakuru', photo: 'flamingos' as PhotoKey, region: 'safari', order: 9,
     summary: 'A Rift Valley soda lake and fenced national park, important for black and white rhino, with flamingos at times.',
     statement: 'Rhinos on the Rift Valley floor.', emphasis: 'Rhinos',
     county: 'Nakuru County', distanceFromDiani: 'Fly via Nairobi, then about 3 h by road', altitude: 'About 1,750 m', area: '188 km²', lat: -0.3667, lng: 36.0833,
@@ -279,7 +276,7 @@ export const sampleDestinations = [
     faqs: [faq('Are there still flamingos at Lake Nakuru?', 'Sometimes. Since lake levels rose from around 2013 numbers have varied; nearby Lake Bogoria often has more.')],
   },
   {
-    name: 'Mount Kenya', slug: 'mount-kenya', region: 'mountain', order: 10,
+    name: 'Mount Kenya', slug: 'mount-kenya', photo: 'mountKenya' as PhotoKey, region: 'mountain', order: 10,
     summary: 'Africa\'s second-highest mountain. Trekkers reach Point Lenana (4,985 m); the higher peaks need technical climbing.',
     statement: 'A walk to the roof of Kenya.', emphasis: 'roof',
     county: 'Meru, Nyeri, Kirinyaga, Embu, Tharaka-Nithi', distanceFromDiani: 'Fly to Nairobi, then 3 to 4 h by road', altitude: 'Point Lenana 4,985 m; Batian 5,199 m', area: '', lat: -0.1500, lng: 37.3000,
@@ -294,7 +291,7 @@ export const sampleDestinations = [
     faqs: [faq('Do I need climbing experience for Point Lenana?', 'No technical skills are needed, but you should be fit and allow time to acclimatise to the altitude.')],
   },
   {
-    name: 'Watamu', slug: 'watamu', region: 'coast', order: 11,
+    name: 'Watamu', slug: 'watamu', photo: 'watamu' as PhotoKey, region: 'coast', order: 11,
     summary: 'A quiet coastal village north of Mombasa with a marine national park, Mida Creek and the Gede ruins nearby.',
     statement: 'Turtles, tides and a lost Swahili town.', emphasis: 'lost',
     county: 'Kilifi County', distanceFromDiani: 'About 150 km north / 3 to 4 h', altitude: 'Sea level', area: '', lat: -3.3500, lng: 40.0167,
@@ -307,7 +304,7 @@ export const sampleDestinations = [
     faqs: [faq('Can I combine Watamu and Malindi?', 'Yes. Malindi is about 25 km north of Watamu, so the two combine easily in one or two days.')],
   },
   {
-    name: 'Lamu', slug: 'lamu', region: 'coast', order: 12,
+    name: 'Lamu', slug: 'lamu', photo: 'lamu' as PhotoKey, region: 'coast', order: 12,
     summary: 'Lamu Old Town is the oldest and best-preserved Swahili settlement in East Africa, a UNESCO World Heritage Site where donkeys and dhows replace cars.',
     statement: 'A town of carved doors and dhows.', emphasis: 'dhows',
     county: 'Lamu County', distanceFromDiani: 'Fly to Manda airstrip, then boat', altitude: 'Sea level', area: '', lat: -2.2717, lng: 40.9020,
@@ -321,7 +318,7 @@ export const sampleDestinations = [
     faqs: [faq('Are there cars on Lamu?', 'Almost none. People walk, ride donkeys or travel by boat, which is a large part of the island\'s character.')],
   },
   {
-    name: 'Mombasa', slug: 'mombasa', region: 'coast', order: 13,
+    name: 'Mombasa', slug: 'mombasa', photo: 'mombasa' as PhotoKey, region: 'coast', order: 13,
     summary: 'Kenya\'s historic port city: Fort Jesus, the narrow lanes of Old Town and centuries of Swahili, Arab, Portuguese and Indian influence.',
     statement: 'Old Town lanes and a Portuguese fort.', emphasis: 'Old Town',
     county: 'Mombasa County', distanceFromDiani: 'About 35 km / 1 to 1.5 h via the Likoni ferry', altitude: 'Sea level', area: '', lat: -4.0435, lng: 39.6682,
@@ -415,7 +412,7 @@ export const sampleTrips: TripSeed[] = [
     faqs: [faq('Is this trip good for a second safari?', 'Yes. It shows a very different Kenya from Tsavo and the Mara, with species you will not see in the south.')],
   },
   {
-    title: 'Shimba Hills morning safari', slug: 'shimba-hills-morning', type: 'safari', order: 5,
+    title: 'Shimba Hills morning safari', slug: 'shimba-hills-morning', photo: 'shimbaSable' as PhotoKey, type: 'safari', order: 5,
     summary: 'A half-day in the forested hills above Diani: sable antelope, elephants and the walk to Sheldrick Falls.',
     statement: 'A safari before lunch.', emphasis: 'lunch',
     days: 1, nights: 0, priceFrom: 140, priceBasis: 'per person, sample price', difficulty: 'easy', groupSizeMax: 6,
@@ -426,7 +423,7 @@ export const sampleTrips: TripSeed[] = [
     faqs: [faq('How fit do I need to be for the falls walk?', 'Moderately. The path to Sheldrick Falls is steep in places and takes about two hours there and back.')],
   },
   {
-    title: 'Wasini & Kisite dhow day', slug: 'wasini-kisite-dhow', type: 'coastal', featured: true, order: 6,
+    title: 'Wasini & Kisite dhow day', slug: 'wasini-kisite-dhow', photo: 'wasiniDhow' as PhotoKey, type: 'coastal', featured: true, order: 6,
     summary: 'A full day on a traditional dhow: snorkelling in Kisite-Mpunguti Marine Park, dolphins and a Swahili seafood lunch on Wasini.',
     statement: 'A day on the water, the Swahili way.', emphasis: 'water',
     days: 1, nights: 0, priceFrom: 120, priceBasis: 'per person, sample price', difficulty: 'easy', groupSizeMax: 12,
@@ -437,7 +434,7 @@ export const sampleTrips: TripSeed[] = [
     faqs: [faq('Will we see dolphins?', 'Often, but they are wild animals, so sightings cannot be guaranteed.')],
   },
   {
-    title: 'Mombasa Old Town & Fort Jesus', slug: 'mombasa-old-town', type: 'coastal', order: 7,
+    title: 'Mombasa Old Town & Fort Jesus', slug: 'mombasa-old-town', photo: 'mombasa' as PhotoKey, type: 'coastal', order: 7,
     summary: 'A guided day in Kenya\'s historic port: Fort Jesus, the Old Town lanes and the spice market.',
     statement: 'Five centuries in a single walk.', emphasis: 'centuries',
     days: 1, nights: 0, priceFrom: 95, priceBasis: 'per person, sample price', difficulty: 'easy', groupSizeMax: 10,
@@ -448,7 +445,7 @@ export const sampleTrips: TripSeed[] = [
     faqs: [faq('What should I wear in Old Town?', 'Light clothes that cover shoulders and knees are respectful in the Old Town and its mosques.')],
   },
   {
-    title: 'Lamu Old Town escape', slug: 'lamu-old-town', type: 'coastal', order: 8,
+    title: 'Lamu Old Town escape', slug: 'lamu-old-town', photo: 'lamu' as PhotoKey, type: 'coastal', order: 8,
     summary: 'Three days on Lamu: carved doors, donkeys, dhow sails at sunset and the dunes of Shela.',
     statement: 'Slow days on a car-free island.', emphasis: 'car-free',
     days: 3, nights: 2, priceFrom: 890, priceBasis: 'per person sharing, sample price', difficulty: 'easy', groupSizeMax: 8,
@@ -463,7 +460,7 @@ export const sampleTrips: TripSeed[] = [
     faqs: [faq('Is Lamu suitable for families?', 'Yes, with older children who enjoy walking; there are no cars, so lanes are calm.')],
   },
   {
-    title: 'Watamu, Gede & Malindi', slug: 'watamu-malindi', type: 'coastal', order: 9,
+    title: 'Watamu, Gede & Malindi', slug: 'watamu-malindi', photo: 'watamu' as PhotoKey, type: 'coastal', order: 9,
     summary: 'Two days up the coast: the marine park, the ruined Swahili town of Gede and sunset over Mida Creek.',
     statement: 'Ruins in the forest, turtles in the bay.', emphasis: 'Ruins',
     days: 2, nights: 1, priceFrom: 420, priceBasis: 'per person sharing, sample price', difficulty: 'easy', groupSizeMax: 6,
@@ -477,7 +474,7 @@ export const sampleTrips: TripSeed[] = [
     faqs: [faq('Is the drive long?', 'About three and a half hours each way, so two days is the comfortable minimum.')],
   },
   {
-    title: 'Mount Kenya: Sirimon to Chogoria', slug: 'mount-kenya-sirimon-chogoria', type: 'walking', featured: true, order: 10,
+    title: 'Mount Kenya: Sirimon to Chogoria', slug: 'mount-kenya-sirimon-chogoria', photo: 'mountKenya' as PhotoKey, type: 'walking', featured: true, order: 10,
     summary: 'A five-day trek to Point Lenana (4,985 m), up the gentle Sirimon route and down the dramatic Chogoria gorge.',
     statement: 'Walk to the roof of Kenya.', emphasis: 'roof',
     days: 5, nights: 4, priceFrom: 1400, priceBasis: 'per person, sample price', difficulty: 'challenging', groupSizeMax: 8,
@@ -494,7 +491,7 @@ export const sampleTrips: TripSeed[] = [
     faqs: [faq('How hard is the Point Lenana trek?', 'It is non-technical but strenuous; altitude is the main challenge. Good fitness and a slow pace matter most.')],
   },
   {
-    title: 'Kaya Kinondo forest walk', slug: 'kaya-kinondo-walk', type: 'walking', order: 11,
+    title: 'Kaya Kinondo forest walk', slug: 'kaya-kinondo-walk', photo: 'coastalForest' as PhotoKey, type: 'walking', order: 11,
     summary: 'A guided walk through a sacred Mijikenda forest on the edge of Diani, with a local elder or guide.',
     statement: 'A sacred forest, a few minutes from the sea.', emphasis: 'sacred',
     days: 1, nights: 0, priceFrom: 35, priceBasis: 'per person, sample price', difficulty: 'easy', groupSizeMax: 10,
@@ -509,28 +506,28 @@ export const sampleTrips: TripSeed[] = [
 export const sampleWildlife = [
   { name: 'African elephant', slug: 'african-elephant', photo: 'tsavoElephants' as PhotoKey, swahiliName: 'Tembo', scientificName: 'Loxodonta africana', group: 'grazers', description: 'The largest land animal. In Tsavo they often look red from dust-bathing in the soil.', whereToSee: ['tsavo-east', 'amboseli', 'tsavo-west', 'shimba-hills'], tip: 'Watch the waterholes around midday in the dry season.', order: 1 },
   { name: 'Lion', slug: 'lion', photo: 'maraLioness' as PhotoKey, swahiliName: 'Simba', scientificName: 'Panthera leo', group: 'predators', description: 'Kenya\'s most sought-after sighting. Most active at dawn and dusk.', whereToSee: ['maasai-mara', 'tsavo-east', 'amboseli'], tip: 'Early starts matter: lions are often moving at first light.', order: 2 },
-  { name: 'Leopard', slug: 'leopard', swahiliName: 'Chui', scientificName: 'Panthera pardus', group: 'predators', description: 'Elusive and mostly nocturnal; often rests in trees along rivers.', whereToSee: ['maasai-mara', 'samburu', 'tsavo-west'], tip: 'Scan the branches of large acacias and fig trees.', order: 3 },
-  { name: 'Cheetah', slug: 'cheetah', swahiliName: 'Duma', scientificName: 'Acinonyx jubatus', group: 'predators', description: 'Built for speed on open grassland; hunts by day.', whereToSee: ['maasai-mara', 'tsavo-east', 'samburu'], order: 4 },
-  { name: 'Grevy\'s zebra', slug: 'grevys-zebra', swahiliName: 'Punda milia', scientificName: 'Equus grevyi', group: 'grazers', description: 'An endangered zebra with narrow stripes, found mainly in northern Kenya.', whereToSee: ['samburu'], order: 5 },
-  { name: 'Reticulated giraffe', slug: 'reticulated-giraffe', swahiliName: 'Twiga', scientificName: 'Giraffa reticulata', group: 'grazers', description: 'Bold, net-like markings; one of the Samburu special five.', whereToSee: ['samburu'], order: 6 },
-  { name: 'Black rhino', slug: 'black-rhino', swahiliName: 'Kifaru', scientificName: 'Diceros bicornis', group: 'grazers', description: 'Critically endangered browser, protected in sanctuaries such as Ngulia and Lake Nakuru.', whereToSee: ['lake-nakuru', 'tsavo-west'], order: 7 },
-  { name: 'Sable antelope', slug: 'sable-antelope', swahiliName: 'Palahala', scientificName: 'Hippotragus niger', group: 'grazers', description: 'Striking antelope with sweeping horns; in Kenya found only in the Shimba Hills.', whereToSee: ['shimba-hills'], order: 8 },
-  { name: 'Angolan black-and-white colobus', slug: 'angolan-colobus', swahiliName: 'Mbega', scientificName: 'Colobus angolensis palliatus', group: 'primates', description: 'Leaf-eating monkey of Diani\'s coastal forest, protected by local conservation groups.', whereToSee: ['diani'], tip: 'Look up in the forest patches along the Diani beach road.', order: 9 },
-  { name: 'Lesser flamingo', slug: 'lesser-flamingo', swahiliName: 'Heroe', scientificName: 'Phoeniconaias minor', group: 'birds', description: 'Gathers on Rift Valley soda lakes; numbers move with lake conditions.', whereToSee: ['lake-nakuru'], order: 10 },
-  { name: 'Humpback whale', slug: 'humpback-whale', swahiliName: 'Nyangumi', scientificName: 'Megaptera novaeangliae', group: 'marine', description: 'Migrates along the Kenyan coast, usually from about July to October.', whereToSee: ['wasini-kisite', 'watamu'], bestMonths: ['jul', 'aug', 'sep', 'oct'], order: 11 },
-  { name: 'Indo-Pacific bottlenose dolphin', slug: 'bottlenose-dolphin', swahiliName: 'Pomboo', scientificName: 'Tursiops aduncus', group: 'marine', description: 'Frequently seen around Kisite-Mpunguti on dhow trips.', whereToSee: ['wasini-kisite'], order: 12 },
-  { name: 'Green turtle', slug: 'green-turtle', swahiliName: 'Kasa', scientificName: 'Chelonia mydas', group: 'marine', description: 'Feeds on seagrass in the marine parks and nests on quieter beaches.', whereToSee: ['watamu', 'wasini-kisite', 'diani'], order: 13 },
+  { name: 'Leopard', slug: 'leopard', photo: 'leopard' as PhotoKey, swahiliName: 'Chui', scientificName: 'Panthera pardus', group: 'predators', description: 'Elusive and mostly nocturnal; often rests in trees along rivers.', whereToSee: ['maasai-mara', 'samburu', 'tsavo-west'], tip: 'Scan the branches of large acacias and fig trees.', order: 3 },
+  { name: 'Cheetah', slug: 'cheetah', photo: 'cheetah' as PhotoKey, swahiliName: 'Duma', scientificName: 'Acinonyx jubatus', group: 'predators', description: 'Built for speed on open grassland; hunts by day.', whereToSee: ['maasai-mara', 'tsavo-east', 'samburu'], order: 4 },
+  { name: 'Grevy\'s zebra', slug: 'grevys-zebra', photo: 'grevysZebra' as PhotoKey, swahiliName: 'Punda milia', scientificName: 'Equus grevyi', group: 'grazers', description: 'An endangered zebra with narrow stripes, found mainly in northern Kenya.', whereToSee: ['samburu'], order: 5 },
+  { name: 'Reticulated giraffe', slug: 'reticulated-giraffe', photo: 'reticulatedGiraffe' as PhotoKey, swahiliName: 'Twiga', scientificName: 'Giraffa reticulata', group: 'grazers', description: 'Bold, net-like markings; one of the Samburu special five.', whereToSee: ['samburu'], order: 6 },
+  { name: 'Black rhino', slug: 'black-rhino', photo: 'blackRhino' as PhotoKey, swahiliName: 'Kifaru', scientificName: 'Diceros bicornis', group: 'grazers', description: 'Critically endangered browser, protected in sanctuaries such as Ngulia and Lake Nakuru.', whereToSee: ['lake-nakuru', 'tsavo-west'], order: 7 },
+  { name: 'Sable antelope', slug: 'sable-antelope', photo: 'sableAntelope' as PhotoKey, swahiliName: 'Palahala', scientificName: 'Hippotragus niger', group: 'grazers', description: 'Striking antelope with sweeping horns; in Kenya found only in the Shimba Hills.', whereToSee: ['shimba-hills'], order: 8 },
+  { name: 'Angolan black-and-white colobus', slug: 'angolan-colobus', photo: 'colobus' as PhotoKey, swahiliName: 'Mbega', scientificName: 'Colobus angolensis palliatus', group: 'primates', description: 'Leaf-eating monkey of Diani\'s coastal forest, protected by local conservation groups.', whereToSee: ['diani'], tip: 'Look up in the forest patches along the Diani beach road.', order: 9 },
+  { name: 'Lesser flamingo', slug: 'lesser-flamingo', photo: 'flamingos' as PhotoKey, swahiliName: 'Heroe', scientificName: 'Phoeniconaias minor', group: 'birds', description: 'Gathers on Rift Valley soda lakes; numbers move with lake conditions.', whereToSee: ['lake-nakuru'], order: 10 },
+  { name: 'Humpback whale', slug: 'humpback-whale', photo: 'humpback' as PhotoKey, swahiliName: 'Nyangumi', scientificName: 'Megaptera novaeangliae', group: 'marine', description: 'Migrates along the Kenyan coast, usually from about July to October.', whereToSee: ['wasini-kisite', 'watamu'], bestMonths: ['jul', 'aug', 'sep', 'oct'], order: 11 },
+  { name: 'Indo-Pacific bottlenose dolphin', slug: 'bottlenose-dolphin', photo: 'dolphins' as PhotoKey, swahiliName: 'Pomboo', scientificName: 'Tursiops aduncus', group: 'marine', description: 'Frequently seen around Kisite-Mpunguti on dhow trips.', whereToSee: ['wasini-kisite'], order: 12 },
+  { name: 'Green turtle', slug: 'green-turtle', photo: 'greenTurtle' as PhotoKey, swahiliName: 'Kasa', scientificName: 'Chelonia mydas', group: 'marine', description: 'Feeds on seagrass in the marine parks and nests on quieter beaches.', whereToSee: ['watamu', 'wasini-kisite', 'diani'], order: 13 },
 ] as const
 
 export const sampleExperiences = [
-  { title: 'Sunset dhow sail', slug: 'sunset-dhow', category: 'water', summary: 'Sail on a traditional lateen-rigged dhow as the sun drops over the coast.', duration: '2 to 3 hours', priceFrom: 60, location: 'diani', order: 1 },
-  { title: 'Snorkelling at Kisite', slug: 'snorkelling-kisite', category: 'water', summary: 'Coral gardens in one of Kenya\'s best marine parks.', duration: 'Full day', priceFrom: 120, location: 'wasini-kisite', order: 2 },
-  { title: 'Kitesurfing lessons', slug: 'kitesurfing', category: 'water', summary: 'Diani\'s monsoon winds make it one of East Africa\'s kitesurfing hubs (roughly Dec to Mar and Jun to Sep).', duration: 'From 2 hours', location: 'diani', order: 3 },
-  { title: 'Colobus forest walk', slug: 'colobus-walk', category: 'wild', summary: 'Meet Diani\'s Angolan colobus monkeys with a conservation guide.', duration: '1.5 hours', priceFrom: 25, location: 'diani', order: 4 },
-  { title: 'Hot-air balloon over the Mara', slug: 'mara-balloon', category: 'wild', summary: 'Drift over the plains at sunrise, followed by a bush breakfast.', duration: 'Sunrise, about 1 hour flight', location: 'maasai-mara', order: 5 },
-  { title: 'Shimoni caves', slug: 'shimoni-caves', category: 'culture', summary: 'Coral caves near Shimoni linked to the coast\'s slave-trade history.', duration: '1 hour', location: 'wasini-kisite', order: 6 },
-  { title: 'Gede Ruins', slug: 'gede-ruins', category: 'culture', summary: 'Remains of a Swahili town abandoned centuries ago, deep in the forest near Watamu.', duration: '2 hours', location: 'watamu', order: 7 },
-  { title: 'Sheldrick Falls trail', slug: 'sheldrick-falls', category: 'foot', summary: 'A ranger-led walk down to a forest waterfall in the Shimba Hills.', duration: '2 hours', location: 'shimba-hills', order: 8 },
+  { title: 'Sunset dhow sail', slug: 'sunset-dhow', photo: 'sunsetDhow' as PhotoKey, category: 'water', summary: 'Sail on a traditional lateen-rigged dhow as the sun drops over the coast.', duration: '2 to 3 hours', priceFrom: 60, location: 'diani', order: 1 },
+  { title: 'Snorkelling at Kisite', slug: 'snorkelling-kisite', photo: 'reef' as PhotoKey, category: 'water', summary: 'Coral gardens in one of Kenya\'s best marine parks.', duration: 'Full day', priceFrom: 120, location: 'wasini-kisite', order: 2 },
+  { title: 'Kitesurfing lessons', slug: 'kitesurfing', photo: 'kitesurf' as PhotoKey, category: 'water', summary: 'Diani\'s monsoon winds make it one of East Africa\'s kitesurfing hubs (roughly Dec to Mar and Jun to Sep).', duration: 'From 2 hours', location: 'diani', order: 3 },
+  { title: 'Colobus forest walk', slug: 'colobus-walk', photo: 'colobus' as PhotoKey, category: 'wild', summary: 'Meet Diani\'s Angolan colobus monkeys with a conservation guide.', duration: '1.5 hours', priceFrom: 25, location: 'diani', order: 4 },
+  { title: 'Hot-air balloon over the Mara', slug: 'mara-balloon', photo: 'balloon' as PhotoKey, category: 'wild', summary: 'Drift over the plains at sunrise, followed by a bush breakfast.', duration: 'Sunrise, about 1 hour flight', location: 'maasai-mara', order: 5 },
+  { title: 'Shimoni caves', slug: 'shimoni-caves', photo: 'seaCave' as PhotoKey, category: 'culture', summary: 'Coral caves near Shimoni linked to the coast\'s slave-trade history.', duration: '1 hour', location: 'wasini-kisite', order: 6 },
+  { title: 'Gede Ruins', slug: 'gede-ruins', photo: 'coralRuins' as PhotoKey, category: 'culture', summary: 'Remains of a Swahili town abandoned centuries ago, deep in the forest near Watamu.', duration: '2 hours', location: 'watamu', order: 7 },
+  { title: 'Sheldrick Falls trail', slug: 'sheldrick-falls', photo: 'waterfall' as PhotoKey, category: 'foot', summary: 'A ranger-led walk down to a forest waterfall in the Shimba Hills.', duration: '2 hours', location: 'shimba-hills', order: 8 },
 ] as const
 
 export const sampleAuthor = {
@@ -556,7 +553,7 @@ export const samplePosts = [
     faqs: [faq('Can I do Tsavo East as a day trip from Diani?', 'Yes, but it means about six hours on the road. Staying at least one night gives a far better experience.')],
   },
   {
-    title: 'Kisite-Mpunguti: a day on the dhow', slug: 'kisite-mpunguti-dhow-day', photo: 'dianiSunset' as PhotoKey,
+    title: 'Kisite-Mpunguti: a day on the dhow', slug: 'kisite-mpunguti-dhow-day', photo: 'wasiniDhow' as PhotoKey,
     excerpt: 'Snorkelling, dolphins and lunch on Wasini Island: a plain guide to the south coast\'s favourite day out.',
     topics: ['coast', 'marine'],
     content: lexical([
@@ -635,7 +632,7 @@ export const samplePosts = [
     ],
   },
   {
-    title: 'Meet the colobus monkeys of Diani', slug: 'diani-colobus-monkeys', photo: 'dianiSunset' as PhotoKey,
+    title: 'Meet the colobus monkeys of Diani', slug: 'diani-colobus-monkeys', photo: 'colobus' as PhotoKey,
     excerpt: 'The black-and-white monkeys of Diani\'s coastal forest, where to see them and how to be a good neighbour.',
     topics: ['wildlife', 'coast'],
     content: lexical([

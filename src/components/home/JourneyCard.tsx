@@ -16,7 +16,7 @@ export function MonthBar({ months, className = '' }: { months: string[]; classNa
 }
 
 /** A journey: photo, title and length/price; the summary appears on hover. */
-export function JourneyCard({ trip, ctaPrefix }: { trip: TripVM; ctaPrefix: string }) {
+export function JourneyCard({ trip, ctaPrefix, quiet = false }: { trip: TripVM; ctaPrefix: string; quiet?: boolean }) {
   const kind = trip.type === 'coastal' ? 'Coast' : trip.type === 'walking' ? 'On foot' : 'Safari'
   return (
     <PhotoCard
@@ -28,6 +28,7 @@ export function JourneyCard({ trip, ctaPrefix }: { trip: TripVM; ctaPrefix: stri
       summary={trip.summary}
       cta="View journey"
       ctaId={`${ctaPrefix}-${trip.slug}`}
+      quiet={quiet}
     />
   )
 }

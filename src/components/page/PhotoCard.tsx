@@ -15,7 +15,7 @@ type Fallback = 'coast' | 'safari' | 'dawn'
  */
 export function PhotoCard({
   href, image, fallback, title, meta, summary, cta = 'View', aspect = 'aspect-[4/5]', sizes = '(min-width:1024px) 30vw, (min-width:640px) 45vw, 90vw',
-  headingLevel = 'h3', priority = false, ctaId, className = '', large = false,
+  headingLevel = 'h3', priority = false, ctaId, className = '', large = false, quiet = false,
 }: {
   href: string
   image?: MediaVM | null
@@ -32,10 +32,12 @@ export function PhotoCard({
   className?: string
   /** The wide lead card (e.g. the latest article): a bigger title. */
   large?: boolean
+  /** Only the photo until hovered, focused or tapped (first tap shows the details, second opens). */
+  quiet?: boolean
 }) {
   const H = headingLevel
   return (
-    <article className={`photo-card h-full ${className}`}>
+    <article className={`photo-card h-full ${quiet ? 'photo-card--quiet' : ''} ${className}`}>
       <Link href={href} data-cta={ctaId} className={`group relative block h-full overflow-hidden rounded-2xl bg-night ${aspect} outline-none`}>
         <div className="photo-card__img absolute inset-0">
           <Media media={image} fallback={fallback} sizes={sizes} priority={priority} />

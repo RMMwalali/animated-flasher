@@ -11,6 +11,7 @@ import * as migration_20261116_060921_remove_welcome_sound from './20261116_0609
 import * as migration_20261116_061208_home_title from './20261116_061208_home_title';
 import * as migration_20261116_082858_traveller_details from './20261116_082858_traveller_details';
 import * as migration_20261116_084744_live_chat from './20261116_084744_live_chat';
+import * as migration_20261116_132510_remove_whatsapp_and_sample_banner from './20261116_132510_remove_whatsapp_and_sample_banner';
 
 export const migrations = [
   {
@@ -76,6 +77,11 @@ export const migrations = [
   {
     up: migration_20261116_084744_live_chat.up,
     down: migration_20261116_084744_live_chat.down,
-    name: '20261116_084744_live_chat'
+    name: '20261116_084744_live_chat',
+  },
+  {
+    up: migration_20261116_132510_remove_whatsapp_and_sample_banner.up,
+    down: migration_20261116_132510_remove_whatsapp_and_sample_banner.down,
+    name: '20261116_132510_remove_whatsapp_and_sample_banner'
   },
 ];

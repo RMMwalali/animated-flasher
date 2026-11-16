@@ -86,10 +86,22 @@ export function Motion() {
               const track = rail.querySelector<HTMLElement>('[data-hscroll-track]')
               if (!track) return
               const dist = () => Math.max(0, track.scrollWidth - rail.clientWidth)
+              // Each stop lands on a card: the rail comes to rest with a card at the left edge
+              // (after the title panel), never part-way, so nothing is skipped.
+              const stops = () => {
+                const d = dist()
+                if (!d) return [0, 1]
+                const cards = [...track.querySelectorAll<HTMLElement>('[data-card]')]
+                const first = cards[0]?.offsetLeft ?? 0
+                const pts = [0, ...cards.map((c) => (c.offsetLeft - first) / d).filter((p) => p > 0 && p < 1), 1]
+                return [...new Set(pts.map((p) => Math.round(p * 1000) / 1000))]
+              }
               gsap.to(track, {
                 x: () => -dist(), ease: 'none',
                 scrollTrigger: {
-                  trigger: rail, start: 'top top', end: () => `+=${dist()}`, pin: true, scrub: 0.6, invalidateOnRefresh: true,
+                  // 1.6 × the distance in scroll: the row moves calmly, not in a rush
+                  trigger: rail, start: 'top top', end: () => `+=${dist() * 1.6}`, pin: true, scrub: 1, invalidateOnRefresh: true,
+                  snap: { snapTo: (v: number) => stops().reduce((a, b) => (Math.abs(b - v) < Math.abs(a - v) ? b : a), 0), duration: { min: 0.35, max: 0.8 }, delay: 0.12, ease: 'power2.inOut' },
                   onUpdate: (st) => rail.dispatchEvent(new CustomEvent('hprogress', { detail: st.progress })),
                 },
               })
