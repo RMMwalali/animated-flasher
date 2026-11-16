@@ -305,7 +305,10 @@ export interface Company {
 export interface User {
   id: number;
   name: string;
-  roles: ('admin' | 'sales' | 'editor')[];
+  /**
+   * The first account is always an Admin.
+   */
+  roles?: ('admin' | 'sales' | 'editor')[] | null;
   /**
    * Untick to block this person from logging in.
    */
@@ -829,6 +832,23 @@ export interface Booking {
   balanceDue?: number | null;
   balanceDueDate?: string | null;
   travellers?: (number | Traveller)[] | null;
+  /**
+   * e.g. KQ 604
+   */
+  arrivalFlight?: string | null;
+  arrivalAt?: string | null;
+  /**
+   * Airport or hotel.
+   */
+  pickup?: string | null;
+  departureFlight?: string | null;
+  departureAt?: string | null;
+  dropoff?: string | null;
+  /**
+   * Special occasions, accessibility, room set-up…
+   */
+  guestNotes?: string | null;
+  detailsSubmittedAt?: string | null;
   services?:
     | {
         supplier: number | Supplier;
@@ -850,6 +870,7 @@ export interface Booking {
     confirmationSentAt?: string | null;
     balanceReminderSentAt?: string | null;
     etaReminderSentAt?: string | null;
+    detailsReminderSentAt?: string | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -971,6 +992,7 @@ export interface Traveller {
   id: number;
   name: string;
   contact?: (number | null) | Contact;
+  dateOfBirth?: string | null;
   /**
    * Affects park fees (resident / non-resident).
    */
@@ -1875,6 +1897,14 @@ export interface BookingsSelect<T extends boolean = true> {
   balanceDue?: T;
   balanceDueDate?: T;
   travellers?: T;
+  arrivalFlight?: T;
+  arrivalAt?: T;
+  pickup?: T;
+  departureFlight?: T;
+  departureAt?: T;
+  dropoff?: T;
+  guestNotes?: T;
+  detailsSubmittedAt?: T;
   services?:
     | T
     | {
@@ -1895,6 +1925,7 @@ export interface BookingsSelect<T extends boolean = true> {
         confirmationSentAt?: T;
         balanceReminderSentAt?: T;
         etaReminderSentAt?: T;
+        detailsReminderSentAt?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1906,6 +1937,7 @@ export interface BookingsSelect<T extends boolean = true> {
 export interface TravellersSelect<T extends boolean = true> {
   name?: T;
   contact?: T;
+  dateOfBirth?: T;
   nationality?: T;
   isChild?: T;
   ageOnTravel?: T;
