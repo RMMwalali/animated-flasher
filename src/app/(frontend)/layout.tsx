@@ -11,6 +11,7 @@ import { SampleBanner } from '@/components/site/SampleBanner'
 import { Analytics } from '@/components/site/Analytics'
 import { PublicConfigProvider } from '@/components/site/PublicConfig'
 import { WhatsAppButton } from '@/components/site/WhatsAppButton'
+import { CardReveal } from '@/components/site/CardReveal'
 import { ChatWidget } from '@/components/site/ChatWidget'
 import { getConfig } from '@/lib/config'
 import { getSettings } from '@/lib/content'
@@ -77,6 +78,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         </div>
         <ConsentBanner />
         <Motion />
+        <CardReveal />
         <AttributionCapture />
         <Analytics ids={config.analytics} />
       </body>

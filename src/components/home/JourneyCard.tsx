@@ -1,6 +1,4 @@
-import Link from 'next/link'
-import { Icon } from '@/components/icons/Icon'
-import { Media } from '@/components/site/Media'
+import { PhotoCard } from '@/components/page/PhotoCard'
 import type { TripVM } from '@/lib/content'
 import { tripHref } from '@/lib/routes'
 
@@ -17,35 +15,19 @@ export function MonthBar({ months, className = '' }: { months: string[]; classNa
   )
 }
 
+/** A journey: photo, title and length/price; the summary appears on hover. */
 export function JourneyCard({ trip, ctaPrefix }: { trip: TripVM; ctaPrefix: string }) {
-  const href = tripHref(trip)
+  const kind = trip.type === 'coastal' ? 'Coast' : trip.type === 'walking' ? 'On foot' : 'Safari'
   return (
-    <article className="group relative flex h-full flex-col">
-      <Link href={href} className="relative block aspect-[4/5] overflow-hidden rounded-2xl" aria-label={trip.title}>
-        <div className="absolute inset-0 transition-transform duration-[1.4s] ease-[var(--ease-out-expo)] group-hover:scale-105">
-          <Media media={trip.heroImage} fallback={trip.type === 'coastal' ? 'coast' : trip.type === 'walking' ? 'dawn' : 'safari'} sizes="(min-width:1024px) 30vw, 80vw" />
-        </div>
-        <span className="eyebrow absolute left-4 top-4 rounded-full bg-night/75 px-3 py-1.5 text-cream backdrop-blur-sm">
-          {trip.days} {trip.days === 1 ? 'day' : 'days'} · {trip.type === 'coastal' ? 'Coast' : trip.type === 'walking' ? 'On foot' : 'Safari'}
-        </span>
-      </Link>
-      <div className="flex flex-1 flex-col gap-3 pt-5">
-        <h3 className="font-display text-2xl font-medium leading-tight"><Link href={href} className="link-u">{trip.title}</Link></h3>
-        <p className="line-clamp-3 opacity-85">{trip.summary}</p>
-        <dl className="mt-auto grid grid-cols-2 gap-4 border-t border-current/25 pt-4 text-sm">
-          <div>
-            <dt className="eyebrow opacity-75">From</dt>
-            <dd className="mt-1 font-display text-xl">{trip.priceFrom ? usd(trip.priceFrom) : 'On request'}</dd>
-          </div>
-          <div>
-            <dt className="eyebrow opacity-75">Best months</dt>
-            <dd className="mt-3"><MonthBar months={trip.bestMonths} /></dd>
-          </div>
-        </dl>
-        <Link href={`/plan-your-trip?trip=${trip.slug}`} className="tone-accent inline-flex items-center gap-2 font-semibold" data-cta={`${ctaPrefix}-plan-${trip.slug}`}>
-          Plan this journey <Icon name="arrow-right" size={18} />
-        </Link>
-      </div>
-    </article>
+    <PhotoCard
+      href={tripHref(trip)}
+      image={trip.heroImage}
+      fallback={trip.type === 'coastal' ? 'coast' : trip.type === 'walking' ? 'dawn' : 'safari'}
+      title={trip.title}
+      meta={<>{kind} · {trip.days} {trip.days === 1 ? 'day' : 'days'}{trip.priceFrom ? <> · from {usd(trip.priceFrom)}</> : null}</>}
+      summary={trip.summary}
+      cta="View journey"
+      ctaId={`${ctaPrefix}-${trip.slug}`}
+    />
   )
 }
