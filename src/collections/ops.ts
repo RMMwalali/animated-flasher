@@ -129,7 +129,26 @@ export const Bookings: CollectionConfig = {
       { name: 'balanceDue', type: 'number', admin: { readOnly: true } },
       { name: 'balanceDueDate', type: 'date', admin: { date: { pickerAppearance: 'dayOnly' } } },
     ] },
-    { name: 'travellers', type: 'relationship', relationTo: 'travellers', hasMany: true },
+    {
+      type: 'collapsible', label: 'Travellers & flights',
+      admin: { description: 'The guest can fill these in on their trip page. Missing details show here.' },
+      fields: [
+        { name: 'detailsStatus', type: 'ui', admin: { components: { Field: '/components/admin/TravellerStatus#TravellerStatus' } } },
+        { name: 'travellers', type: 'relationship', relationTo: 'travellers', hasMany: true },
+        { type: 'row', fields: [
+          { name: 'arrivalFlight', type: 'text', label: 'Arrival flight', admin: { description: 'e.g. KQ 604' } },
+          { name: 'arrivalAt', type: 'date', label: 'Arrives', admin: { date: { pickerAppearance: 'dayAndTime', displayFormat: 'd MMM yyyy, HH:mm' } } },
+          { name: 'pickup', type: 'text', label: 'Pick-up', admin: { description: 'Airport or hotel.' } },
+        ] },
+        { type: 'row', fields: [
+          { name: 'departureFlight', type: 'text', label: 'Departure flight' },
+          { name: 'departureAt', type: 'date', label: 'Departs', admin: { date: { pickerAppearance: 'dayAndTime', displayFormat: 'd MMM yyyy, HH:mm' } } },
+          { name: 'dropoff', type: 'text', label: 'Drop-off' },
+        ] },
+        { name: 'guestNotes', type: 'textarea', label: 'Notes from the guest', admin: { description: 'Special occasions, accessibility, room set-up…' } },
+        { name: 'detailsSubmittedAt', type: 'date', label: 'Guest last updated details', admin: { readOnly: true } },
+      ],
+    },
     {
       name: 'services', type: 'array', label: 'Suppliers & services', admin: { initCollapsed: true },
       fields: [
@@ -154,6 +173,7 @@ export const Bookings: CollectionConfig = {
         { name: 'confirmationSentAt', type: 'date', label: 'Booking confirmation', admin: { readOnly: true } },
         { name: 'balanceReminderSentAt', type: 'date', label: 'Balance reminder', admin: { readOnly: true } },
         { name: 'etaReminderSentAt', type: 'date', label: 'eTA reminder', admin: { readOnly: true } },
+        { name: 'detailsReminderSentAt', type: 'date', label: 'Traveller details reminder', admin: { readOnly: true } },
       ],
     },
   ],
@@ -166,8 +186,9 @@ export const Travellers: CollectionConfig = {
   admin: { useAsTitle: 'name', group: OPS, defaultColumns: ['name', 'nationality', 'contact'], description: 'People on a booking. Collect only what the trip needs.' },
   access: crmAccess,
   fields: [
-    { name: 'name', type: 'text', required: true },
+    { name: 'name', type: 'text', required: true, label: 'Full name (as on passport)' },
     { name: 'contact', type: 'relationship', relationTo: 'contacts' },
+    { name: 'dateOfBirth', type: 'date', admin: { date: { pickerAppearance: 'dayOnly' } } },
     { type: 'row', fields: [
       { name: 'nationality', type: 'text', admin: { description: 'Affects park fees (resident / non-resident).' } },
       { name: 'isChild', type: 'checkbox', defaultValue: false },

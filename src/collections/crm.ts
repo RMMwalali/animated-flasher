@@ -88,6 +88,7 @@ export const Leads: CollectionConfig = {
     { name: 'statusChangedAt', type: 'date', admin: { position: 'sidebar', readOnly: true } },
     { name: 'lostReason', type: 'text', admin: { position: 'sidebar', condition: (d) => d?.status === 'lost' } },
     { name: 'trips', type: 'relationship', relationTo: 'trips', hasMany: true, label: 'Interested in' },
+    { name: 'quotes', type: 'join', collection: 'quotes', on: 'lead', admin: { description: 'Quotes for this lead. A booking request from the website comes with a draft quote ready to check and send.', defaultColumns: ['number', 'title', 'status', 'total'] } },
     { name: 'interests', type: 'select', hasMany: true, options: ['safari', 'coast', 'walking', 'marine', 'culture', 'honeymoon', 'family', 'birding'] },
     { type: 'row', fields: [
       { name: 'travelStart', type: 'date', admin: { date: { pickerAppearance: 'dayOnly' } } },
@@ -168,6 +169,8 @@ export const Conversations: CollectionConfig = {
     { name: 'lastDirection', type: 'select', options: ['in', 'out'] },
     // visitor chat session: sha256 of the token in the visitor's cookie
     { name: 'visitorTokenHash', type: 'text', index: true, admin: { hidden: true }, access: { read: () => false } },
+    // last time the visitor's chat window checked for replies (if they have gone, replies are emailed too)
+    { name: 'visitorSeenAt', type: 'date', admin: { readOnly: true, condition: (d) => d?.channel === 'chat', description: 'Last time the visitor had the chat open.' } },
     // a stable token used in reply-to addresses so guest email replies thread here
     { name: 'threadKey', type: 'text', index: true, admin: { readOnly: true } },
     sourceGroup,

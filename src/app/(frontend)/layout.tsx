@@ -12,6 +12,7 @@ import { Analytics } from '@/components/site/Analytics'
 import { PublicConfigProvider } from '@/components/site/PublicConfig'
 import { WhatsAppButton } from '@/components/site/WhatsAppButton'
 import { CardReveal } from '@/components/site/CardReveal'
+import { ChatWidget } from '@/components/site/ChatWidget'
 import { getConfig } from '@/lib/config'
 import { getSettings } from '@/lib/content'
 import { env } from '@/lib/env'
@@ -71,7 +72,10 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
           <Footer settings={settings} />
         </PublicConfigProvider>
         <LionWalker />
-        {settings.whatsappButton !== false && settings.whatsapp && <WhatsAppButton number={settings.whatsapp} message={settings.whatsappMessage || 'Jambo!'} />}
+        <div className="pointer-events-none fixed bottom-5 right-5 z-[55] flex flex-col items-end gap-3 [&>*]:pointer-events-auto" data-floating-actions>
+          {settings.liveChat !== false && !settings.fromSample && <ChatWidget greeting={settings.chatGreeting || 'Jambo! How can we help?'} />}
+          {settings.whatsappButton !== false && settings.whatsapp && <WhatsAppButton number={settings.whatsapp} message={settings.whatsappMessage || 'Jambo!'} />}
+        </div>
         <ConsentBanner />
         <Motion />
         <CardReveal />

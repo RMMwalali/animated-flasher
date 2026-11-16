@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { adminHeaders } from './admin'
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -41,7 +42,7 @@ test('destination page has TouristDestination data and the map links to it', asy
   expect(ld).toContain('"TouristDestination"')
 })
 
-test('request to book: five steps, then a lead is created', async ({ page }) => {
+test('request to book: five steps, then a lead and a draft quote are created', async ({ page, request }) => {
   await page.goto('/plan-your-trip?trip=maasai-mara-fly-in')
   await expect(page.getByRole('heading', { level: 1 })).toContainText(/request to book/i)
   await page.getByRole('button', { name: /next: when/i }).click()
@@ -56,10 +57,25 @@ test('request to book: five steps, then a lead is created', async ({ page }) => 
   await page.getByRole('radio', { name: /boutique/i }).click()
   await page.getByRole('button', { name: /next: you/i }).click()
   await page.getByLabel('Your name').fill('E2E Booking Guest')
-  await page.getByLabel('Email').fill(`e2e+book${Date.now()}@example.com`)
+  const email = `e2e+book${Date.now()}@example.com`
+  await page.getByLabel('Email').fill(email)
   await page.waitForTimeout(2600)
   await page.getByRole('button', { name: /send booking request/i }).click()
   await expect(page.getByText(/we have your booking request/i)).toBeVisible({ timeout: 15_000 })
+
+  // the team gets a draft quote built from the journey, with the guest's date and group
+  if (!process.env.E2E_ADMIN_TOKEN) return
+  const headers = adminHeaders()
+  const contact = (await (await request.get(`/api/contacts?where[email][equals]=${encodeURIComponent(email)}&depth=0`, { headers })).json()).docs[0]
+  const quote = (await (await request.get(`/api/quotes?where[contact][equals]=${contact.id}&depth=0`, { headers })).json()).docs[0]
+  expect(quote.status).toBe('draft')
+  expect(quote.startDate.slice(0, 10)).toBe(d)
+  expect(quote.adults).toBe(2)
+  expect(quote.total).toBeGreaterThan(0)
+  expect(quote.days.length).toBeGreaterThan(0)
+  expect(quote.lead).toBeTruthy()
+  // nothing is sent to the guest until the planner presses Send
+  expect(quote.sentAt ?? null).toBeNull()
 })
 
 test('sitemap, robots and llms.txt', async ({ request }) => {

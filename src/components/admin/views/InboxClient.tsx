@@ -37,7 +37,7 @@ async function api<T>(path: string, init?: RequestInit): Promise<T> {
   if (!res.ok || (j as { ok?: boolean }).ok === false) throw new Error((j as { error?: string; errors?: { message: string }[] }).error || (j as { errors?: { message: string }[] }).errors?.[0]?.message || `Error ${res.status}`)
   return j as T
 }
-const act = (body: Record<string, unknown>) => api<{ ok: boolean; status?: string; conversationId?: number }>('/api/admin/inbox', { method: 'POST', body: JSON.stringify(body) })
+const act = (body: Record<string, unknown>) => api<{ ok: boolean; status?: string; delivery?: string; conversationId?: number }>('/api/admin/inbox', { method: 'POST', body: JSON.stringify(body) })
 
 function listQuery(filter: Filter, q: string, me?: number) {
   const p = new URLSearchParams({ depth: '1', limit: '60', sort: '-lastMessageAt' })
@@ -111,6 +111,8 @@ export function InboxClient() {
     let alive = true
     const tick = () => {
       if (!alive || document.hidden) return
+      // while the Inbox is open, website visitors see the team as online in the chat
+      act({ action: 'presence' }).catch(() => {})
       loadList()
       if (selected) loadThread(selected).catch(() => {})
     }
@@ -143,7 +145,8 @@ export function InboxClient() {
     try {
       const r = await act({ action: mode === 'note' ? 'note' : 'reply', conversationId: conv.id, body: text })
       setText('')
-      setNotice({ tone: 'ok', text: mode === 'note' ? 'Note added (only the team sees it).' : r.status === 'logged' ? (conv.channel === 'email' ? 'Saved, but email is not set up yet, so it was not sent. Connect Postmark on the Integrations page.' : 'Logged.') : 'Sent.' })
+      const chatNote = { live: 'Sent to the chat.', emailed: 'Sent to the chat and by email (the visitor had left).', 'no-email': 'Sent to the chat. The visitor has left and gave no email, so they see it when they come back.', 'email-failed': 'Sent to the chat, but the email copy failed.' } as Record<string, string>
+      setNotice({ tone: 'ok', text: mode === 'note' ? 'Note added (only the team sees it).' : conv.channel === 'chat' ? (chatNote[r.delivery ?? 'live'] ?? 'Sent.') : r.status === 'logged' ? (conv.channel === 'email' ? 'Saved, but email is not set up yet, so it was not sent. Connect Postmark on the Integrations page.' : 'Logged.') : 'Sent.' })
       await loadThread(conv.id)
       loadList()
     } catch (e) {

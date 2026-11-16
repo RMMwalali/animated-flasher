@@ -4,6 +4,7 @@ import { localReq } from '@/lib/booking/flows'
 import { json, sameOrigin } from '@/lib/booking/http'
 import { getPayloadSafe } from '@/lib/content'
 import { sendToGuest } from '@/lib/inbox'
+import { emailChatReplyIfAway, markTeamSeen } from '@/lib/chat'
 
 export const dynamic = 'force-dynamic'
 
@@ -28,10 +29,21 @@ export async function POST(req: NextRequest) {
 
   try {
     switch (b.action) {
+      case 'presence': {
+        // the Inbox is open: live chat shows the team as online
+        await markTeamSeen(payload)
+        return json({ ok: true })
+      }
       case 'reply': {
         const conv = await payload.findByID({ collection: 'conversations', id: Number(b.conversationId), depth: 0, overrideAccess: true })
         const body = str(b.body).trim()
         if (!body) return json({ ok: false, error: 'Write a message first.' }, 400)
+        if (conv.channel === 'chat') {
+          await payload.create({ collection: 'messages', overrideAccess: true, req: r, data: { conversation: conv.id, direction: 'out', channel: 'chat', author: me.id, body } })
+          // the visitor has left the chat: send the reply to their email too
+          const delivery = await emailChatReplyIfAway(r, conv, body, signature)
+          return json({ ok: true, status: delivery === 'emailed' ? 'sent' : 'logged', delivery })
+        }
         if (conv.channel !== 'email') {
           await payload.create({ collection: 'messages', overrideAccess: true, req: r, data: { conversation: conv.id, direction: 'out', channel: conv.channel, author: me.id, body } })
           return json({ ok: true, status: 'logged' })

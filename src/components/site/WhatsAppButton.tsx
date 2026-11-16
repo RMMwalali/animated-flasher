@@ -8,7 +8,7 @@ import { trackEvent } from './Analytics'
 const HIDE_KEY = 'ngina-wa-hidden'
 
 /**
- * WhatsApp button, bottom-right on every page (Business settings). The small
+ * WhatsApp button, bottom-right on every page under the chat (Business settings). The small
  * × hides it for the rest of the visit.
  */
 export function WhatsAppButton({ number, message }: { number: string; message: string }) {
@@ -32,7 +32,7 @@ export function WhatsAppButton({ number, message }: { number: string; message: s
     } catch {}
   }
   return (
-    <div className="fixed bottom-5 right-5 z-40" data-no-print data-whatsapp>
+    <div className="relative" data-no-print data-whatsapp>
       <a
         href={href(message)}
         target="_blank"

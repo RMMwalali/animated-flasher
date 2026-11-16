@@ -3,12 +3,13 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { OtherWaysToPay } from '@/components/booking/OtherWaysToPay'
 import { PayButton } from '@/components/booking/PayButton'
+import { TravellerDetailsForm } from '@/components/booking/TravellerDetailsForm'
 import { PrintButton } from '@/components/booking/PrintButton'
 import { PdfLink } from '@/components/booking/PdfLink'
 import { Icon } from '@/components/icons/Icon'
 import { Media } from '@/components/site/Media'
 import { findBookingByToken } from '@/lib/booking/flows'
-import { daysUntil, nextPayment } from '@/lib/booking/rules'
+import { daysUntil, nextPayment, travellerGaps } from '@/lib/booking/rules'
 import { getPayloadSafe, getSettings, media } from '@/lib/content'
 import { getFeatures } from '@/lib/config'
 import { formatMoney, type Currency } from '@/lib/pricing'
@@ -47,6 +48,11 @@ export default async function TripPage({ params }: Props) {
   const stepIndex = STEPS.findIndex((s) => s.key === b.status)
   const toGo = daysUntil(b.startDate)
   const flyIn = /fly|flight|air/i.test(`${b.title} ${trip?.title ?? ''}`)
+  const travellers = ((b.travellers ?? []) as any[]).filter((t) => t && typeof t === 'object')
+  const gaps = travellerGaps(b as any, travellers)
+  // flight times are shown and typed in Kenya time
+  const eatLocal = (d?: string | null) => (d ? new Date(new Date(d).getTime() + 3 * 3600e3).toISOString().slice(0, 16) : '')
+  const canEdit = !cancelled && b.status !== 'completed'
 
   return (
     <>
@@ -99,6 +105,26 @@ export default async function TripPage({ params }: Props) {
                     ))}
                   </ol>
                   {quote.acceptToken && <p className="mt-4 text-sm"><Link href={`/quote/${quote.acceptToken}`} className="underline underline-offset-4">See the full quote, with what is included</Link></p>}
+                </section>
+              )}
+
+              {canEdit && (
+                <section id="travellers" className="mt-14 scroll-mt-28" aria-labelledby="travellers-title">
+                  <h2 id="travellers-title" className="font-display text-4xl font-medium">Who&rsquo;s travelling</h2>
+                  <p className="mt-3 max-w-[60ch] text-[0.97rem] leading-relaxed">We need these to book park permits and rooms, and to meet you at the airport. Only your planner sees them.</p>
+                  <TravellerDetailsForm
+                    token={token}
+                    pax={b.pax ?? 1}
+                    missing={gaps.missing}
+                    initial={travellers.map((t) => ({
+                      id: t.id, name: t.name ?? '', nationality: t.nationality ?? '', dateOfBirth: t.dateOfBirth ? String(t.dateOfBirth).slice(0, 10) : '',
+                      dietary: t.dietary ?? '', emergencyName: t.emergencyName ?? '', emergencyPhone: t.emergencyPhone ?? '', hasMedical: Boolean(t.medicalNotes),
+                    }))}
+                    flights={{
+                      arrivalFlight: b.arrivalFlight ?? '', arrivalAt: eatLocal(b.arrivalAt), pickup: b.pickup ?? '',
+                      departureFlight: b.departureFlight ?? '', departureAt: eatLocal(b.departureAt), dropoff: b.dropoff ?? '', guestNotes: b.guestNotes ?? '',
+                    }}
+                  />
                 </section>
               )}
 

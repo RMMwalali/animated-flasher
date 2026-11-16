@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test'
+import { adminHeaders } from './admin'
 
 const PAGES = ['/', '/safaris', '/safaris/tsavo-east-taita-hills', '/coastal-tours/wasini-kisite-dhow', '/destinations', '/destinations/amboseli', '/wildlife', '/experiences', '/when-to-go', '/our-story', '/kenya-eta', '/blog', '/blog/what-to-pack-kenya-safari', '/contact', '/licences', '/plan-your-trip']
 
@@ -37,8 +38,7 @@ test('site name and business data are published for Google', async ({ request })
 test('search titles edited in the admin reach the website straight away', async ({ request, isMobile }) => {
   const password = process.env.E2E_ADMIN_PASSWORD ?? process.env.SEED_ADMIN_PASSWORD
   test.skip(isMobile || !password, 'desktop, needs the seeded admin password')
-  const { token } = (await (await request.post('/api/users/login', { data: { email: process.env.E2E_ADMIN_EMAIL ?? 'admin@ngina.local', password } })).json()) as { token: string }
-  const headers = { Authorization: `JWT ${token}` }
+  const headers = adminHeaders()
   const titleOf = async (p: string) => /<title>([^<]+)<\/title>/.exec(await (await request.get(p)).text())?.[1]
   // home page: Business settings → Search & Google
   await request.post('/api/globals/site-settings', { headers, data: { search: { homeTitle: 'E2E home title' } } })

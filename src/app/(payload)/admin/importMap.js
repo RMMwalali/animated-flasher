@@ -1,5 +1,6 @@
 import { ContactTimeline as ContactTimeline_b6a81e5b5e37f760549bd87ba63f155e } from '../../../components/admin/views/ContactTimeline'
 import { QuoteActions as QuoteActions_ba728b108c542cc3ab62ffd20ad316a3 } from '../../../components/admin/QuoteActions'
+import { TravellerStatus as TravellerStatus_a3faca3a9a93bba3bf8e107a0f284097 } from '../../../components/admin/TravellerStatus'
 import { BookingActions as BookingActions_f14676ba39bbe4de98026691ab4737a2 } from '../../../components/admin/BookingActions'
 import { PaymentActions as PaymentActions_37e5a15ff77675b079975771f7847a5e } from '../../../components/admin/PaymentActions'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -44,6 +45,7 @@ import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc056
 export const importMap = {
   "/components/admin/views/ContactTimeline#ContactTimeline": ContactTimeline_b6a81e5b5e37f760549bd87ba63f155e,
   "/components/admin/QuoteActions#QuoteActions": QuoteActions_ba728b108c542cc3ab62ffd20ad316a3,
+  "/components/admin/TravellerStatus#TravellerStatus": TravellerStatus_a3faca3a9a93bba3bf8e107a0f284097,
   "/components/admin/BookingActions#BookingActions": BookingActions_f14676ba39bbe4de98026691ab4737a2,
   "/components/admin/PaymentActions#PaymentActions": PaymentActions_37e5a15ff77675b079975771f7847a5e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,

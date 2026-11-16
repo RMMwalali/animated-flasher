@@ -98,7 +98,11 @@ export interface Config {
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    leads: {
+      quotes: 'quotes';
+    };
+  };
   collectionsSelect: {
     leads: LeadsSelect<false> | LeadsSelect<true>;
     contacts: ContactsSelect<false> | ContactsSelect<true>;
@@ -139,11 +143,13 @@ export interface Config {
     'site-settings': SiteSetting;
     home: Home;
     integrations: Integration;
+    'chat-status': ChatStatus;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
     integrations: IntegrationsSelect<false> | IntegrationsSelect<true>;
+    'chat-status': ChatStatusSelect<false> | ChatStatusSelect<true>;
   };
   locale: null;
   widgets: {
@@ -188,6 +194,14 @@ export interface Lead {
   statusChangedAt?: string | null;
   lostReason?: string | null;
   trips?: (number | Trip)[] | null;
+  /**
+   * Quotes for this lead. A booking request from the website comes with a draft quote ready to check and send.
+   */
+  quotes?: {
+    docs?: (number | Quote)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   interests?: ('safari' | 'coast' | 'walking' | 'marine' | 'culture' | 'honeymoon' | 'family' | 'birding')[] | null;
   travelStart?: string | null;
   travelEnd?: string | null;
@@ -305,7 +319,10 @@ export interface Company {
 export interface User {
   id: number;
   name: string;
-  roles: ('admin' | 'sales' | 'editor')[];
+  /**
+   * The first account is always an Admin.
+   */
+  roles?: ('admin' | 'sales' | 'editor')[] | null;
   /**
    * Untick to block this person from logging in.
    */
@@ -651,6 +668,207 @@ export interface Destination {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Build a quote from a journey, adjust prices, then send it. The guest accepts online.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quotes".
+ */
+export interface Quote {
+  id: number;
+  number?: string | null;
+  status: 'draft' | 'sent' | 'viewed' | 'accepted' | 'declined' | 'expired';
+  validUntil?: string | null;
+  title: string;
+  lead?: (number | null) | Lead;
+  contact: number | Contact;
+  /**
+   * Pick a journey and save: its day-by-day plan and price fill in automatically.
+   */
+  trip?: (number | null) | Trip;
+  startDate?: string | null;
+  adults?: number | null;
+  children?: number | null;
+  items?:
+    | {
+        description: string;
+        unit?: ('per_person' | 'per_child' | 'per_group' | 'fixed') | null;
+        quantity?: number | null;
+        unitPrice: number;
+        id?: string | null;
+      }[]
+    | null;
+  currency: 'USD' | 'KES';
+  /**
+   * Amount off.
+   */
+  discount?: number | null;
+  depositPercent?: number | null;
+  subtotal?: number | null;
+  total?: number | null;
+  deposit?: number | null;
+  days?:
+    | {
+        title: string;
+        description?: string | null;
+        overnight?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  inclusions?: string | null;
+  exclusions?: string | null;
+  notes?: string | null;
+  acceptToken?: string | null;
+  sentAt?: string | null;
+  viewedAt?: string | null;
+  acceptedAt?: string | null;
+  acceptedName?: string | null;
+  declinedAt?: string | null;
+  declineReason?: string | null;
+  booking?: (number | null) | Booking;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings".
+ */
+export interface Booking {
+  id: number;
+  reference?: string | null;
+  status: 'pending_deposit' | 'deposit_paid' | 'paid' | 'travelling' | 'completed' | 'cancelled';
+  title: string;
+  contact: number | Contact;
+  lead?: (number | null) | Lead;
+  quote?: (number | null) | Quote;
+  trip?: (number | null) | Trip;
+  departure?: (number | null) | Departure;
+  startDate: string;
+  endDate?: string | null;
+  pax?: number | null;
+  currency: 'USD' | 'KES';
+  total: number;
+  depositDue?: number | null;
+  /**
+   * Updated automatically from successful payments.
+   */
+  amountPaid?: number | null;
+  balanceDue?: number | null;
+  balanceDueDate?: string | null;
+  travellers?: (number | Traveller)[] | null;
+  /**
+   * e.g. KQ 604
+   */
+  arrivalFlight?: string | null;
+  arrivalAt?: string | null;
+  /**
+   * Airport or hotel.
+   */
+  pickup?: string | null;
+  departureFlight?: string | null;
+  departureAt?: string | null;
+  dropoff?: string | null;
+  /**
+   * Special occasions, accessibility, room set-up…
+   */
+  guestNotes?: string | null;
+  detailsSubmittedAt?: string | null;
+  services?:
+    | {
+        supplier: number | Supplier;
+        date?: string | null;
+        status?: ('requested' | 'confirmed' | 'paid' | 'cancelled') | null;
+        service?: string | null;
+        cost?: number | null;
+        confirmationRef?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  notes?: string | null;
+  reviewRequested?: boolean | null;
+  portalToken?: string | null;
+  /**
+   * Filled in automatically when each email goes out.
+   */
+  emails?: {
+    confirmationSentAt?: string | null;
+    balanceReminderSentAt?: string | null;
+    etaReminderSentAt?: string | null;
+    detailsReminderSentAt?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Scheduled trips with vehicles and guides. See the calendar for the month view.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "departures".
+ */
+export interface Departure {
+  id: number;
+  label?: string | null;
+  trip: number | Trip;
+  startDate: string;
+  endDate?: string | null;
+  capacity?: number | null;
+  guide?: (number | null) | Supplier;
+  vehicle?: (number | null) | Supplier;
+  status?: ('scheduled' | 'confirmed' | 'running' | 'done' | 'cancelled') | null;
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Lodges, camps, drivers, guides, boats and vehicles.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "suppliers".
+ */
+export interface Supplier {
+  id: number;
+  name: string;
+  type: 'lodge' | 'hotel' | 'driver' | 'guide' | 'vehicle' | 'boat' | 'other';
+  contactName?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  location?: (number | null) | Destination;
+  /**
+   * Rate notes, contract season, payment terms.
+   */
+  rates?: string | null;
+  /**
+   * e.g. PSV licence, guide certification.
+   */
+  licence?: string | null;
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * People on a booking. Collect only what the trip needs.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "travellers".
+ */
+export interface Traveller {
+  id: number;
+  name: string;
+  contact?: (number | null) | Contact;
+  dateOfBirth?: string | null;
+  /**
+   * Affects park fees (resident / non-resident).
+   */
+  nationality?: string | null;
+  isChild?: boolean | null;
+  ageOnTravel?: number | null;
+  dietary?: string | null;
+  medicalNotes?: string | null;
+  emergencyName?: string | null;
+  emergencyPhone?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Email and live chat threads. Use the Inbox to reply.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -669,6 +887,10 @@ export interface Conversation {
   lastMessagePreview?: string | null;
   lastDirection?: ('in' | 'out') | null;
   visitorTokenHash?: string | null;
+  /**
+   * Last time the visitor had the chat open.
+   */
+  visitorSeenAt?: string | null;
   threadKey?: string | null;
   /**
    * Where this came from. Captured automatically.
@@ -799,188 +1021,6 @@ export interface ReviewRequest {
   clickedAt?: string | null;
   clickedPlatform?: string | null;
   token?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "bookings".
- */
-export interface Booking {
-  id: number;
-  reference?: string | null;
-  status: 'pending_deposit' | 'deposit_paid' | 'paid' | 'travelling' | 'completed' | 'cancelled';
-  title: string;
-  contact: number | Contact;
-  lead?: (number | null) | Lead;
-  quote?: (number | null) | Quote;
-  trip?: (number | null) | Trip;
-  departure?: (number | null) | Departure;
-  startDate: string;
-  endDate?: string | null;
-  pax?: number | null;
-  currency: 'USD' | 'KES';
-  total: number;
-  depositDue?: number | null;
-  /**
-   * Updated automatically from successful payments.
-   */
-  amountPaid?: number | null;
-  balanceDue?: number | null;
-  balanceDueDate?: string | null;
-  travellers?: (number | Traveller)[] | null;
-  services?:
-    | {
-        supplier: number | Supplier;
-        date?: string | null;
-        status?: ('requested' | 'confirmed' | 'paid' | 'cancelled') | null;
-        service?: string | null;
-        cost?: number | null;
-        confirmationRef?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  notes?: string | null;
-  reviewRequested?: boolean | null;
-  portalToken?: string | null;
-  /**
-   * Filled in automatically when each email goes out.
-   */
-  emails?: {
-    confirmationSentAt?: string | null;
-    balanceReminderSentAt?: string | null;
-    etaReminderSentAt?: string | null;
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Build a quote from a journey, adjust prices, then send it. The guest accepts online.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "quotes".
- */
-export interface Quote {
-  id: number;
-  number?: string | null;
-  status: 'draft' | 'sent' | 'viewed' | 'accepted' | 'declined' | 'expired';
-  validUntil?: string | null;
-  title: string;
-  lead?: (number | null) | Lead;
-  contact: number | Contact;
-  /**
-   * Pick a journey and save: its day-by-day plan and price fill in automatically.
-   */
-  trip?: (number | null) | Trip;
-  startDate?: string | null;
-  adults?: number | null;
-  children?: number | null;
-  items?:
-    | {
-        description: string;
-        unit?: ('per_person' | 'per_child' | 'per_group' | 'fixed') | null;
-        quantity?: number | null;
-        unitPrice: number;
-        id?: string | null;
-      }[]
-    | null;
-  currency: 'USD' | 'KES';
-  /**
-   * Amount off.
-   */
-  discount?: number | null;
-  depositPercent?: number | null;
-  subtotal?: number | null;
-  total?: number | null;
-  deposit?: number | null;
-  days?:
-    | {
-        title: string;
-        description?: string | null;
-        overnight?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  inclusions?: string | null;
-  exclusions?: string | null;
-  notes?: string | null;
-  acceptToken?: string | null;
-  sentAt?: string | null;
-  viewedAt?: string | null;
-  acceptedAt?: string | null;
-  acceptedName?: string | null;
-  declinedAt?: string | null;
-  declineReason?: string | null;
-  booking?: (number | null) | Booking;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Scheduled trips with vehicles and guides. See the calendar for the month view.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "departures".
- */
-export interface Departure {
-  id: number;
-  label?: string | null;
-  trip: number | Trip;
-  startDate: string;
-  endDate?: string | null;
-  capacity?: number | null;
-  guide?: (number | null) | Supplier;
-  vehicle?: (number | null) | Supplier;
-  status?: ('scheduled' | 'confirmed' | 'running' | 'done' | 'cancelled') | null;
-  notes?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Lodges, camps, drivers, guides, boats and vehicles.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "suppliers".
- */
-export interface Supplier {
-  id: number;
-  name: string;
-  type: 'lodge' | 'hotel' | 'driver' | 'guide' | 'vehicle' | 'boat' | 'other';
-  contactName?: string | null;
-  phone?: string | null;
-  email?: string | null;
-  location?: (number | null) | Destination;
-  /**
-   * Rate notes, contract season, payment terms.
-   */
-  rates?: string | null;
-  /**
-   * e.g. PSV licence, guide certification.
-   */
-  licence?: string | null;
-  active?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * People on a booking. Collect only what the trip needs.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "travellers".
- */
-export interface Traveller {
-  id: number;
-  name: string;
-  contact?: (number | null) | Contact;
-  /**
-   * Affects park fees (resident / non-resident).
-   */
-  nationality?: string | null;
-  isChild?: boolean | null;
-  ageOnTravel?: number | null;
-  dietary?: string | null;
-  medicalNotes?: string | null;
-  emergencyName?: string | null;
-  emergencyPhone?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1610,6 +1650,7 @@ export interface LeadsSelect<T extends boolean = true> {
   statusChangedAt?: T;
   lostReason?: T;
   trips?: T;
+  quotes?: T;
   interests?: T;
   travelStart?: T;
   travelEnd?: T;
@@ -1703,6 +1744,7 @@ export interface ConversationsSelect<T extends boolean = true> {
   lastMessagePreview?: T;
   lastDirection?: T;
   visitorTokenHash?: T;
+  visitorSeenAt?: T;
   threadKey?: T;
   source?:
     | T
@@ -1875,6 +1917,14 @@ export interface BookingsSelect<T extends boolean = true> {
   balanceDue?: T;
   balanceDueDate?: T;
   travellers?: T;
+  arrivalFlight?: T;
+  arrivalAt?: T;
+  pickup?: T;
+  departureFlight?: T;
+  departureAt?: T;
+  dropoff?: T;
+  guestNotes?: T;
+  detailsSubmittedAt?: T;
   services?:
     | T
     | {
@@ -1895,6 +1945,7 @@ export interface BookingsSelect<T extends boolean = true> {
         confirmationSentAt?: T;
         balanceReminderSentAt?: T;
         etaReminderSentAt?: T;
+        detailsReminderSentAt?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -1906,6 +1957,7 @@ export interface BookingsSelect<T extends boolean = true> {
 export interface TravellersSelect<T extends boolean = true> {
   name?: T;
   contact?: T;
+  dateOfBirth?: T;
   nationality?: T;
   isChild?: T;
   ageOnTravel?: T;
@@ -2547,6 +2599,11 @@ export interface SiteSetting {
   whatsappButton?: boolean | null;
   whatsappMessage?: string | null;
   /**
+   * Visitors' messages arrive in the Inbox. While someone on the team has the Inbox open, the chat shows "online"; otherwise it asks for an email address and replies go out by email too.
+   */
+  liveChat?: boolean | null;
+  chatGreeting?: string | null;
+  /**
    * Shown on the website and in emails: "we reply within …", e.g. 24 hours.
    */
   responseTime?: string | null;
@@ -2967,6 +3024,16 @@ export interface Integration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chat-status".
+ */
+export interface ChatStatus {
+  id: number;
+  teamSeenAt?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
@@ -2998,6 +3065,8 @@ export interface SiteSettingsSelect<T extends boolean = true> {
       };
   whatsappButton?: T;
   whatsappMessage?: T;
+  liveChat?: T;
+  chatGreeting?: T;
   responseTime?: T;
   social?:
     | T
@@ -3230,6 +3299,16 @@ export interface IntegrationsSelect<T extends boolean = true> {
     | {
         key?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chat-status_select".
+ */
+export interface ChatStatusSelect<T extends boolean = true> {
+  teamSeenAt?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

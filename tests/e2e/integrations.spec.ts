@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto'
 import { expect, test } from '@playwright/test'
+import { adminHeaders } from './admin'
 
-const email = process.env.E2E_ADMIN_EMAIL ?? 'admin@ngina.local'
 const password = process.env.E2E_ADMIN_PASSWORD ?? process.env.SEED_ADMIN_PASSWORD
 
 test('integrations are admin-only and keys never come back in full', async ({ request, isMobile }) => {
@@ -9,8 +9,7 @@ test('integrations are admin-only and keys never come back in full', async ({ re
   expect([401, 403]).toContain((await request.get('/api/globals/integrations')).status())
   expect((await request.post('/api/admin/integrations/test', { data: { service: 'paystack' } })).status()).toBe(403)
   test.skip(!password, 'needs the seeded admin password')
-  const { token } = (await (await request.post('/api/users/login', { data: { email, password } })).json()) as { token: string }
-  const headers = { Authorization: `JWT ${token}` }
+  const headers = adminHeaders()
   // throwaway values made up for this run (never real keys)
   const indexNowKey = randomBytes(16).toString('hex')
   const fakeApiKey = `test-only-${randomBytes(6).toString('hex')}-1234`
