@@ -61,7 +61,7 @@ test('first visit: logo opening plays on its own, then the stage (motion enabled
   await expect(intro).toHaveCount(0, { timeout: 8000 })
   await expect(page.locator('#site-header')).not.toHaveAttribute('inert', '')
   await expect(page.locator('.stage-line.is-active')).toHaveCount(1)
-  await expect(page.locator('[data-cta="home-stage-explore"]')).toBeInViewport()
+  await expect(page.locator('.stage-line.is-active')).toBeInViewport()
   // repeat visit in the same session skips it
   await page.reload()
   await expect(page.locator('[data-intro-overlay]')).toHaveCount(0)
@@ -86,4 +86,18 @@ test('stage pauses and moves between scenes', async ({ page }, testInfo) => {
   await page.getByRole('button', { name: 'Next scene' }).click()
   await expect.poll(active).not.toBe(first)
   await expect(page.getByRole('button', { name: /play scenes|pause scenes/i })).toBeVisible()
+})
+
+test('no hand-drawn strokes: emphasis is colour, buttons are plain', async ({ page }) => {
+  for (const path of ['/', '/destinations']) {
+    await page.goto(path)
+    await expect(page.locator('svg.brush')).toHaveCount(0)
+    await expect(page.locator('#site-header button svg path[d^="M52 5"]')).toHaveCount(0)
+  }
+  await expect(page.getByText(/explore ngina/i)).toHaveCount(0)
+  const em = page.locator('.stage-em, .emphasis').first()
+  if (await em.count()) {
+    const color = await em.evaluate((el) => getComputedStyle(el).color)
+    expect(color).not.toBe(await page.locator('body').evaluate((el) => getComputedStyle(el).color))
+  }
 })

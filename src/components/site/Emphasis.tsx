@@ -1,9 +1,8 @@
 import { Fragment } from 'react'
-import { Brush } from './Brush'
 
 /**
- * Renders a statement with one emphasised word/phrase underlined by a drawn
- * brush stroke (burnt orange on light sections, ochre on dark).
+ * Renders a statement with one emphasised word/phrase picked out in colour
+ * and italic (burnt orange on light sections, ochre on dark).
  */
 export function Emphasis({ text, emphasis, className = '' }: { text: string; emphasis?: string | null; className?: string }) {
   if (!emphasis) return <>{text}</>
@@ -19,10 +18,7 @@ export function Emphasis({ text, emphasis, className = '' }: { text: string; emp
     <Fragment>
       {before}
       <span className="whitespace-nowrap">
-        <em className={`relative inline-block italic ${className}`}>
-          {word}
-          <Brush seed={word} className="emphasis-brush absolute -bottom-[0.12em] left-[-2%] h-[0.28em] w-[104%]" />
-        </em>
+        <em className={`emphasis ${className}`}>{word}</em>
         {punct}
       </span>
       {after}

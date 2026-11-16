@@ -3,8 +3,6 @@ import Link from 'next/link'
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { useEffect } from 'react'
 import { Icon } from '@/components/icons/Icon'
-import { Brush } from './Brush'
-import { BrushCircle } from './BrushCircle'
 import { ExploreButton } from './Explore'
 import { HeaderLogo, LocationLine } from './Logo'
 import { MENU } from './nav'
@@ -28,8 +26,7 @@ export function Menu({ open, onClose, contact }: { open: boolean; onClose: () =>
         <DialogTitle className="sr-only">Menu</DialogTitle>
         <div className="gutter grid h-[76px] grid-cols-[1fr_auto_1fr] items-center sm:h-[88px]">
           <div className="flex items-center">
-            <button type="button" onClick={onClose} className="relative hidden size-12 place-items-center rounded-full lg:grid" aria-label="Close menu">
-              <BrushCircle className="absolute inset-0 size-full text-orange-300" />
+            <button type="button" onClick={onClose} className="hidden size-12 place-items-center rounded-full transition-colors hover:bg-cream/10 lg:grid" aria-label="Close menu">
               <Icon name="close" size={20} />
             </button>
           </div>
@@ -37,8 +34,7 @@ export function Menu({ open, onClose, contact }: { open: boolean; onClose: () =>
             <HeaderLogo />
           </Link>
           <div className="flex justify-end">
-            <button type="button" onClick={onClose} className="relative grid size-12 place-items-center rounded-full lg:hidden" aria-label="Close menu" autoFocus>
-              <BrushCircle className="absolute inset-0 size-full text-orange-300" />
+            <button type="button" onClick={onClose} className="grid size-12 place-items-center rounded-full transition-colors hover:bg-cream/10 lg:hidden" aria-label="Close menu" autoFocus>
               <Icon name="close" size={20} />
             </button>
           </div>
@@ -51,9 +47,8 @@ export function Menu({ open, onClose, contact }: { open: boolean; onClose: () =>
                 <li key={m.href} className="menu-item" style={{ ['--i' as string]: i }}>
                   <Link href={m.href} onClick={onClose} className="menu-link group flex items-baseline gap-4 py-1.5 sm:gap-6">
                     <span className="hidden font-semibold tabular-nums text-xs text-ochre sm:text-sm lg:inline">{String(i + 1).padStart(2, '0')}</span>
-                    <span className="relative font-display text-[2rem] font-medium leading-none sm:text-5xl lg:text-6xl">
+                    <span className="font-display text-[2rem] font-medium leading-none transition-colors duration-300 group-hover:text-orange-300 group-focus-visible:text-orange-300 sm:text-5xl lg:text-6xl">
                       {m.label}
-                      <Brush seed={m.label} draw={false} className="menu-brush absolute -bottom-2 left-0 h-3 w-full text-orange-300" />
                     </span>
                     <span className="hidden text-sm text-cream/75 md:inline">{m.note}</span>
                   </Link>

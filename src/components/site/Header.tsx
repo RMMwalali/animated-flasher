@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, type ReactNode } from 'react'
 import { Icon } from '@/components/icons/Icon'
-import { BrushCircle } from './BrushCircle'
 import { HeaderLogo } from './Logo'
 import { initialHeaderState, nextHeaderState } from './headerState'
 import { Menu } from './Menu'
@@ -79,8 +78,7 @@ export function Header({ contact, overHero = true, banner }: { contact: ContactI
         {banner}
         <div className="gutter grid h-[76px] grid-cols-[1fr_auto_1fr] items-center sm:h-[88px]">
           <div className="flex items-center gap-6">
-            <button type="button" onClick={() => setOpen(true)} className="relative hidden size-12 place-items-center rounded-full lg:grid" aria-haspopup="dialog" aria-expanded={open} aria-label="Open menu">
-              <BrushCircle className="absolute inset-0 size-full text-orange" />
+            <button type="button" onClick={() => setOpen(true)} className="hidden size-12 place-items-center rounded-full transition-colors hover:bg-current/10 lg:grid" aria-haspopup="dialog" aria-expanded={open} aria-label="Open menu">
               <Icon name="menu" size={20} />
             </button>
             <nav aria-label="Journeys" className="hidden items-center gap-6 lg:flex">
@@ -107,8 +105,7 @@ export function Header({ contact, overHero = true, banner }: { contact: ContactI
             <Link href="/plan-your-trip" data-cta="header-plan" className="btn btn-primary hidden !min-h-11 !px-5 !py-2.5 text-sm lg:inline-flex">
               Plan your trip
             </Link>
-            <button type="button" onClick={() => setOpen(true)} className="relative grid size-12 place-items-center rounded-full lg:hidden" aria-haspopup="dialog" aria-expanded={open} aria-label="Open menu">
-              <BrushCircle className="absolute inset-0 size-full text-orange" />
+            <button type="button" onClick={() => setOpen(true)} className="grid size-12 place-items-center rounded-full transition-colors hover:bg-current/10 lg:hidden" aria-haspopup="dialog" aria-expanded={open} aria-label="Open menu">
               <Icon name="menu" size={20} />
             </button>
           </div>

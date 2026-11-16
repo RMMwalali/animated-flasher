@@ -170,7 +170,7 @@ html.lenis body {
   }
 }
 
-/* Brush underline drawing (Emphasis). Starts drawn so no-JS and reduced motion look right. */
+/* Line drawing on scroll (map routes). Starts drawn so no-JS and reduced motion look right. */
 .brush path {
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
@@ -244,25 +244,15 @@ html[data-intro='done'] .intro-gate {
   }
 }
 
-/* Brush colours: burnt orange on light sections, ochre on dark ones. */
-.emphasis-brush {
+/* Emphasised words: colour, not decoration. Burnt orange on light sections, ochre on dark ones. */
+.emphasis,
+.stage-em {
   color: var(--color-orange);
 }
-[data-tone='night'] .emphasis-brush,
-[data-tone='safari'] .emphasis-brush {
+[data-tone='night'] :is(.emphasis, .stage-em),
+[data-tone='safari'] :is(.emphasis, .stage-em),
+.stage-line .stage-em {
   color: var(--color-ochre);
-}
-.menu-brush path {
-  stroke-dashoffset: 1;
-  opacity: 0;
-  transition:
-    stroke-dashoffset 0.6s var(--ease-in-out-quart),
-    opacity 0.2s;
-}
-.menu-link:hover .menu-brush path,
-.menu-link:focus-visible .menu-brush path {
-  stroke-dashoffset: 0;
-  opacity: 1;
 }
 .btn-ghost:hover {
   background: color-mix(in srgb, currentColor 12%, transparent);
@@ -340,32 +330,14 @@ html[data-intro='done'] .intro-gate {
     filter: blur(10px);
   }
 }
-.stage-brush path {
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset 0.9s var(--ease-in-out-quart);
-}
-.stage-line.is-active .stage-brush path {
-  stroke-dashoffset: 0;
-  transition-delay: 1.15s;
-}
 /* Without JavaScript: show the first statement. */
 html:not(.js) .stage-line:first-of-type {
   opacity: 1;
   transform: none;
 }
-html:not(.js) .stage-line:first-of-type .stage-brush path {
-  stroke-dashoffset: 0;
-}
-.explore-cta .emphasis-brush path {
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset 0.6s var(--ease-in-out-quart);
-}
-.explore-cta:hover .emphasis-brush path,
-.explore-cta:focus-visible .emphasis-brush path {
-  stroke-dashoffset: 0;
-}
 
-/* Emphasised word: italic serif + brush underline */
+/* Emphasised word: italic serif in colour */
+.emphasis,
 .statement em,
 .stage-em {
   font-style: italic;
