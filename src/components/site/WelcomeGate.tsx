@@ -1,7 +1,7 @@
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { brandPaths } from '@/components/brand/paths'
-import { HeaderLogo } from './Logo'
+import { BrandLogo } from './Logo'
 
 const KEY = 'ngina-intro'
 const [bx, by, bw, bh] = brandPaths.silhouette.box
@@ -115,7 +115,7 @@ export function LogoIntro() {
         <path d={brandPaths.silhouette.d} pathLength={1} fill="none" stroke="currentColor" strokeWidth={6} strokeDasharray={1} />
       </svg>
       <div data-logo className="intro-logo absolute inset-0 grid place-items-center text-deep">
-        <HeaderLogo className="[&>span:first-child]:h-20 [&>span:last-child]:h-7 sm:[&>span:first-child]:h-24 sm:[&>span:last-child]:h-8" />
+        <BrandLogo priority sizes="(min-width: 640px) 360px, 260px" className="h-[min(42vh,300px)] max-w-[80vw]" />
       </div>
     </div>
   )

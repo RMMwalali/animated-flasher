@@ -4,7 +4,7 @@ import { Icon } from '@/components/icons/Icon'
 import { socialOf } from './social'
 import type { SettingsVM } from '@/lib/content'
 import { formatHours } from './hours'
-import { LocationLine, MaskedSvg } from './Logo'
+import { BrandLogo, LocationLine } from './Logo'
 import { LEGAL, MENU } from './nav'
 import { CookieSettingsLink } from './Consent'
 
@@ -18,7 +18,7 @@ export function Footer({ settings }: { settings: SettingsVM }) {
       </svg>
       <div className="gutter grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1.2fr] lg:py-24">
         <div className="grid content-start gap-6">
-          <MaskedSvg src="/brand/logo-stacked-cream.svg" ratio={1934 / 1633} className="w-44 text-cream" label="Ngina Trails and Safaris, Diani Beach, Kenya" />
+          <BrandLogo variant="light" sizes="176px" className="w-44" />
           <p className="max-w-xs text-cream/80">{settings.tagline}</p>
         </div>
         <nav aria-label="Journeys">

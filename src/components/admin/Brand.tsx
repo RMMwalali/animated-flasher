@@ -4,7 +4,7 @@ import { Icon } from '@/components/icons/Icon'
 export function AdminLogo() {
   return (
     <div className="ng-admin-logo">
-      <img src="/brand/logo-stacked-deep.svg" alt="Ngina Trails and Safaris" width={220} height={190} />
+      <img src="/brand/logo-full.png" alt="Ngina Trails and Safaris, Diani Beach, Kenya" width={220} height={183} />
       <p className="ng-label">Back office</p>
     </div>
   )

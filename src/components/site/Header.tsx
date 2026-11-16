@@ -93,7 +93,7 @@ export function Header({ contact, overHero = true, banner }: { contact: ContactI
           </div>
 
           <Link href="/" className="flex min-h-11 items-center justify-center px-2" aria-label="Ngina Trails and Safaris, home">
-            <HeaderLogo />
+            <HeaderLogo light={light} />
           </Link>
 
           <div className="flex items-center justify-end gap-6">
